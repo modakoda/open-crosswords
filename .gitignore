@@ -1,0 +1,36 @@
+.claude/.docs-update-pending
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+*.pem
+
+# debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env
+.env*.local
+
+# drizzle studio
+.drizzle
+
+# typescript incremental build info
+tsconfig.tsbuildinfo

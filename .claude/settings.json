@@ -1,0 +1,25 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // empty' | { read -r f; case \"$f\" in */README.md|README.md|*/CLAUDE.md|CLAUDE.md|*/AGENTS.md|AGENTS.md|*/.claude/*|.claude/*|*/.gitignore|.gitignore) ;; *) mkdir -p .claude && touch .claude/.docs-update-pending ;; esac; } 2>/dev/null || true"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f .claude/.docs-update-pending ]; then rm -f .claude/.docs-update-pending; printf '%s' '{\"decision\":\"block\",\"reason\":\"Code/config changed this turn. Before finishing, update documentation (README.md, root CLAUDE.md/AGENTS.md) and this repo'\"'\"'s Claude Code configuration (.claude/agents, .claude/skills) so they reflect the current state of the app.\"}'; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

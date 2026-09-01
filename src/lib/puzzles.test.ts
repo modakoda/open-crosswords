@@ -1,0 +1,123 @@
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { sql } from "drizzle-orm";
+
+vi.mock("@/db", async () => {
+  const { makeTestDb } = await import("@/test/db");
+  const store = await makeTestDb();
+  return { db: store.db, schema: await import("@/db/schema") };
+});
+
+const { db } = await import("@/db");
+const { entries, languages, puzzles } = await import("@/db/schema");
+const { generatePuzzle, getPuzzleBySlug, NotEnoughEntriesError } = await import(
+  "@/lib/puzzles"
+);
+
+const WORDS = [
+  ["Capital of France", "Paris"],
+  ["Frozen water", "Ice"],
+  ["King of the jungle", "Lion"],
+  ["Red planet", "Mars"],
+  ["Study of living things", "Biology"],
+  ["Sport at Wimbledon", "Tennis"],
+  ["Yellow citrus fruit", "Lemon"],
+  ["Large grey mammal with a trunk", "Elephant"],
+  ["Opposite of night", "Day"],
+  ["Frozen dessert", "Sorbet"],
+  ["Woodwind instrument", "Oboe"],
+  ["Nocturnal hooting bird", "Owl"],
+];
+
+async function seedEntries() {
+  await db.insert(languages).values({ code: "en", name: "English" });
+  await db.insert(entries).values(
+    WORDS.map(([clue, answer]) => ({
+      languageCode: "en",
+      clue,
+      answer,
+      answerNormalized: answer.toUpperCase(),
+      length: answer.length,
+      difficulty: 3,
+      source: "seed",
+    })),
+  );
+}
+
+beforeEach(async () => {
+  await db.execute(
+    sql`truncate ${puzzles}, ${entries}, ${languages} restart identity cascade`,
+  );
+});
+
+describe("generatePuzzle", () => {
+  it("builds, persists, and returns a solvable puzzle", async () => {
+    await seedEntries();
+    const dto = await generatePuzzle({
+      languageCode: "en",
+      paperSize: "a4",
+      orientation: "portrait",
+      seed: "fixed-seed",
+    });
+
+    expect(dto.slug).toMatch(/^[A-Za-z0-9_-]{10}$/);
+    expect(dto.clues.across.length + dto.clues.down.length).toBeGreaterThanOrEqual(4);
+    expect(dto.width).toBeLessThanOrEqual(23);
+
+    // every clue's answer sits in the grid at its start cell
+    for (const c of [...dto.clues.across, ...dto.clues.down]) {
+      expect(dto.grid[c.row][c.col]?.solution).toBe(c.answer[0]);
+    }
+
+    const fromDb = await getPuzzleBySlug(dto.slug);
+    expect(fromDb?.title).toBe(dto.title);
+  });
+
+  it("marks the entries it used (timesUsed / lastUsedAt)", async () => {
+    await seedEntries();
+    const dto = await generatePuzzle({
+      languageCode: "en",
+      paperSize: "a4",
+      orientation: "portrait",
+      seed: "s",
+    });
+    const rows = await db.select().from(entries);
+    const used = rows.filter((r) => r.timesUsed > 0);
+    expect(used.length).toBe(dto.clues.across.length + dto.clues.down.length);
+    expect(used.every((r) => r.lastUsedAt instanceof Date)).toBe(true);
+  });
+
+  it("persists the seed and honours an explicit one", async () => {
+    await seedEntries();
+    const dto = await generatePuzzle({
+      languageCode: "en",
+      paperSize: "a4",
+      orientation: "portrait",
+      seed: "my-seed",
+    });
+    const [row] = await db.select().from(puzzles);
+    expect(row.seed).toBe("my-seed");
+    expect(row.slug).toBe(dto.slug);
+  });
+
+  it("rejects when there are too few entries", async () => {
+    await db.insert(languages).values({ code: "en", name: "English" });
+    await db.insert(entries).values({
+      languageCode: "en",
+      clue: "Only one",
+      answer: "Solo",
+      answerNormalized: "SOLO",
+      length: 4,
+      difficulty: 3,
+      source: "seed",
+    });
+    await expect(
+      generatePuzzle({ languageCode: "en", paperSize: "a4", orientation: "portrait" }),
+    ).rejects.toBeInstanceOf(NotEnoughEntriesError);
+  });
+});
+
+describe("getPuzzleBySlug", () => {
+  it("returns null for an unknown slug", async () => {
+    expect(await getPuzzleBySlug("nope1234ab")).toBeNull();
+  });
+});

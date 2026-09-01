@@ -1,0 +1,31 @@
+# Local development dependencies for open-crosswords.
+# Orchestrated by Tilt (see ./Tiltfile). You can also run it standalone:
+#   docker compose up -d        # start Postgres
+#   docker compose down         # stop (keeps data)
+#   docker compose down -v      # stop and wipe the data volume
+#
+# Credentials/port match the local DATABASE_URL in .env.example:
+#   postgresql://user:password@localhost:5433/open_crosswords
+# Host port defaults to 5433 to avoid clashing with a system Postgres on 5432.
+# Override with POSTGRES_PORT (keep it in sync with DATABASE_URL in .env).
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: open-crosswords-postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: open_crosswords
+    ports:
+      # Bound to localhost only — never expose Postgres beyond the host.
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - open-crosswords-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d open_crosswords"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  open-crosswords-pgdata:
