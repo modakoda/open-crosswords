@@ -39,7 +39,7 @@ export async function readJson(
 }
 
 /** Parse an unknown value with Zod, returning a typed result or a 400 response. */
-export function parse<S extends z.ZodTypeAny>(
+export function parse<S extends z.ZodType>(
   schema: S,
   value: unknown,
 ): { ok: true; data: z.infer<S> } | { ok: false; response: NextResponse } {

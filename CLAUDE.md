@@ -6,6 +6,10 @@ or solve them online via a shareable link. Open source, single Next.js app.
 ## Architecture (verify against code before relying on it)
 
 - **Next.js App Router** (`src/app/**`), React 19, TypeScript, Tailwind CSS v4.
+- **UI primitives** in `src/components/ui/` are shadcn/ui components (config in
+  `components.json`) — build forms and controls from these (`Button`, `Input`,
+  `Select`, `Table`, `Tabs`, etc.) rather than raw `<button>`/`<input>` with
+  ad hoc classes. Theme tokens live in `src/app/globals.css`.
 - **Data layer** in `src/db/`: Drizzle ORM schema split by domain under
   `src/db/schema/` (`auth.ts`, `content.ts`, re-exported from `index.ts`); the
   shared client is `src/db/index.ts` using **postgres.js** (`drizzle-orm/postgres-js`)

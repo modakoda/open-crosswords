@@ -29,7 +29,7 @@ export default async function PuzzlePage({
     <div className="space-y-4">
       <div>
         <h1 className="text-2xl font-bold">{puzzle.title}</h1>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {puzzle.width}×{puzzle.height} · {puzzle.clues.across.length} across ·{" "}
           {puzzle.clues.down.length} down · share this page to let others solve it
         </p>

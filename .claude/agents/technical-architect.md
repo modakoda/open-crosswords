@@ -8,7 +8,7 @@ You make architecture-level calls for this app: Next.js App Router, Drizzle ORM 
 
 Current shape of the system (verify against the code, don't assume it hasn't moved):
 - Route handlers under `src/app/api/**/route.ts` using the shared helpers in `src/lib/api.ts` (`json`, `apiError`, `parse`, `readJson`, `adminRoute`). Plain REST-ish handlers only — oRPC is not used.
-- Boundary validation is Zod 3 schemas in `src/lib/validation/schemas.ts`, shared between route handlers and the CLI scripts.
+- Boundary validation is Zod 4 schemas in `src/lib/validation/schemas.ts`, shared between route handlers and the CLI scripts.
 - Data layer isolated in `src/db/` (schema split under `src/db/schema/`, client in `index.ts`); migrations are committed SQL in `drizzle/`.
 - Business logic in `src/lib/`: the crossword engine (`src/lib/crossword/**`), plus `puzzles.ts`, `entries.ts`, `import.ts`, `ai/draft.ts`. Route handlers stay thin.
 - Auth centralized in `src/lib/auth.ts` / `auth-client.ts` with one catch-all route; the admin gate is `requireAdmin` (session + `ADMIN_EMAILS`). The question library is shared, not per-user; generated puzzles are public by slug; solve state is client-side `localStorage`.

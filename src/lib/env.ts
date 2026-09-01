@@ -5,11 +5,11 @@ import { z } from "zod";
  * (route handlers, server components, scripts) — never from a client component.
  */
 const schema = z.object({
-  DATABASE_URL: z.string().url("DATABASE_URL must be a valid connection string"),
+  DATABASE_URL: z.url("DATABASE_URL must be a valid connection string"),
   BETTER_AUTH_SECRET: z
     .string()
     .min(16, "BETTER_AUTH_SECRET must be at least 16 characters"),
-  BETTER_AUTH_URL: z.string().url().default("http://localhost:3000"),
+  BETTER_AUTH_URL: z.url().default("http://localhost:3000"),
   ADMIN_EMAILS: z
     .string()
     .default("")

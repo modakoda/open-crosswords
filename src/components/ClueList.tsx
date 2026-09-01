@@ -1,4 +1,5 @@
 import type { PuzzleClue } from "@/lib/puzzles";
+import { cn } from "@/lib/utils";
 
 interface Props {
   title: string;
@@ -17,7 +18,7 @@ export function ClueList({
 }: Props) {
   return (
     <div>
-      <h3 className="mb-1 font-semibold uppercase tracking-wide text-slate-700">
+      <h3 className="mb-1 font-semibold uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>
       <ol className="space-y-1 text-sm">
@@ -28,15 +29,17 @@ export function ClueList({
               <button
                 type="button"
                 onClick={onSelect ? () => onSelect(c) : undefined}
-                className={`text-left ${onSelect ? "hover:underline" : "cursor-default"} ${
-                  active ? "font-semibold text-amber-700" : ""
-                }`}
+                className={cn(
+                  "text-left",
+                  onSelect ? "hover:underline" : "cursor-default",
+                  active && "font-semibold text-primary",
+                )}
               >
                 <span className="mr-1 tabular-nums">{c.number}.</span>
                 {c.clue}
-                <span className="ml-1 text-slate-400">({c.length})</span>
+                <span className="ml-1 text-muted-foreground">({c.length})</span>
                 {showAnswers && (
-                  <span className="ml-2 font-mono text-emerald-700">
+                  <span className="ml-2 font-mono text-emerald-700 dark:text-emerald-400">
                     {c.answer}
                   </span>
                 )}

@@ -2,6 +2,23 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { Category } from "./AdminDashboard";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface Entry {
   id: string;
@@ -106,24 +123,22 @@ export function EntryManager({
     <div className="space-y-4">
       <form
         onSubmit={createEntry}
-        className="grid gap-2 rounded border border-slate-200 p-3 sm:grid-cols-2"
+        className="grid gap-2 rounded-lg border border-border p-3 sm:grid-cols-2"
       >
-        <input
-          className="field sm:col-span-2"
+        <Input
+          className="sm:col-span-2"
           placeholder="Clue"
           value={clue}
           onChange={(e) => setClue(e.target.value)}
           required
         />
-        <input
-          className="field"
+        <Input
           placeholder="Answer"
           value={answer}
           onChange={(e) => setAnswer(e.target.value)}
           required
         />
-        <input
-          className="field"
+        <Input
           list="cat-list"
           placeholder="Category (optional)"
           value={categoryName}
@@ -134,64 +149,64 @@ export function EntryManager({
             <option key={c.id} value={c.name} />
           ))}
         </datalist>
-        <label className="text-sm">
-          Difficulty{" "}
-          <select
-            className="field"
-            value={difficulty}
-            onChange={(e) => setDifficulty(Number(e.target.value))}
-          >
+        <Select
+          value={String(difficulty)}
+          onValueChange={(v) => setDifficulty(Number(v))}
+        >
+          <SelectTrigger className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
             {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
+              <SelectItem key={n} value={String(n)}>
+                Difficulty {n}
+              </SelectItem>
             ))}
-          </select>
-        </label>
-        <button className="btn">Add entry</button>
+          </SelectContent>
+        </Select>
+        <Button className="sm:col-span-2">Add entry</Button>
       </form>
 
-      {msg && <p className="text-sm text-red-600">{msg}</p>}
+      {msg && <p className="text-sm text-destructive">{msg}</p>}
 
-      <input
-        className="field w-full"
+      <Input
         placeholder="Search clue or answer…"
         value={q}
         onChange={(e) => setQ(e.target.value)}
       />
-      <p className="text-sm text-slate-500">{total} entries</p>
+      <p className="text-sm text-muted-foreground">{total} entries</p>
 
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="text-left text-slate-500">
-            <th className="py-1">Clue</th>
-            <th>Answer</th>
-            <th>Cat</th>
-            <th>Diff</th>
-            <th>Used</th>
-            <th />
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Clue</TableHead>
+            <TableHead>Answer</TableHead>
+            <TableHead>Cat</TableHead>
+            <TableHead>Diff</TableHead>
+            <TableHead>Used</TableHead>
+            <TableHead />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {rows.map((e) => (
-            <tr key={e.id} className="border-t border-slate-100">
-              <td className="py-1 pr-2">{e.clue}</td>
-              <td className="font-mono">{e.answerNormalized}</td>
-              <td>{catName(e.categoryId)}</td>
-              <td>{e.difficulty}</td>
-              <td>{e.timesUsed}</td>
-              <td className="whitespace-nowrap text-right">
-                <button className="btn mr-1" onClick={() => toggle(e)}>
+            <TableRow key={e.id}>
+              <TableCell className="whitespace-normal">{e.clue}</TableCell>
+              <TableCell className="font-mono">{e.answerNormalized}</TableCell>
+              <TableCell>{catName(e.categoryId)}</TableCell>
+              <TableCell>{e.difficulty}</TableCell>
+              <TableCell>{e.timesUsed}</TableCell>
+              <TableCell className="text-right">
+                <Button variant="outline" size="sm" className="mr-1" onClick={() => toggle(e)}>
                   {e.enabled ? "Disable" : "Enable"}
-                </button>
-                <button className="btn" onClick={() => remove(e.id)}>
+                </Button>
+                <Button variant="destructive" size="sm" onClick={() => remove(e.id)}>
                   Delete
-                </button>
-              </td>
-            </tr>
+                </Button>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

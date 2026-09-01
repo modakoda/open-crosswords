@@ -3,6 +3,18 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+
 interface Language {
   code: string;
   name: string;
@@ -85,7 +97,7 @@ export function GenerateForm() {
 
   if (languages.length === 0) {
     return (
-      <p className="text-slate-600">
+      <p className="text-muted-foreground">
         {error ??
           "No languages yet. Seed the database (npm run seed) or add entries in Admin."}
       </p>
@@ -94,85 +106,90 @@ export function GenerateForm() {
 
   return (
     <div className="max-w-xl space-y-4">
-      <label className="block">
-        <span className="text-sm font-medium">Language</span>
-        <select
-          className="field mt-1 block w-full"
-          value={language}
-          onChange={(e) => setLanguage(e.target.value)}
-        >
-          {languages.map((l) => (
-            <option key={l.code} value={l.code}>
-              {l.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <div className="space-y-1.5">
+        <Label htmlFor="language">Language</Label>
+        <Select value={language} onValueChange={setLanguage}>
+          <SelectTrigger id="language" className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {languages.map((l) => (
+              <SelectItem key={l.code} value={l.code}>
+                {l.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
-      <fieldset>
+      <fieldset className="space-y-1.5">
         <legend className="text-sm font-medium">
           Categories {selected.size ? `(${selected.size})` : "(all)"}
         </legend>
-        <div className="mt-1 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2">
           {categories.length === 0 && (
-            <span className="text-sm text-slate-500">No categories</span>
+            <span className="text-sm text-muted-foreground">No categories</span>
           )}
           {categories.map((c) => (
-            <button
+            <Button
               key={c.id}
               type="button"
+              size="sm"
+              variant={selected.has(c.id) ? "secondary" : "outline"}
               onClick={() => toggle(c.id)}
-              className={`btn ${selected.has(c.id) ? "!bg-amber-200" : ""}`}
+              className={cn(selected.has(c.id) && "border-primary/40 text-primary")}
             >
               {c.name}
-            </button>
+            </Button>
           ))}
         </div>
       </fieldset>
 
       <div className="flex gap-4">
-        <label className="block flex-1">
-          <span className="text-sm font-medium">Paper size</span>
-          <select
-            className="field mt-1 block w-full"
-            value={paperSize}
-            onChange={(e) => setPaperSize(e.target.value)}
-          >
-            {PAPER.map(([v, label]) => (
-              <option key={v} value={v}>
-                {label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block flex-1">
-          <span className="text-sm font-medium">Orientation</span>
-          <select
-            className="field mt-1 block w-full"
-            value={orientation}
-            onChange={(e) => setOrientation(e.target.value)}
-          >
-            <option value="portrait">Portrait</option>
-            <option value="landscape">Landscape</option>
-          </select>
-        </label>
+        <div className="flex-1 space-y-1.5">
+          <Label htmlFor="paper-size">Paper size</Label>
+          <Select value={paperSize} onValueChange={setPaperSize}>
+            <SelectTrigger id="paper-size" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {PAPER.map(([v, label]) => (
+                <SelectItem key={v} value={v}>
+                  {label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex-1 space-y-1.5">
+          <Label htmlFor="orientation">Orientation</Label>
+          <Select value={orientation} onValueChange={setOrientation}>
+            <SelectTrigger id="orientation" className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="portrait">Portrait</SelectItem>
+              <SelectItem value="landscape">Landscape</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
-      <label className="block">
-        <span className="text-sm font-medium">Title (optional)</span>
-        <input
-          className="field mt-1 block w-full"
+      <div className="space-y-1.5">
+        <Label htmlFor="title">Title (optional)</Label>
+        <Input
+          id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Friday night crossword"
         />
-      </label>
+      </div>
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
 
-      <button className="btn" onClick={generate} disabled={busy || !language}>
+      <Button onClick={generate} disabled={busy || !language}>
         {busy ? "Generating…" : "Generate crossword"}
-      </button>
+      </Button>
     </div>
   );
 }

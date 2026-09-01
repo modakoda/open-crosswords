@@ -10,7 +10,7 @@ export const LANGUAGE_CODE = z
 
 export const generatePuzzleSchema = z.object({
   languageCode: LANGUAGE_CODE,
-  categoryIds: z.array(z.string().uuid()).max(24).optional(),
+  categoryIds: z.array(z.uuid()).max(24).optional(),
   paperSize: z.enum(PAPER_SIZES),
   orientation: z.enum(ORIENTATIONS).default("portrait"),
   title: z.string().trim().min(1).max(120).optional(),
@@ -24,7 +24,7 @@ const difficulty = z.coerce.number().int().min(1).max(5);
 
 export const createEntrySchema = z.object({
   languageCode: LANGUAGE_CODE,
-  categoryId: z.string().uuid().nullish(),
+  categoryId: z.uuid().nullish(),
   clue,
   answer,
   difficulty: difficulty.default(3),
@@ -34,7 +34,7 @@ export type CreateEntryInput = z.infer<typeof createEntrySchema>;
 
 export const updateEntrySchema = z
   .object({
-    categoryId: z.string().uuid().nullish(),
+    categoryId: z.uuid().nullish(),
     clue,
     answer,
     difficulty,
@@ -45,7 +45,7 @@ export const updateEntrySchema = z
 
 export const listEntriesQuerySchema = z.object({
   languageCode: LANGUAGE_CODE.optional(),
-  categoryId: z.string().uuid().optional(),
+  categoryId: z.uuid().optional(),
   q: z.string().trim().max(120).optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
   offset: z.coerce.number().int().min(0).default(0),

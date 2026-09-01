@@ -3,6 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -30,34 +33,32 @@ export default function AdminLoginPage() {
     <div className="mx-auto max-w-sm space-y-4">
       <h1 className="text-xl font-bold">Admin sign in</h1>
       <form onSubmit={submit} className="space-y-3">
-        <label className="block">
-          <span className="text-sm font-medium">Email</span>
-          <input
-            className="field mt-1 block w-full"
+        <div className="space-y-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
             type="email"
             autoComplete="username"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-        </label>
-        <label className="block">
-          <span className="text-sm font-medium">Password</span>
-          <input
-            className="field mt-1 block w-full"
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
             type="password"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-        </label>
-        {error && <p className="text-sm text-red-600">{error}</p>}
-        <button className="btn" disabled={busy}>
-          {busy ? "Signing in…" : "Sign in"}
-        </button>
+        </div>
+        {error && <p className="text-sm text-destructive">{error}</p>}
+        <Button disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
       </form>
-      <p className="text-xs text-slate-500">
+      <p className="text-xs text-muted-foreground">
         Accounts are provisioned with <code>npm run create-admin</code>. Public
         sign-up is disabled.
       </p>

@@ -5,6 +5,7 @@ import type { PuzzleClue, PuzzleDTO } from "@/lib/puzzles";
 import type { Direction } from "@/lib/crossword/types";
 import { CrosswordGrid } from "./CrosswordGrid";
 import { ClueList } from "./ClueList";
+import { Button } from "@/components/ui/button";
 
 const cellKey = (r: number, c: number) => `${r},${c}`;
 
@@ -122,23 +123,25 @@ export function SolveView({ puzzle }: { puzzle: PuzzleDTO }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2 no-print">
-        <button className="btn" onClick={check}>
+        <Button variant="outline" onClick={check}>
           Check
-        </button>
-        <button className="btn" onClick={revealWord}>
+        </Button>
+        <Button variant="outline" onClick={revealWord}>
           Reveal word
-        </button>
-        <button className="btn" onClick={clearAll}>
+        </Button>
+        <Button variant="outline" onClick={clearAll}>
           Clear
-        </button>
-        <a className="btn" href={`/puzzles/${puzzle.slug}/print`}>
-          Print version
-        </a>
+        </Button>
+        <Button variant="outline" asChild>
+          <a href={`/puzzles/${puzzle.slug}/print`}>Print version</a>
+        </Button>
         {status === "solved" && (
-          <span className="font-semibold text-emerald-700">Solved! 🎉</span>
+          <span className="font-semibold text-emerald-700 dark:text-emerald-400">
+            Solved! 🎉
+          </span>
         )}
         {status === "errors" && (
-          <span className="font-semibold text-red-600">
+          <span className="font-semibold text-destructive">
             Some letters are wrong or missing.
           </span>
         )}

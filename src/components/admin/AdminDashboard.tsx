@@ -5,6 +5,16 @@ import { signOut } from "@/lib/auth-client";
 import { EntryManager } from "./EntryManager";
 import { ImportPanel } from "./ImportPanel";
 import { AiDraftPanel } from "./AiDraftPanel";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export interface Language {
   code: string;
@@ -47,30 +57,30 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
-        <label className="text-sm font-medium">
-          Language{" "}
-          <select
-            className="field"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
+        <Select value={language} onValueChange={setLanguage}>
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
             {languages.map((l) => (
-              <option key={l.code} value={l.code}>
+              <SelectItem key={l.code} value={l.code}>
                 {l.name} ({l.code})
-              </option>
+              </SelectItem>
             ))}
-            {languages.length === 0 && <option value="en">English (en)</option>}
-          </select>
-        </label>
+            {languages.length === 0 && (
+              <SelectItem value="en">English (en)</SelectItem>
+            )}
+          </SelectContent>
+        </Select>
         <span className="flex items-center gap-1">
-          <input
-            className="field w-24"
+          <Input
+            className="w-24"
             placeholder="add e.g. lt"
             value={newLang}
             onChange={(e) => setNewLang(e.target.value)}
           />
-          <button
-            className="btn"
+          <Button
+            variant="outline"
             onClick={() => {
               const code = newLang.trim().toLowerCase();
               if (code) {
@@ -80,55 +90,41 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
             }}
           >
             Use
-          </button>
+          </Button>
         </span>
-        <button
-          className="btn ml-auto"
+        <Button
+          variant="ghost"
+          className="ml-auto"
           onClick={() => signOut().then(() => location.assign("/admin/login"))}
         >
           Sign out
-        </button>
+        </Button>
       </div>
 
-      <nav className="flex gap-2 border-b border-slate-200">
-        {(
-          [
-            ["entries", "Entries"],
-            ["import", "Bulk import"],
-            ["ai", "AI draft"],
-          ] as [Tab, string][]
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            onClick={() => setTab(id)}
-            className={`px-3 py-2 text-sm ${
-              tab === id
-                ? "border-b-2 border-slate-800 font-semibold"
-                : "text-slate-500"
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
-
-      {tab === "entries" && (
-        <EntryManager
-          language={language}
-          categories={categories}
-          onCategoriesChanged={reloadCategories}
-        />
-      )}
-      {tab === "import" && (
-        <ImportPanel language={language} onDone={reloadCategories} />
-      )}
-      {tab === "ai" && (
-        <AiDraftPanel
-          language={language}
-          categories={categories}
-          aiEnabled={aiEnabled}
-        />
-      )}
+      <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>
+        <TabsList>
+          <TabsTrigger value="entries">Entries</TabsTrigger>
+          <TabsTrigger value="import">Bulk import</TabsTrigger>
+          <TabsTrigger value="ai">AI draft</TabsTrigger>
+        </TabsList>
+        <TabsContent value="entries">
+          <EntryManager
+            language={language}
+            categories={categories}
+            onCategoriesChanged={reloadCategories}
+          />
+        </TabsContent>
+        <TabsContent value="import">
+          <ImportPanel language={language} onDone={reloadCategories} />
+        </TabsContent>
+        <TabsContent value="ai">
+          <AiDraftPanel
+            language={language}
+            categories={categories}
+            aiEnabled={aiEnabled}
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

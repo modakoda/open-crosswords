@@ -5,7 +5,7 @@ import { updateEntrySchema } from "@/lib/validation/schemas";
 
 export const runtime = "nodejs";
 
-const idSchema = z.string().uuid();
+const idSchema = z.uuid();
 
 export const PATCH = adminRoute(
   async (req: Request, ctx: { params: Promise<{ id: string }> }) => {

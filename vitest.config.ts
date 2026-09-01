@@ -7,7 +7,7 @@ export default defineConfig({
   // Don't load the app's Tailwind PostCSS config into the test runner.
   css: { postcss: { plugins: [] } },
   resolve: {
-    alias: { "@": resolve(__dirname, "./src") },
+    alias: { "@": resolve(import.meta.dirname, "./src") },
   },
   test: {
     environment: "jsdom",

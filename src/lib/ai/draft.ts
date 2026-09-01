@@ -1,5 +1,5 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 import { z } from "zod";
 import { env, isAiEnabled } from "@/lib/env";
 import { normalizeAnswer, isPlaceableAnswer } from "@/lib/crossword/normalize";
@@ -36,9 +36,9 @@ export async function draftEntries(input: AiDraftInput): Promise<DraftedEntry[]>
   }
 
   const anthropic = createAnthropic({ apiKey: env.ANTHROPIC_API_KEY });
-  const { object } = await generateObject({
+  const { output } = await generateText({
     model: anthropic(env.AI_MODEL),
-    schema: draftSchema,
+    output: Output.object({ schema: draftSchema }),
     prompt: [
       `Generate ${input.count} crossword clue/answer pairs.`,
       `Language: ${input.languageCode}. Topic: "${input.topic}".`,
@@ -52,5 +52,5 @@ export async function draftEntries(input: AiDraftInput): Promise<DraftedEntry[]>
       .join(" "),
   });
 
-  return object.entries.filter((e) => isPlaceableAnswer(normalizeAnswer(e.answer)));
+  return output.entries.filter((e) => isPlaceableAnswer(normalizeAnswer(e.answer)));
 }

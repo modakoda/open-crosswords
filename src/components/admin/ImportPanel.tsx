@@ -1,6 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 const SAMPLE_JSON = `[
   { "clue": "Capital of France", "answer": "Paris", "category": "Geography", "difficulty": 1 },
@@ -53,32 +56,32 @@ export function ImportPanel({
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-muted-foreground">
         Paste JSON or CSV. Unknown categories are created automatically for{" "}
         <strong>{language}</strong>. Duplicate clue/answer pairs are skipped.
       </p>
-      <div className="flex gap-2">
-        {(["json", "csv"] as const).map((f) => (
-          <button
-            key={f}
-            className={`btn ${format === f ? "!bg-amber-200" : ""}`}
-            onClick={() => {
-              setFormat(f);
-              setText(f === "json" ? SAMPLE_JSON : SAMPLE_CSV);
-            }}
-          >
-            {f.toUpperCase()}
-          </button>
-        ))}
-      </div>
-      <textarea
-        className="field h-64 w-full font-mono text-xs"
+      <ToggleGroup
+        type="single"
+        variant="outline"
+        value={format}
+        onValueChange={(v) => {
+          if (!v) return;
+          const f = v as "json" | "csv";
+          setFormat(f);
+          setText(f === "json" ? SAMPLE_JSON : SAMPLE_CSV);
+        }}
+      >
+        <ToggleGroupItem value="json">JSON</ToggleGroupItem>
+        <ToggleGroupItem value="csv">CSV</ToggleGroupItem>
+      </ToggleGroup>
+      <Textarea
+        className="h-64 font-mono text-xs"
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <button className="btn" onClick={run} disabled={busy}>
+      <Button onClick={run} disabled={busy}>
         {busy ? "Importing…" : "Import"}
-      </button>
+      </Button>
       {result && <p className="text-sm">{result}</p>}
     </div>
   );

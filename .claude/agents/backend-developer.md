@@ -17,6 +17,6 @@ Stack specifics for this repo:
 
 Conventions to follow:
 - Match the existing error-response shape and status codes in `src/app/api/**` (`json`, `apiError`, `parse`, `readJson`, `adminRoute` from `src/lib/api.ts`) rather than inventing a new one. Read request bodies with `readJson` (up-front size cap), not bare `req.json()`.
-- Validate at the boundary (request body, query/path params) with Zod schemas from `src/lib/validation/schemas.ts` using `safeParse` — this repo is on Zod 3. Trust internal helpers only once past that boundary.
+- Validate at the boundary (request body, query/path params) with Zod schemas from `src/lib/validation/schemas.ts` using `safeParse` — this repo is on Zod 4 (top-level formats like `z.uuid()`/`z.url()`, not `.string().uuid()`). Trust internal helpers only once past that boundary.
 - Don't add edge runtime (`runtime = 'edge'`) — this project targets Node.js/Fluid Compute; streaming and full Node APIs work fine there.
 - Keep files under 200 lines; split a route handler or query module by responsibility rather than letting it grow. Follow existing naming: `route.ts` for handlers, kebab-case for other modules.
