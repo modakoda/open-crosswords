@@ -15,10 +15,35 @@ app, easy to self-host.
   starter set. Grow the library with the admin UI, CSV/JSON import, or optional
   AI drafting.
 
+## Try it out (Docker, no build)
+
+No Node, no clone — pulls the prebuilt image and a throwaway Postgres:
+
+```bash
+curl -O https://raw.githubusercontent.com/modakoda/open-crosswords/main/compose.tryout.yaml
+docker compose -f compose.tryout.yaml up -d
+open http://localhost:3000
+```
+
+It migrates and seeds the English starter set automatically. To sign in to
+`/admin`, create a login and add its email to `ADMIN_EMAILS`:
+
+```bash
+docker compose -f compose.tryout.yaml exec app \
+  npm run create-admin -- you@example.com "Your Name" "a-long-password"
+ADMIN_EMAILS=you@example.com docker compose -f compose.tryout.yaml up -d app
+```
+
+See the comments in [compose.tryout.yaml](./compose.tryout.yaml) for details
+(and for setting your own `BETTER_AUTH_SECRET` before exposing it beyond
+localhost). For actual development, use the setup below instead.
+
 ## Quick start
 
 Requires Node.js 20+ and a Postgres database (local Docker or
-[Neon](https://neon.tech)).
+[Neon](https://neon.tech)). A [`.mise.toml`](./.mise.toml) pins the Node
+version — run `mise install` (or `mise trust` on first use) if you have
+[mise](https://mise.jdx.dev) installed.
 
 ```bash
 npm install

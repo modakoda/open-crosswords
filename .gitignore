@@ -34,3 +34,6 @@ yarn-error.log*
 
 # typescript incremental build info
 tsconfig.tsbuildinfo
+
+# mise local overrides
+.mise.local.toml

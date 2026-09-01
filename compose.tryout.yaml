@@ -1,0 +1,77 @@
+# Zero-build way to try open-crosswords: pulls the prebuilt image published
+# by CI instead of building it locally. This is NOT the dev stack —
+# compose.yaml runs only Postgres, for use alongside a natively-run
+# `next dev`. This file runs the whole app in a container against a
+# throwaway local Postgres, so you can try it without cloning the repo or
+# installing Node.
+#
+# Quick start:
+#   curl -O https://raw.githubusercontent.com/modakoda/open-crosswords/main/compose.tryout.yaml
+#   docker compose -f compose.tryout.yaml up -d
+#   open http://localhost:3000
+#
+# Create an admin login once containers are up:
+#   docker compose -f compose.tryout.yaml exec app \
+#     npm run create-admin -- you@example.com "Your Name" "a-long-password"
+# Then add that email to ADMIN_EMAILS below (or export it before `up`) and
+# recreate the app service: docker compose -f compose.tryout.yaml up -d app
+#
+# BETTER_AUTH_SECRET below is a placeholder, fine for a local tryout. Set
+# your own (`openssl rand -base64 32`) via an exported env var or a
+# git-ignored .env file before exposing this beyond localhost.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: open_crosswords
+    volumes:
+      - open-crosswords-tryout-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d open_crosswords"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    image: ghcr.io/modakoda/open-crosswords:latest
+    command: ["npm", "run", "db:migrate"]
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres:5432/open_crosswords
+      # src/lib/env.ts validates the whole schema on import, even for scripts
+      # that only touch the DB — BETTER_AUTH_SECRET must be set here too.
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-tryout-only-please-change-me-32-bytes}
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  seed:
+    image: ghcr.io/modakoda/open-crosswords:latest
+    command: ["npm", "run", "seed"]
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres:5432/open_crosswords
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-tryout-only-please-change-me-32-bytes}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  app:
+    image: ghcr.io/modakoda/open-crosswords:latest
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgresql://user:password@postgres:5432/open_crosswords
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-tryout-only-please-change-me-32-bytes}
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  open-crosswords-tryout-pgdata:
