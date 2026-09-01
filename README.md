@@ -62,8 +62,8 @@ Sign in at `/admin`.
 | --- | --- | --- |
 | `DATABASE_URL` | yes | Postgres connection string |
 | `BETTER_AUTH_SECRET` | yes | 32-byte random string (`openssl rand -base64 32`) |
-| `BETTER_AUTH_URL` | yes | Public base URL, no trailing slash |
-| `ADMIN_EMAILS` | yes | Comma-separated emails allowed into `/admin` |
+| `BETTER_AUTH_URL` | no | Public base URL, no trailing slash (default `http://localhost:3000`) |
+| `ADMIN_EMAILS` | no | Comma-separated emails allowed into `/admin` (default: none — set this or nobody can sign in to `/admin`) |
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
 | `AI_MODEL` | no | Model id for AI drafting (default `claude-sonnet-5`) |
 

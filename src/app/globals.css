@@ -1,44 +1,155 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --grid-line: #1f2937;
-}
-
-html {
   color-scheme: light;
+
+  --background: oklch(0.995 0.001 240);
+  --foreground: oklch(0.16 0.01 260);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.16 0.01 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.16 0.01 260);
+  --primary: oklch(0.52 0.16 264);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0.005 260);
+  --secondary-foreground: oklch(0.22 0.02 264);
+  --muted: oklch(0.968 0.004 260);
+  --muted-foreground: oklch(0.52 0.02 260);
+  --accent: oklch(0.96 0.02 264);
+  --accent-foreground: oklch(0.28 0.06 264);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.918 0.005 260);
+  --input: oklch(0.918 0.005 260);
+  --ring: oklch(0.52 0.16 264);
+  --chart-1: oklch(0.62 0.19 264);
+  --chart-2: oklch(0.65 0.15 190);
+  --chart-3: oklch(0.7 0.16 90);
+  --chart-4: oklch(0.65 0.2 25);
+  --chart-5: oklch(0.6 0.18 320);
+  --radius: 0.7rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.16 0.01 260);
+  --sidebar-primary: oklch(0.52 0.16 264);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0.005 260);
+  --sidebar-accent-foreground: oklch(0.22 0.02 264);
+  --sidebar-border: oklch(0.918 0.005 260);
+  --sidebar-ring: oklch(0.52 0.16 264);
+
+  /* Crossword grid — light */
+  --grid-line: #1f2937;
+  --xw-cell-bg: #ffffff;
+  --xw-text: #0f172a;
+  --xw-active: #fde68a;
+  --xw-inword: #fef9c3;
+  --xw-wrong: #dc2626;
 }
 
-body {
-  background: #f8fafc;
-  color: #0f172a;
-  font-family:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(0.17 0.008 260);
+  --foreground: oklch(0.96 0.004 260);
+  --card: oklch(0.208 0.009 260);
+  --card-foreground: oklch(0.96 0.004 260);
+  --popover: oklch(0.208 0.009 260);
+  --popover-foreground: oklch(0.96 0.004 260);
+  --primary: oklch(0.7 0.15 264);
+  --primary-foreground: oklch(0.16 0.02 264);
+  --secondary: oklch(0.27 0.012 260);
+  --secondary-foreground: oklch(0.96 0.004 260);
+  --muted: oklch(0.26 0.01 260);
+  --muted-foreground: oklch(0.7 0.02 260);
+  --accent: oklch(0.3 0.03 264);
+  --accent-foreground: oklch(0.96 0.01 264);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.7 0.15 264);
+  --chart-1: oklch(0.68 0.18 264);
+  --chart-2: oklch(0.7 0.14 190);
+  --chart-3: oklch(0.75 0.15 90);
+  --chart-4: oklch(0.7 0.19 25);
+  --chart-5: oklch(0.68 0.17 320);
+  --sidebar: oklch(0.208 0.009 260);
+  --sidebar-foreground: oklch(0.96 0.004 260);
+  --sidebar-primary: oklch(0.7 0.15 264);
+  --sidebar-primary-foreground: oklch(0.16 0.02 264);
+  --sidebar-accent: oklch(0.3 0.03 264);
+  --sidebar-accent-foreground: oklch(0.96 0.01 264);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.7 0.15 264);
+
+  /* Crossword grid — dark */
+  --grid-line: #475569;
+  --xw-cell-bg: #0c0c0e;
+  --xw-text: #f1f5f9;
+  --xw-active: #713f12;
+  --xw-inword: #422006;
+  --xw-wrong: #f87171;
 }
 
-.btn {
-  display: inline-flex;
-  align-items: center;
-  border: 1px solid #cbd5e1;
-  border-radius: 0.375rem;
-  background: #fff;
-  padding: 0.375rem 0.75rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, sans-serif;
+  --font-heading: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, SFMono-Regular,
+    "SF Mono", Menlo, Consolas, monospace;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
-.btn:hover {
-  background: #f1f5f9;
-}
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-.field {
-  border: 1px solid #cbd5e1;
-  border-radius: 0.375rem;
-  padding: 0.375rem 0.5rem;
-  font-size: 0.875rem;
-  background: #fff;
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+    -webkit-font-smoothing: antialiased;
+  }
 }
 
 /* --- Crossword grid (shared by solve + print) --------------------------- */
@@ -47,6 +158,8 @@ body {
   gap: 0;
   border: 2px solid var(--grid-line);
   width: max-content;
+  border-radius: 4px;
+  overflow: hidden;
 }
 .xw-cell {
   position: relative;
@@ -54,6 +167,8 @@ body {
   height: var(--xw-cell-size, 34px);
   border: 1px solid var(--grid-line);
   box-sizing: border-box;
+  background: var(--xw-cell-bg);
+  color: var(--xw-text);
   text-transform: uppercase;
   text-align: center;
   font-weight: 600;
@@ -68,30 +183,39 @@ body {
   font-size: 9px;
   font-weight: 400;
   line-height: 1;
+  color: var(--xw-text);
+  opacity: 0.75;
 }
 .xw-cell input {
   width: 100%;
   height: 100%;
   border: 0;
   background: transparent;
+  color: var(--xw-text);
   text-align: center;
   text-transform: uppercase;
   font: inherit;
   outline: none;
   padding: 0;
+  caret-color: var(--primary);
 }
 .xw-cell.active {
-  background: #fde68a;
+  background: var(--xw-active);
 }
 .xw-cell.in-word {
-  background: #fef9c3;
+  background: var(--xw-inword);
 }
 .xw-cell.wrong input {
-  color: #dc2626;
+  color: var(--xw-wrong);
 }
 
 /* --- Print ------------------------------------------------------------- */
 @media print {
+  :root {
+    --grid-line: #1f2937;
+    --xw-cell-bg: #ffffff;
+    --xw-text: #0f172a;
+  }
   body {
     background: #fff;
   }

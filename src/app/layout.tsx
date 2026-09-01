@@ -1,6 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/components/theme-provider";
+import { SiteHeader } from "@/components/site-header";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
+const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
   title: "Open Crosswords",
@@ -14,30 +23,36 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>
-        <header className="no-print border-b border-slate-200 bg-white">
-          <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-            <Link href="/" className="text-lg font-bold">
-              Open Crosswords
-            </Link>
-            <nav className="flex gap-4 text-sm">
-              <Link href="/" className="hover:underline">
-                Generate
-              </Link>
-              <Link href="/admin" className="hover:underline">
-                Admin
-              </Link>
-              <a
-                href="https://github.com"
-                className="text-slate-500 hover:underline"
-              >
-                Source
-              </a>
-            </nav>
-          </div>
-        </header>
-        <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={cn(
+          "min-h-dvh font-sans antialiased",
+          geistSans.variable,
+          geistMono.variable,
+        )}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider delayDuration={200}>
+            <div className="relative flex min-h-dvh flex-col">
+              <SiteHeader />
+              <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:py-10">
+                {children}
+              </main>
+              <footer className="no-print border-t border-border/70 py-6">
+                <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-4 text-sm text-muted-foreground sm:flex-row">
+                  <p>Open Crosswords — open-source multilingual crossword builder.</p>
+                  <p>Puzzles are public and shareable by link.</p>
+                </div>
+              </footer>
+            </div>
+            <Toaster position="top-center" />
+          </TooltipProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
