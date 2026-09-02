@@ -16,6 +16,10 @@
 # Then add that email to ADMIN_EMAILS below (or export it before `up`) and
 # recreate the app service: docker compose -f compose.tryout.yaml up -d app
 #
+# The question library starts empty — add clues via the admin UI
+# (/admin -> Bulk import), or load the bundled English starter set:
+#   docker compose -f compose.tryout.yaml exec app npm run seed
+#
 # BETTER_AUTH_SECRET below is a placeholder, fine for a local tryout. Set
 # your own (`openssl rand -base64 32`) via an exported env var or a
 # git-ignored .env file before exposing this beyond localhost.
@@ -47,16 +51,6 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-
-  seed:
-    image: ghcr.io/modakoda/open-crosswords:latest
-    command: ["npm", "run", "seed"]
-    environment:
-      DATABASE_URL: postgresql://user:password@postgres:5432/open_crosswords
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-tryout-only-please-change-me-32-bytes}
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
 
   app:
     image: ghcr.io/modakoda/open-crosswords:latest

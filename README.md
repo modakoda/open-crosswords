@@ -11,9 +11,9 @@ app, easy to self-host.
   solved answer key.
 - ⌨️ **Solve online** — type into the grid, arrow/Tab navigation, check & reveal,
   progress saved in your browser; every generated puzzle has a shareable URL.
-- 🌍 **Any language** — the schema is language-scoped; English ships as the
-  starter set. Grow the library with the admin UI, CSV/JSON import, or optional
-  AI drafting.
+- 🌍 **Any language** — the schema is language-scoped and starts empty. Grow
+  the library with the admin UI, CSV/JSON import, or optional AI drafting; an
+  English starter set is bundled to import if you want a running start.
 
 ## Try it out (Docker, no build)
 
@@ -25,14 +25,17 @@ docker compose -f compose.tryout.yaml up -d
 open http://localhost:3000
 ```
 
-It migrates and seeds the English starter set automatically. To sign in to
-`/admin`, create a login and add its email to `ADMIN_EMAILS`:
+It applies migrations automatically; the question library starts empty. To
+sign in to `/admin`, create a login and add its email to `ADMIN_EMAILS`:
 
 ```bash
 docker compose -f compose.tryout.yaml exec app \
   npm run create-admin -- you@example.com "Your Name" "a-long-password"
 ADMIN_EMAILS=you@example.com docker compose -f compose.tryout.yaml up -d app
 ```
+
+Then add clues from `/admin` → *Bulk import*, or load the bundled English
+starter set: `docker compose -f compose.tryout.yaml exec app npm run seed`.
 
 See the comments in [compose.tryout.yaml](./compose.tryout.yaml) for details
 (and for setting your own `BETTER_AUTH_SECRET` before exposing it beyond
@@ -55,9 +58,13 @@ cp .env.example .env          # then edit DATABASE_URL + BETTER_AUTH_SECRET
 ```bash
 docker compose up -d          # Postgres on localhost:5433 (see compose.yaml)
 npm run db:migrate            # apply migrations
-npm run seed                  # load data/seed-en.json (English starter set)
 npm run dev                   # http://localhost:3000
 ```
+
+The question library starts empty. Add clues from `/admin` → *Bulk import*,
+or run `npm run seed` to load the bundled English starter set
+(`data/seed-en.json`). A Lithuanian starter set is also bundled:
+`npm run seed -- data/seed-lt.json`.
 
 (There is also a `Tiltfile` — `tilt up` runs Postgres, migrations and the dev
 server together with live reload.)
@@ -67,7 +74,7 @@ server together with live reload.)
 Create a project, put its pooled connection string in `DATABASE_URL`, then:
 
 ```bash
-npm run db:migrate && npm run seed && npm run dev
+npm run db:migrate && npm run dev
 ```
 
 ### Create an admin login

@@ -44,6 +44,7 @@ src/lib/                  puzzles, entries, import, csv, paper, rate-limit, ai/
 src/components/           UI (PascalCase); admin/ subfolder for the dashboard
 src/test/db.ts            PGlite test database helper
 data/seed-en.json         starter English question set
+data/seed-lt.json         starter Lithuanian question set
 drizzle/                  committed migration SQL
 ```
 
