@@ -45,8 +45,10 @@ src/lib/i18n/             en/lt UI dictionaries for the visitor-facing pages
 src/components/           UI (PascalCase); admin/ subfolder for the dashboard
 src/test/db.ts            PGlite test database helper
 data/seed-en.json         starter English question set
-data/seed-en-large.json   larger English set generated from WordNet (~11k entries)
+data/seed-en-large.json.gz  large English set generated from WordNet (~1.1M entries,
+                          gzipped; `npm run seed` gunzips `.gz` paths transparently)
 data/seed-lt.json         starter Lithuanian question set
+data/seed-lt-hard.json    supplementary hard-difficulty Lithuanian question set
 drizzle/                  committed migration SQL
 ```
 

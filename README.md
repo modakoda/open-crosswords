@@ -67,9 +67,14 @@ npm run dev                   # http://localhost:3000
 The question library starts empty. Add clues from `/admin` → *Bulk import*,
 or run `npm run seed` to load the bundled English starter set
 (`data/seed-en.json`). A Lithuanian starter set is also bundled:
-`npm run seed -- data/seed-lt.json`. For a much larger English pool
-(~11k entries generated from WordNet definitions), run
-`npm run seed -- data/seed-en-large.json`.
+`npm run seed -- data/seed-lt.json`, plus a supplementary set of harder,
+more obscure clues: `npm run seed -- data/seed-lt-hard.json`. For a much
+larger English pool (~1.1M
+entries programmatically generated from WordNet — definitions plus
+synonym/hypernym/hyponym/meronym/antonym relations; quality is more variable
+than the hand-curated starter set, especially in obscure/taxonomic corners),
+run `npm run seed -- data/seed-en-large.json.gz` (takes ~30 minutes; `npm run
+seed` gunzips `.gz` paths automatically).
 
 (There is also a `Tiltfile` — `tilt up` runs Postgres, migrations and the dev
 server together with live reload.)
