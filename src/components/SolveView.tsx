@@ -6,10 +6,18 @@ import type { Direction } from "@/lib/crossword/types";
 import { CrosswordGrid } from "./CrosswordGrid";
 import { ClueList } from "./ClueList";
 import { Button } from "@/components/ui/button";
+import type { Messages } from "@/lib/i18n";
 
 const cellKey = (r: number, c: number) => `${r},${c}`;
 
-export function SolveView({ puzzle }: { puzzle: PuzzleDTO }) {
+export function SolveView({
+  puzzle,
+  messages,
+}: {
+  puzzle: PuzzleDTO;
+  messages: Messages;
+}) {
+  const t = messages.solve;
   const storageKey = `oc:solve:${puzzle.slug}`;
   const [values, setValues] = useState<Record<string, string>>({});
   const [active, setActive] = useState<string | null>(null);
@@ -124,26 +132,24 @@ export function SolveView({ puzzle }: { puzzle: PuzzleDTO }) {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2 no-print">
         <Button variant="outline" onClick={check}>
-          Check
+          {t.check}
         </Button>
         <Button variant="outline" onClick={revealWord}>
-          Reveal word
+          {t.revealWord}
         </Button>
         <Button variant="outline" onClick={clearAll}>
-          Clear
+          {t.clear}
         </Button>
         <Button variant="outline" asChild>
-          <a href={`/puzzles/${puzzle.slug}/print`}>Print version</a>
+          <a href={`/puzzles/${puzzle.slug}/print`}>{t.printVersion}</a>
         </Button>
         {status === "solved" && (
           <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-            Solved! 🎉
+            {t.solved}
           </span>
         )}
         {status === "errors" && (
-          <span className="font-semibold text-destructive">
-            Some letters are wrong or missing.
-          </span>
+          <span className="font-semibold text-destructive">{t.hasErrors}</span>
         )}
       </div>
 
@@ -161,13 +167,13 @@ export function SolveView({ puzzle }: { puzzle: PuzzleDTO }) {
         </div>
         <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
           <ClueList
-            title="Across"
+            title={messages.clues.across}
             clues={puzzle.clues.across}
             activeNumber={direction === "across" ? activeNumber : null}
             onSelect={(c) => selectClue(c, "across")}
           />
           <ClueList
-            title="Down"
+            title={messages.clues.down}
             clues={puzzle.clues.down}
             activeNumber={direction === "down" ? activeNumber : null}
             onSelect={(c) => selectClue(c, "down")}

@@ -47,13 +47,23 @@ function toClues(placements: Placement[]) {
   };
 }
 
-export async function generatePuzzle(input: GeneratePuzzleInput): Promise<PuzzleDTO> {
+/**
+ * Fetch a random sample of enabled entries to hand to the placement engine.
+ * Ordering by random() (rather than a stable column) matters once a
+ * language/category has more rows than `limit`: a stable order would always
+ * surface the same subset and the rest would never be selectable.
+ */
+export async function fetchCandidatePool(
+  languageCode: string,
+  categoryIds: string[] | undefined,
+  limit = 2000,
+): Promise<Candidate[]> {
   const filters = [
-    eq(entries.languageCode, input.languageCode),
+    eq(entries.languageCode, languageCode),
     eq(entries.enabled, 1),
   ];
-  if (input.categoryIds?.length) {
-    filters.push(inArray(entries.categoryId, input.categoryIds));
+  if (categoryIds?.length) {
+    filters.push(inArray(entries.categoryId, categoryIds));
   }
 
   const rows = await db
@@ -69,10 +79,14 @@ export async function generatePuzzle(input: GeneratePuzzleInput): Promise<Puzzle
     })
     .from(entries)
     .where(and(...filters))
-    .orderBy(entries.id)
-    .limit(2000);
+    .orderBy(sql`random()`)
+    .limit(limit);
 
-  const candidates: Candidate[] = rows.map((r) => ({ ...r }));
+  return rows.map((r) => ({ ...r }));
+}
+
+export async function generatePuzzle(input: GeneratePuzzleInput): Promise<PuzzleDTO> {
+  const candidates = await fetchCandidatePool(input.languageCode, input.categoryIds);
   if (candidates.length < 4) {
     throw new NotEnoughEntriesError(
       "Need at least 4 enabled entries for this language/category selection",

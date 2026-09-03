@@ -29,8 +29,11 @@ Conventions to follow:
   concrete reason (complex aggregation, performance).
 - Watch the indexes on `entries` (`entries_lang_idx`, `entries_category_idx`,
   `entries_pick_idx`, the `entries_lang_answer_clue_unq` dedupe constraint) —
-  the generator's candidate query filters by `language_code` + `enabled` and
-  orders by `id`; keep that path indexed.
+  the generator's candidate query (`fetchCandidatePool` in `src/lib/puzzles.ts`)
+  filters by `language_code` + `enabled` and orders by `random()` so large
+  entry pools get sampled instead of always returning the same rows; keep
+  that path indexed and be aware `ORDER BY random()` doesn't use an index and
+  gets more expensive as the table grows.
 - Consider Neon-specific behaviour (pooled connection string, scale-to-zero cold
   starts, connection limits) — don't assume a long-lived local pool in
   production sizing.

@@ -41,9 +41,11 @@ src/app/                  routes + pages (App Router)
 src/db/schema/            Drizzle schema: auth.ts, content.ts
 src/lib/crossword/        engine: normalize, select, generate, number, rng
 src/lib/                  puzzles, entries, import, csv, paper, rate-limit, ai/
+src/lib/i18n/             en/lt UI dictionaries for the visitor-facing pages
 src/components/           UI (PascalCase); admin/ subfolder for the dashboard
 src/test/db.ts            PGlite test database helper
 data/seed-en.json         starter English question set
+data/seed-en-large.json   larger English set generated from WordNet (~11k entries)
 data/seed-lt.json         starter Lithuanian question set
 drizzle/                  committed migration SQL
 ```

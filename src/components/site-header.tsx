@@ -16,11 +16,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-const NAV = [
-  { href: "/", label: "Generate", icon: GridIcon },
-  { href: "/admin", label: "Admin", icon: ShieldIcon },
-];
+import type { Messages } from "@/lib/i18n";
 
 function isActive(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -34,9 +30,13 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ messages }: { messages: Messages["header"] }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const nav = [
+    { href: "/", label: messages.nav.generate, icon: GridIcon },
+    { href: "/admin", label: messages.nav.admin, icon: ShieldIcon },
+  ];
 
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border/70 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -49,7 +49,7 @@ export function SiteHeader() {
         </Link>
 
         <nav className="ml-4 hidden items-center gap-1 sm:flex">
-          {NAV.map(({ href, label }) => (
+          {nav.map(({ href, label }) => (
             <Button
               key={href}
               asChild
@@ -71,7 +71,7 @@ export function SiteHeader() {
               href="https://github.com/open-crosswords/open-crosswords"
               target="_blank"
               rel="noreferrer"
-              aria-label="Source on GitHub"
+              aria-label={messages.sourceAria}
             >
               <GithubIcon />
             </a>
@@ -80,16 +80,16 @@ export function SiteHeader() {
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="sm:hidden" aria-label="Menu">
+              <Button variant="ghost" size="icon" className="sm:hidden" aria-label={messages.menu}>
                 <MenuIcon />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-64">
               <SheetHeader>
-                <SheetTitle>Menu</SheetTitle>
+                <SheetTitle>{messages.menu}</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-1 px-2">
-                {NAV.map(({ href, label, icon: Icon }) => (
+                {nav.map(({ href, label, icon: Icon }) => (
                   <Button
                     key={href}
                     asChild
@@ -114,7 +114,7 @@ export function SiteHeader() {
                     rel="noreferrer"
                   >
                     <GithubIcon className="text-muted-foreground" />
-                    Source
+                    {messages.source}
                   </a>
                 </Button>
               </div>

@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { PuzzleDTO } from "@/lib/puzzles";
 import type { Cell } from "@/lib/crossword/types";
+import type { Messages } from "@/lib/i18n";
 import { ClueList } from "./ClueList";
 
 const PAGE_CSS: Record<string, string> = {
@@ -48,9 +49,11 @@ function StaticGrid({
 export function PrintableCrossword({
   puzzle,
   includeAnswers = true,
+  messages,
 }: {
   puzzle: PuzzleDTO;
   includeAnswers?: boolean;
+  messages: Messages;
 }) {
   const size = PAGE_CSS[puzzle.paperSize] ?? PAGE_CSS.a4;
   return (
@@ -64,18 +67,28 @@ export function PrintableCrossword({
         <h1 className="mb-3 text-xl font-bold">{puzzle.title}</h1>
         <StaticGrid grid={puzzle.grid} withAnswers={false} />
         <div className="mt-4 grid grid-cols-2 gap-6">
-          <ClueList title="Across" clues={puzzle.clues.across} />
-          <ClueList title="Down" clues={puzzle.clues.down} />
+          <ClueList title={messages.clues.across} clues={puzzle.clues.across} />
+          <ClueList title={messages.clues.down} clues={puzzle.clues.down} />
         </div>
       </section>
 
       {includeAnswers && (
         <section>
-          <h2 className="mb-3 text-lg font-bold">{puzzle.title} — Answer key</h2>
+          <h2 className="mb-3 text-lg font-bold">
+            {puzzle.title} — {messages.print.answerKeySuffix}
+          </h2>
           <StaticGrid grid={puzzle.grid} withAnswers />
           <div className="mt-4 grid grid-cols-2 gap-6">
-            <ClueList title="Across" clues={puzzle.clues.across} showAnswers />
-            <ClueList title="Down" clues={puzzle.clues.down} showAnswers />
+            <ClueList
+              title={messages.clues.across}
+              clues={puzzle.clues.across}
+              showAnswers
+            />
+            <ClueList
+              title={messages.clues.down}
+              clues={puzzle.clues.down}
+              showAnswers
+            />
           </div>
         </section>
       )}

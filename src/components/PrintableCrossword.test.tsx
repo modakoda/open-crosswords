@@ -3,6 +3,9 @@ import { render } from "@testing-library/react";
 import { PrintableCrossword } from "./PrintableCrossword";
 import type { PuzzleDTO } from "@/lib/puzzles";
 import type { Cell } from "@/lib/crossword/types";
+import { getMessages } from "@/lib/i18n";
+
+const messages = getMessages("en");
 
 // 1x3 across word "CAT", cell 1 numbered.
 const grid: Cell[][] = [
@@ -29,7 +32,7 @@ const puzzle: PuzzleDTO = {
 
 describe("PrintableCrossword", () => {
   it("pins an explicit --xw-cell-size so grid tracks match cell boxes in the PDF", () => {
-    const { container } = render(<PrintableCrossword puzzle={puzzle} />);
+    const { container } = render(<PrintableCrossword puzzle={puzzle} messages={messages} />);
 
     const root = container.querySelector(".printable") as HTMLElement;
     expect(root.style.getPropertyValue("--xw-cell-size")).toBe("7mm");
@@ -45,7 +48,7 @@ describe("PrintableCrossword", () => {
 
   it("renders the puzzle sheet and a separate answer key", () => {
     const { container, getAllByText } = render(
-      <PrintableCrossword puzzle={puzzle} />,
+      <PrintableCrossword puzzle={puzzle} messages={messages} />,
     );
     expect(container.querySelector(".print-page")).not.toBeNull();
     // "CAT" letters only appear on the answer-key grid.
@@ -54,7 +57,7 @@ describe("PrintableCrossword", () => {
 
   it("omits the answer key (and its page break) when includeAnswers is false", () => {
     const { container, queryByText } = render(
-      <PrintableCrossword puzzle={puzzle} includeAnswers={false} />,
+      <PrintableCrossword puzzle={puzzle} includeAnswers={false} messages={messages} />,
     );
     // Only the blank puzzle grid remains.
     expect(container.querySelectorAll(".xw-grid").length).toBe(1);

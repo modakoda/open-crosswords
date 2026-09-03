@@ -22,6 +22,14 @@ or solve them online via a shareable link. Open source, single Next.js app.
   `generate` for greedy interlock placement, `number` for grid numbering),
   `puzzles.ts` (generate + persist + fetch), `entries.ts` / `import.ts`
   (question-library CRUD and bulk import), `ai/draft.ts` (optional LLM drafting).
+- **UI translation** in `src/lib/i18n/`: static `en`/`lt` dictionaries
+  (`getMessages`), keyed to the app chrome, not the (separately language-scoped)
+  clue/answer library. Site-wide chrome (`layout.tsx`, the landing page) picks
+  its locale from the visitor's `Accept-Language` header
+  (`getRequestLocale`, server-only); the generate form matches whichever
+  content language is selected; the solve/print pages match the puzzle's own
+  `languageCode` (`resolveLocale`). Admin UI is not translated. Add a language
+  by adding its code to `locales` and a dictionary satisfying `typeof en`.
 - **Auth** is better-auth (`src/lib/auth.ts`, catch-all route
   `src/app/api/auth/[...all]/route.ts`, React client `src/lib/auth-client.ts`).
   Email+password only, **public sign-up disabled** — admin logins are created

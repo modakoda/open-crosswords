@@ -13,7 +13,10 @@ app, easy to self-host.
   progress saved in your browser; every generated puzzle has a shareable URL.
 - 🌍 **Any language** — the schema is language-scoped and starts empty. Grow
   the library with the admin UI, CSV/JSON import, or optional AI drafting; an
-  English starter set is bundled to import if you want a running start.
+  English starter set is bundled to import if you want a running start. The
+  visitor-facing UI itself (generate, solve, print) is translated into English
+  and Lithuanian (`src/lib/i18n/`), matching the puzzle's language or the
+  visitor's browser.
 
 ## Try it out (Docker, no build)
 
@@ -64,7 +67,9 @@ npm run dev                   # http://localhost:3000
 The question library starts empty. Add clues from `/admin` → *Bulk import*,
 or run `npm run seed` to load the bundled English starter set
 (`data/seed-en.json`). A Lithuanian starter set is also bundled:
-`npm run seed -- data/seed-lt.json`.
+`npm run seed -- data/seed-lt.json`. For a much larger English pool
+(~11k entries generated from WordNet definitions), run
+`npm run seed -- data/seed-en-large.json`.
 
 (There is also a `Tiltfile` — `tilt up` runs Postgres, migrations and the dev
 server together with live reload.)

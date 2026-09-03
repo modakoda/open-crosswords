@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { SiteHeader } from "@/components/site-header";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { getMessages } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/i18n/request";
 
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
@@ -17,13 +19,16 @@ export const metadata: Metadata = {
     "Generate random, printable crosswords from a multilingual question bank, or solve them online.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const locale = await getRequestLocale();
+  const messages = getMessages(locale);
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={cn(
           "min-h-dvh font-sans antialiased",
@@ -39,14 +44,14 @@ export default function RootLayout({
         >
           <TooltipProvider delayDuration={200}>
             <div className="relative flex min-h-dvh flex-col">
-              <SiteHeader />
+              <SiteHeader messages={messages.header} />
               <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:py-10">
                 {children}
               </main>
               <footer className="no-print border-t border-border/70 py-6">
                 <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-2 px-4 text-sm text-muted-foreground sm:flex-row">
-                  <p>Open Crosswords — open-source multilingual crossword builder.</p>
-                  <p>Puzzles are public and shareable by link.</p>
+                  <p>{messages.footer.tagline}</p>
+                  <p>{messages.footer.shareable}</p>
                 </div>
               </footer>
             </div>

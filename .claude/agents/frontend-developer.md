@@ -14,6 +14,7 @@ Stack specifics for this repo:
 - Auth-aware pages rely on better-auth session state via `src/lib/auth-client.ts`; the `/admin` page is gated server-side by `getAdmin()` (session + `ADMIN_EMAILS`) with a redirect. Check how existing pages read the session before adding a new gated view.
 - Client-side form/input validation uses the Zod 4 schemas in `src/lib/validation/schemas.ts` — reuse the same schema the backend validates against rather than duplicating field rules.
 - Client components call the API with plain `fetch` against `src/app/api/**` (there is no RPC client). Match the existing patterns in `src/components/GenerateForm.tsx` and `src/components/admin/**`.
+- Visitor-facing pages (generate, solve, print — not `/admin`) are translated via `src/lib/i18n/` (`en`/`lt` dictionaries in `messages/`). Server pages resolve a `Messages` object with `getMessages(locale)` and pass it down as a prop; don't hardcode a new user-visible string in these components — add a key to both `messages/en.ts` and `messages/lt.ts` instead.
 
 Conventions to follow:
 - Don't add a new UI library or component primitive when an existing pattern in `src/components/` already covers it.

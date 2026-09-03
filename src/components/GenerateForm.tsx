@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import { getMessages, resolveLocale, type Locale } from "@/lib/i18n";
 
 interface Language {
   code: string;
@@ -24,14 +25,7 @@ interface Category {
   name: string;
 }
 
-const PAPER = [
-  ["a4", "A4"],
-  ["letter", "US Letter"],
-  ["a5", "A5"],
-  ["legal", "US Legal"],
-] as const;
-
-export function GenerateForm() {
+export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   const router = useRouter();
   const [languages, setLanguages] = useState<Language[]>([]);
   const [language, setLanguage] = useState("");
@@ -43,6 +37,8 @@ export function GenerateForm() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const t = getMessages(resolveLocale(language, initialLocale)).generateForm;
+
   useEffect(() => {
     fetch("/api/languages")
       .then((r) => r.json())
@@ -50,7 +46,9 @@ export function GenerateForm() {
         setLanguages(d.languages);
         if (d.languages[0]) setLanguage(d.languages[0].code);
       })
-      .catch(() => setError("Could not load languages"));
+      .catch(() => setError(getMessages(initialLocale).generateForm.loadError));
+    // Runs once on mount — `initialLocale` is fixed for the component's lifetime.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -86,28 +84,23 @@ export function GenerateForm() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Generation failed");
+      if (!res.ok) throw new Error(data.error ?? t.genericError);
       router.push(`/puzzles/${data.puzzle.slug}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Generation failed");
+      setError(e instanceof Error ? e.message : t.genericError);
     } finally {
       setBusy(false);
     }
   }
 
   if (languages.length === 0) {
-    return (
-      <p className="text-muted-foreground">
-        {error ??
-          "No languages yet. Seed the database (npm run seed) or add entries in Admin."}
-      </p>
-    );
+    return <p className="text-muted-foreground">{error ?? t.noLanguages}</p>;
   }
 
   return (
     <div className="max-w-xl space-y-4">
       <div className="space-y-1.5">
-        <Label htmlFor="language">Language</Label>
+        <Label htmlFor="language">{t.language}</Label>
         <Select value={language} onValueChange={setLanguage}>
           <SelectTrigger id="language" className="w-full">
             <SelectValue />
@@ -124,11 +117,11 @@ export function GenerateForm() {
 
       <fieldset className="space-y-1.5">
         <legend className="text-sm font-medium">
-          Categories {selected.size ? `(${selected.size})` : "(all)"}
+          {t.categories} {selected.size ? `(${selected.size})` : `(${t.all})`}
         </legend>
         <div className="flex flex-wrap gap-2">
           {categories.length === 0 && (
-            <span className="text-sm text-muted-foreground">No categories</span>
+            <span className="text-sm text-muted-foreground">{t.noCategories}</span>
           )}
           {categories.map((c) => (
             <Button
@@ -147,48 +140,50 @@ export function GenerateForm() {
 
       <div className="flex gap-4">
         <div className="flex-1 space-y-1.5">
-          <Label htmlFor="paper-size">Paper size</Label>
+          <Label htmlFor="paper-size">{t.paperSize}</Label>
           <Select value={paperSize} onValueChange={setPaperSize}>
             <SelectTrigger id="paper-size" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {PAPER.map(([v, label]) => (
-                <SelectItem key={v} value={v}>
-                  {label}
-                </SelectItem>
-              ))}
+              {(Object.entries(t.paper) as [keyof typeof t.paper, string][]).map(
+                ([v, label]) => (
+                  <SelectItem key={v} value={v}>
+                    {label}
+                  </SelectItem>
+                ),
+              )}
             </SelectContent>
           </Select>
         </div>
         <div className="flex-1 space-y-1.5">
-          <Label htmlFor="orientation">Orientation</Label>
+          <Label htmlFor="orientation">{t.orientation}</Label>
           <Select value={orientation} onValueChange={setOrientation}>
             <SelectTrigger id="orientation" className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="portrait">Portrait</SelectItem>
-              <SelectItem value="landscape">Landscape</SelectItem>
+              <SelectItem value="portrait">{t.portrait}</SelectItem>
+              <SelectItem value="landscape">{t.landscape}</SelectItem>
             </SelectContent>
           </Select>
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="title">Title (optional)</Label>
+        <Label htmlFor="title">{t.title}</Label>
         <Input
           id="title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="Friday night crossword"
+          placeholder={t.titlePlaceholder}
         />
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 
       <Button onClick={generate} disabled={busy || !language}>
-        {busy ? "Generating…" : "Generate crossword"}
+        {busy ? t.generating : t.generate}
       </Button>
     </div>
   );

@@ -9,9 +9,8 @@ vi.mock("@/db", async () => {
 
 const { db } = await import("@/db");
 const { entries, languages, puzzles } = await import("@/db/schema");
-const { generatePuzzle, getPuzzleBySlug, NotEnoughEntriesError } = await import(
-  "@/lib/puzzles"
-);
+const { generatePuzzle, getPuzzleBySlug, fetchCandidatePool, NotEnoughEntriesError } =
+  await import("@/lib/puzzles");
 
 const WORDS = [
   ["Capital of France", "Paris"],
@@ -113,6 +112,32 @@ describe("generatePuzzle", () => {
     await expect(
       generatePuzzle({ languageCode: "en", paperSize: "a4", orientation: "portrait" }),
     ).rejects.toBeInstanceOf(NotEnoughEntriesError);
+  });
+});
+
+describe("fetchCandidatePool", () => {
+  it("samples randomly, so a pool bigger than the limit isn't stuck on one fixed subset", async () => {
+    await db.insert(languages).values({ code: "en", name: "English" });
+    await db.insert(entries).values(
+      Array.from({ length: 50 }, (_, i) => ({
+        languageCode: "en",
+        clue: `Clue ${i}`,
+        answer: `Answer${i}`,
+        answerNormalized: `ANSWER${i}`,
+        length: 7,
+        difficulty: 3,
+        source: "seed",
+      })),
+    );
+
+    const seen = new Set<string>();
+    for (let i = 0; i < 8; i++) {
+      const rows = await fetchCandidatePool("en", undefined, 10);
+      expect(rows.length).toBe(10);
+      for (const r of rows) seen.add(r.id);
+    }
+    // A stable (non-random) order would return the same 10 rows every time.
+    expect(seen.size).toBeGreaterThan(10);
   });
 });
 
