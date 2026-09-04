@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.47",
+    "@orpc/client": "^1.15.0",
+    "@orpc/server": "^1.15.0",
     "ai": "^7.0.89",
     "better-auth": "^1.2.9",
     "class-variance-authority": "^0.7.1",
