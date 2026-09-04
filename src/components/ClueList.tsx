@@ -7,6 +7,8 @@ interface Props {
   showAnswers?: boolean;
   activeNumber?: number | null;
   onSelect?: (clue: PuzzleClue) => void;
+  hideHeading?: boolean;
+  className?: string;
 }
 
 export function ClueList({
@@ -15,13 +17,17 @@ export function ClueList({
   showAnswers = false,
   activeNumber = null,
   onSelect,
+  hideHeading = false,
+  className,
 }: Props) {
   return (
-    <div>
-      <h3 className="mb-1 font-semibold uppercase tracking-wide text-muted-foreground">
-        {title}
-      </h3>
-      <ol className="space-y-1 text-sm">
+    <div className={className}>
+      {!hideHeading && (
+        <h3 className="mb-1 font-semibold uppercase tracking-wide text-muted-foreground">
+          {title}
+        </h3>
+      )}
+      <ol className="space-y-0.5 text-sm">
         {clues.map((c) => {
           const active = c.number === activeNumber;
           return (
@@ -29,10 +35,14 @@ export function ClueList({
               <button
                 type="button"
                 onClick={onSelect ? () => onSelect(c) : undefined}
+                aria-current={active ? "true" : undefined}
                 className={cn(
-                  "text-left",
-                  onSelect ? "hover:underline" : "cursor-default",
-                  active && "font-semibold text-primary",
+                  "block w-full rounded-md px-2 py-1 text-left transition-colors",
+                  onSelect
+                    ? "hover:bg-muted focus-visible:bg-muted focus-visible:outline-none"
+                    : "cursor-default",
+                  active &&
+                    "bg-primary/10 font-semibold text-primary hover:bg-primary/10",
                 )}
               >
                 <span className="mr-1 tabular-nums">{c.number}.</span>

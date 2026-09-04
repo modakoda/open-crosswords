@@ -10,15 +10,23 @@ export const en = {
     shareable: "Puzzles are public and shareable by link.",
   },
   home: {
+    eyebrow: "Crossword builder",
     title: "Generate a crossword",
     subtitle:
       "Pick a language and (optionally) some topics. Every puzzle is built " +
       "from a fresh, topic-spread selection of clues, sized to print on your " +
       "chosen paper — or solve it online and share the link.",
+    featurePrintable: "Print-ready PDFs",
+    featureOnline: "Solve & share online",
+    featureMultilingual: "Multilingual clue bank",
   },
   generateForm: {
+    formTitle: "Puzzle setup",
+    formDescription: "Choose a language and topics, then generate.",
     language: "Language",
     categories: "Categories",
+    categoriesHint: "Leave empty to draw from every topic.",
+    clear: "Clear",
     all: "all",
     noCategories: "No categories",
     paperSize: "Paper size",
@@ -29,6 +37,7 @@ export const en = {
     titlePlaceholder: "Friday night crossword",
     generate: "Generate crossword",
     generating: "Generating…",
+    generatedToast: "Puzzle ready — opening it now.",
     noLanguages:
       "No languages yet. Seed the database (npm run seed) or add entries in Admin.",
     loadError: "Could not load languages",
@@ -45,9 +54,27 @@ export const en = {
     clear: "Clear",
     printVersion: "Print version",
     solved: "Solved! 🎉",
+    solvedNote: "Every letter checks out. Nicely done.",
     hasErrors: "Some letters are wrong or missing.",
     meta: "{width}×{height} · {across} across · {down} down · share this page to let others solve it",
     notFoundTitle: "Puzzle not found",
+    progressLabel: "Progress",
+    cellsFilled: "{filled} / {total} cells",
+    toolbar: "Tools",
+    share: "Share",
+    shareTitle: "Share this puzzle",
+    shareDescription:
+      "Anyone with this link can solve the same grid online.",
+    copyLink: "Copy link",
+    linkCopied: "Link copied to clipboard",
+    reset: "Reset",
+    resetTitle: "Clear all answers?",
+    resetDescription:
+      "This removes every letter entered on this device. It can't be undone.",
+    resetConfirm: "Clear grid",
+    cancel: "Cancel",
+    keyboardHint:
+      "Arrows move · Space flips direction · Backspace deletes",
   },
   print: {
     printSave: "Print / Save as PDF",

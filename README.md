@@ -142,8 +142,9 @@ reproducible. See [AGENTS.md](./AGENTS.md) for detail.
 ## Tech
 
 Next.js App Router · React 19 · Drizzle ORM + Postgres · better-auth · Zod ·
-Tailwind CSS v4 · Vitest (with PGlite for DB tests). Deploys to Vercel or any
-Node host; `docker compose` covers local dependencies.
+Tailwind CSS v4 + shadcn/ui (light/dark theme) · Vitest (with PGlite for DB
+tests). Deploys to Vercel or any Node host; `docker compose` covers local
+dependencies.
 
 ## Development
 

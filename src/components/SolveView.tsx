@@ -1,14 +1,58 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  CheckIcon,
+  CopyIcon,
+  EyeIcon,
+  KeyboardIcon,
+  PrinterIcon,
+  RotateCcwIcon,
+  Share2Icon,
+  TrophyIcon,
+} from "lucide-react";
+import { toast } from "sonner";
+
 import type { PuzzleClue, PuzzleDTO } from "@/lib/puzzles";
 import type { Direction } from "@/lib/crossword/types";
+import { formatMessage, type Messages } from "@/lib/i18n";
 import { CrosswordGrid } from "./CrosswordGrid";
 import { ClueList } from "./ClueList";
 import { Button } from "@/components/ui/button";
-import type { Messages } from "@/lib/i18n";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
 
 const cellKey = (r: number, c: number) => `${r},${c}`;
+const currentUrl = () =>
+  typeof window === "undefined" ? "" : window.location.href;
 
 export function SolveView({
   puzzle,
@@ -53,6 +97,13 @@ export function SolveView({
     );
     return map;
   }, [puzzle.grid]);
+
+  const totalCells = solutionAt.size;
+  const filledCells = useMemo(
+    () => [...solutionAt.keys()].filter((k) => values[k]).length,
+    [solutionAt, values],
+  );
+  const pct = totalCells ? Math.round((filledCells / totalCells) * 100) : 0;
 
   function setLetter(r: number, c: number, letter: string) {
     const next = { ...values };
@@ -113,6 +164,15 @@ export function SolveView({
     setStatus("idle");
   }
 
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(currentUrl());
+      toast.success(t.linkCopied);
+    } catch {
+      /* clipboard unavailable — the field is selectable as a fallback */
+    }
+  }
+
   const activeNumber = useMemo(() => {
     if (!active) return null;
     const [r, c] = active.split(",").map(Number);
@@ -128,33 +188,135 @@ export function SolveView({
     return list.find((cl) => cl.row === sr && cl.col === sc)?.number ?? null;
   }, [active, direction, puzzle]);
 
+  const cluePanels = (
+    [
+      ["across", messages.clues.across, puzzle.clues.across],
+      ["down", messages.clues.down, puzzle.clues.down],
+    ] as const
+  ).map(([dir, label, clues]) => (
+    <Card
+      key={dir}
+      className="flex max-h-[70vh] min-h-64 flex-col overflow-hidden py-0"
+    >
+      <CardHeader className="bg-muted/40 py-3">
+        <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {label}
+        </CardTitle>
+      </CardHeader>
+      <Separator />
+      <ScrollArea className="flex-1">
+        <ClueList
+          className="p-2"
+          hideHeading
+          title={label}
+          clues={clues}
+          activeNumber={direction === dir ? activeNumber : null}
+          onSelect={(c) => selectClue(c, dir)}
+        />
+      </ScrollArea>
+    </Card>
+  ));
+
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2 no-print">
-        <Button variant="outline" onClick={check}>
+      <div className="no-print flex flex-wrap items-center gap-2">
+        <Button variant="outline" size="sm" onClick={check}>
+          <CheckIcon />
           {t.check}
         </Button>
-        <Button variant="outline" onClick={revealWord}>
+        <Button variant="outline" size="sm" onClick={revealWord} disabled={!active}>
+          <EyeIcon />
           {t.revealWord}
         </Button>
-        <Button variant="outline" onClick={clearAll}>
-          {t.clear}
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              <Share2Icon />
+              {t.share}
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>{t.shareTitle}</DialogTitle>
+              <DialogDescription>{t.shareDescription}</DialogDescription>
+            </DialogHeader>
+            <div className="flex gap-2">
+              <Input
+                readOnly
+                defaultValue={currentUrl()}
+                onFocus={(e) => e.target.select()}
+              />
+              <Button onClick={copyLink}>
+                <CopyIcon />
+                {t.copyLink}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="outline" size="sm">
+              <RotateCcwIcon />
+              {t.reset}
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>{t.resetTitle}</AlertDialogTitle>
+              <AlertDialogDescription>{t.resetDescription}</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t.cancel}</AlertDialogCancel>
+              <AlertDialogAction onClick={clearAll}>
+                {t.resetConfirm}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+        <Button variant="ghost" size="sm" asChild>
+          <a href={`/puzzles/${puzzle.slug}/print`}>
+            <PrinterIcon />
+            {t.printVersion}
+          </a>
         </Button>
-        <Button variant="outline" asChild>
-          <a href={`/puzzles/${puzzle.slug}/print`}>{t.printVersion}</a>
-        </Button>
-        {status === "solved" && (
-          <span className="font-semibold text-emerald-700 dark:text-emerald-400">
-            {t.solved}
-          </span>
-        )}
-        {status === "errors" && (
-          <span className="font-semibold text-destructive">{t.hasErrors}</span>
-        )}
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button variant="ghost" size="icon-sm" aria-label={t.keyboardHint}>
+              <KeyboardIcon />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t.keyboardHint}</TooltipContent>
+        </Tooltip>
       </div>
 
-      <div className="flex flex-col gap-6 md:flex-row">
-        <div className="overflow-auto">
+      <div className="no-print flex items-center gap-3">
+        <Progress value={pct} className="h-2 max-w-xs" />
+        <span className="text-xs tabular-nums text-muted-foreground">
+          {formatMessage(t.cellsFilled, { filled: filledCells, total: totalCells })}
+        </span>
+      </div>
+
+      {status === "solved" && (
+        <Alert className="no-print border-emerald-500/40 text-emerald-700 dark:text-emerald-400 [&>svg]:text-emerald-600 dark:[&>svg]:text-emerald-400">
+          <TrophyIcon />
+          <AlertTitle>{t.solved}</AlertTitle>
+          <AlertDescription className="text-emerald-700/80 dark:text-emerald-400/80">
+            {t.solvedNote}
+          </AlertDescription>
+        </Alert>
+      )}
+      {status === "errors" && (
+        <Alert variant="destructive" className="no-print">
+          <AlertTitle>{t.hasErrors}</AlertTitle>
+        </Alert>
+      )}
+
+      <div className="grid gap-6 xl:grid-cols-[auto_minmax(20rem,1fr)] xl:items-start">
+        <Card className="w-fit max-w-full overflow-auto p-3 sm:p-4">
           <CrosswordGrid
             grid={puzzle.grid}
             values={values}
@@ -164,20 +326,9 @@ export function SolveView({
             onChange={setLetter}
             onActivate={activate}
           />
-        </div>
-        <div className="grid flex-1 grid-cols-1 gap-4 sm:grid-cols-2">
-          <ClueList
-            title={messages.clues.across}
-            clues={puzzle.clues.across}
-            activeNumber={direction === "across" ? activeNumber : null}
-            onSelect={(c) => selectClue(c, "across")}
-          />
-          <ClueList
-            title={messages.clues.down}
-            clues={puzzle.clues.down}
-            activeNumber={direction === "down" ? activeNumber : null}
-            onSelect={(c) => selectClue(c, "down")}
-          />
+        </Card>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
+          {cluePanels}
         </div>
       </div>
     </div>

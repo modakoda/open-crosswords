@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getPuzzleBySlug } from "@/lib/puzzles";
 import { SolveView } from "@/components/SolveView";
-import { formatMessage, getMessages, resolveLocale } from "@/lib/i18n";
+import { Badge } from "@/components/ui/badge";
+import { getMessages, resolveLocale } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n/request";
 
 export const runtime = "nodejs";
@@ -34,18 +35,26 @@ export default async function PuzzlePage({
   const messages = getMessages(resolveLocale(puzzle.languageCode));
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold">{puzzle.title}</h1>
-        <p className="text-sm text-muted-foreground">
-          {formatMessage(messages.solve.meta, {
-            width: puzzle.width,
-            height: puzzle.height,
-            across: puzzle.clues.across.length,
-            down: puzzle.clues.down.length,
-          })}
-        </p>
-      </div>
+    <div className="space-y-5">
+      <header className="space-y-3">
+        <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+          {puzzle.title}
+        </h1>
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <Badge variant="secondary" className="tabular-nums">
+            {puzzle.width}×{puzzle.height}
+          </Badge>
+          <Badge variant="outline" className="tabular-nums font-normal">
+            {puzzle.clues.across.length} {messages.clues.across}
+          </Badge>
+          <Badge variant="outline" className="tabular-nums font-normal">
+            {puzzle.clues.down.length} {messages.clues.down}
+          </Badge>
+          <span className="text-muted-foreground uppercase text-xs tracking-wide">
+            {puzzle.languageCode}
+          </span>
+        </div>
+      </header>
       <SolveView puzzle={puzzle} messages={messages} />
     </div>
   );
