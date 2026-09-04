@@ -8,6 +8,7 @@ import {
   UploadIcon,
 } from "lucide-react";
 
+import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -44,26 +45,19 @@ export function ImportPanel({
     setBusy(true);
     setResult(null);
     try {
-      const res = await fetch("/api/admin/entries/import", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          languageCode: language,
-          format,
-          text,
-          createMissingCategories: true,
-        }),
+      const data = await orpc.admin.entries.import({
+        languageCode: language,
+        format,
+        text,
+        createMissingCategories: true,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setResult({ ok: false, text: data.error ?? "Import failed" });
-      } else {
-        setResult({
-          ok: true,
-          text: `Inserted ${data.inserted}, skipped ${data.skipped} duplicate(s), ${data.errors.length} error(s).`,
-        });
-        onDone();
-      }
+      setResult({
+        ok: true,
+        text: `Inserted ${data.inserted}, skipped ${data.skipped} duplicate(s), ${data.errors.length} error(s).`,
+      });
+      onDone();
+    } catch (err) {
+      setResult({ ok: false, text: err instanceof Error ? err.message : "Import failed" });
     } finally {
       setBusy(false);
     }

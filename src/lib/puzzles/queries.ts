@@ -3,50 +3,13 @@ import { nanoid } from "nanoid";
 import { db } from "@/db";
 import { entries, puzzles } from "@/db/schema";
 import { buildCrossword } from "@/lib/crossword";
-import type { Candidate, Cell, Placement } from "@/lib/crossword/types";
+import type { Candidate, Placement } from "@/lib/crossword/types";
 import { randomSeed } from "@/lib/crossword/rng";
 import { paperToGrid } from "@/lib/paper";
 import type { GeneratePuzzleInput } from "@/lib/validation/schemas";
+import { toClues, type PuzzleDTO, type PuzzleSummary } from "./types";
 
 export class NotEnoughEntriesError extends Error {}
-
-export interface PuzzleClue {
-  number: number;
-  clue: string;
-  answer: string;
-  length: number;
-  row: number;
-  col: number;
-}
-
-export interface PuzzleDTO {
-  id: string;
-  slug: string;
-  title: string;
-  languageCode: string;
-  paperSize: string;
-  orientation: string;
-  width: number;
-  height: number;
-  grid: Cell[][];
-  clues: { across: PuzzleClue[]; down: PuzzleClue[] };
-  createdAt: string;
-}
-
-function toClues(placements: Placement[]) {
-  const map = (p: Placement): PuzzleClue => ({
-    number: p.number,
-    clue: p.clue,
-    answer: p.answer,
-    length: p.answer.length,
-    row: p.row,
-    col: p.col,
-  });
-  return {
-    across: placements.filter((p) => p.direction === "across").map(map),
-    down: placements.filter((p) => p.direction === "down").map(map),
-  };
-}
 
 /**
  * Fetch a random sample of enabled entries to hand to the placement engine.
@@ -84,13 +47,6 @@ export async function fetchCandidatePool(
     .limit(limit);
 
   return rows.map((r) => ({ ...r }));
-}
-
-export interface PuzzleSummary {
-  slug: string;
-  title: string;
-  languageCode: string;
-  createdAt: string;
 }
 
 export async function generatePuzzle(
@@ -197,7 +153,7 @@ export async function getPuzzleBySlug(slug: string): Promise<PuzzleDTO | null> {
     orientation: row.orientation,
     width: row.width,
     height: row.height,
-    grid: row.grid as Cell[][],
+    grid: row.grid as PuzzleDTO["grid"],
     clues: toClues(row.placements as Placement[]),
     createdAt: row.createdAt.toISOString(),
   };

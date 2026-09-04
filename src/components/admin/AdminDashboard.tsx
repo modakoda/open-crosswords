@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { LogOutIcon, SparklesIcon, TableIcon, UploadIcon } from "lucide-react";
 
 import { signOut } from "@/lib/auth-client";
+import { orpc } from "@/lib/orpc/client";
 import { EntryManager } from "./EntryManager";
 import { ImportPanel } from "./ImportPanel";
 import { AiDraftPanel } from "./AiDraftPanel";
@@ -39,19 +40,17 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
   const [categories, setCategories] = useState<Category[]>([]);
 
   function reloadLanguages() {
-    fetch("/api/languages")
-      .then((r) => r.json())
-      .then((d: { languages: Language[] }) => {
-        setLanguages(d.languages);
-        if (d.languages.length && !d.languages.some((l) => l.code === language)) {
-          setLanguage(d.languages[0].code);
-        }
-      });
+    orpc.languages.list().then((d) => {
+      setLanguages(d.languages);
+      if (d.languages.length && !d.languages.some((l) => l.code === language)) {
+        setLanguage(d.languages[0].code);
+      }
+    });
   }
   function reloadCategories() {
-    fetch(`/api/categories?languageCode=${encodeURIComponent(language)}`)
-      .then((r) => r.json())
-      .then((d: { categories: Category[] }) => setCategories(d.categories))
+    orpc.categories
+      .list({ languageCode: language })
+      .then((d) => setCategories(d.categories))
       .catch(() => setCategories([]));
   }
 

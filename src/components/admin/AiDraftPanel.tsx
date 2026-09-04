@@ -4,19 +4,12 @@ import { useState } from "react";
 import { LoaderCircleIcon, SparklesIcon, WandSparklesIcon } from "lucide-react";
 
 import type { Category } from "./AdminDashboard";
+import { DraftList, type Draft } from "./DraftList";
+import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-interface Draft {
-  clue: string;
-  answer: string;
-  difficulty: number;
-}
 
 export function AiDraftPanel({
   language,
@@ -53,23 +46,16 @@ export function AiDraftPanel({
     setMsg(null);
     setDrafts([]);
     try {
-      const res = await fetch("/api/admin/entries/ai-draft", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          languageCode: language,
-          topic,
-          count,
-          categoryName: categoryName || undefined,
-        }),
+      const data = await orpc.admin.entries.aiDraft({
+        languageCode: language,
+        topic,
+        count,
+        categoryName: categoryName || undefined,
       });
-      const data = await res.json();
-      if (!res.ok) {
-        setMsg(data.error ?? "Draft request failed");
-        return;
-      }
       setDrafts(data.drafts);
-      setKeep(new Set(data.drafts.map((_: Draft, i: number) => i)));
+      setKeep(new Set(data.drafts.map((_, i) => i)));
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Draft request failed");
     } finally {
       setBusy(false);
     }
@@ -79,36 +65,37 @@ export function AiDraftPanel({
     setBusy(true);
     let categoryId: string | undefined;
     if (categoryName.trim()) {
-      const res = await fetch("/api/admin/categories", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ languageCode: language, name: categoryName.trim() }),
-      });
-      if (res.ok) categoryId = (await res.json()).category.id;
+      try {
+        const { category } = await orpc.admin.categories.create({
+          languageCode: language,
+          name: categoryName.trim(),
+        });
+        categoryId = category.id;
+      } catch {
+        /* fall through — drafts can still be saved without a category */
+      }
     }
     let saved = 0;
     for (let i = 0; i < drafts.length; i++) {
       if (!keep.has(i)) continue;
-      const res = await fetch("/api/admin/entries", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
+      try {
+        await orpc.admin.entries.create({
           languageCode: language,
           clue: drafts[i].clue,
           answer: drafts[i].answer,
           difficulty: drafts[i].difficulty,
           categoryId,
           source: "ai",
-        }),
-      });
-      if (res.ok) saved++;
+        });
+        saved++;
+      } catch {
+        /* skip this draft, continue saving the rest */
+      }
     }
     setBusy(false);
     setMsg(`Saved ${saved} entries.`);
     setDrafts([]);
   }
-
-  const allKept = drafts.length > 0 && keep.size === drafts.length;
 
   return (
     <div className="space-y-4">
@@ -167,53 +154,7 @@ export function AiDraftPanel({
       )}
 
       {drafts.length > 0 && (
-        <div className="rounded-lg border border-border">
-          <div className="flex items-center gap-3 px-3 py-2">
-            <Checkbox
-              checked={allKept}
-              onCheckedChange={(c) =>
-                setKeep(c ? new Set(drafts.map((_, i) => i)) : new Set())
-              }
-              aria-label="Select all drafts"
-            />
-            <span className="text-sm font-medium">Drafts</span>
-            <Badge variant="secondary" className="tabular-nums">
-              {keep.size} / {drafts.length}
-            </Badge>
-          </div>
-          <Separator />
-          <ul className="divide-y divide-border">
-            {drafts.map((d, i) => (
-              <li key={i}>
-                <Label className="flex items-start gap-3 px-3 py-2.5 font-normal hover:bg-muted/40">
-                  <Checkbox
-                    className="mt-0.5"
-                    checked={keep.has(i)}
-                    onCheckedChange={(checked) => {
-                      const next = new Set(keep);
-                      checked ? next.add(i) : next.delete(i);
-                      setKeep(next);
-                    }}
-                  />
-                  <span className="text-sm">
-                    <strong className="font-mono">{d.answer}</strong>
-                    <span className="mx-1 text-muted-foreground">·</span>
-                    {d.clue}
-                    <Badge variant="outline" className="ml-2 font-normal">
-                      d{d.difficulty}
-                    </Badge>
-                  </span>
-                </Label>
-              </li>
-            ))}
-          </ul>
-          <Separator />
-          <div className="px-3 py-2">
-            <Button onClick={saveKept} disabled={busy || keep.size === 0}>
-              Save {keep.size} selected
-            </Button>
-          </div>
-        </div>
+        <DraftList drafts={drafts} keep={keep} onKeepChange={setKeep} busy={busy} onSave={saveKept} />
       )}
     </div>
   );

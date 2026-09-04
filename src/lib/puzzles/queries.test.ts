@@ -8,9 +8,14 @@ vi.mock("@/db", async () => {
 });
 
 const { db } = await import("@/db");
-const { entries, languages, puzzles } = await import("@/db/schema");
-const { generatePuzzle, getPuzzleBySlug, fetchCandidatePool, NotEnoughEntriesError } =
-  await import("@/lib/puzzles");
+const { entries, languages, puzzles, user } = await import("@/db/schema");
+const {
+  generatePuzzle,
+  getPuzzleBySlug,
+  listPuzzlesForUser,
+  fetchCandidatePool,
+  NotEnoughEntriesError,
+} = await import("@/lib/puzzles");
 
 const WORDS = [
   ["Capital of France", "Paris"],
@@ -44,7 +49,7 @@ async function seedEntries() {
 
 beforeEach(async () => {
   await db.execute(
-    sql`truncate ${puzzles}, ${entries}, ${languages} restart identity cascade`,
+    sql`truncate ${puzzles}, ${entries}, ${languages}, ${user} restart identity cascade`,
   );
 });
 
@@ -98,6 +103,24 @@ describe("generatePuzzle", () => {
     expect(row.slug).toBe(dto.slug);
   });
 
+  it("attaches the generating user's id when signed in", async () => {
+    await seedEntries();
+    await db.insert(user).values({ id: "u1", name: "Alice", email: "alice@example.com" });
+    await generatePuzzle(
+      { languageCode: "en", paperSize: "a4", orientation: "portrait", seed: "s1" },
+      "u1",
+    );
+    const [row] = await db.select().from(puzzles);
+    expect(row.userId).toBe("u1");
+  });
+
+  it("leaves userId null for anonymous generation", async () => {
+    await seedEntries();
+    await generatePuzzle({ languageCode: "en", paperSize: "a4", orientation: "portrait", seed: "s2" });
+    const [row] = await db.select().from(puzzles);
+    expect(row.userId).toBeNull();
+  });
+
   it("rejects when there are too few entries", async () => {
     await db.insert(languages).values({ code: "en", name: "English" });
     await db.insert(entries).values({
@@ -138,6 +161,37 @@ describe("fetchCandidatePool", () => {
     }
     // A stable (non-random) order would return the same 10 rows every time.
     expect(seen.size).toBeGreaterThan(10);
+  });
+});
+
+describe("listPuzzlesForUser", () => {
+  it("only returns the given user's own puzzles, never another user's", async () => {
+    await seedEntries();
+    await db.insert(user).values([
+      { id: "u1", name: "Alice", email: "alice@example.com" },
+      { id: "u2", name: "Bob", email: "bob@example.com" },
+    ]);
+    await generatePuzzle(
+      { languageCode: "en", paperSize: "a4", orientation: "portrait", seed: "a" },
+      "u1",
+    );
+    await generatePuzzle(
+      { languageCode: "en", paperSize: "a4", orientation: "portrait", seed: "b" },
+      "u2",
+    );
+
+    const alicesPuzzles = await listPuzzlesForUser("u1");
+    expect(alicesPuzzles).toHaveLength(1);
+    expect(alicesPuzzles[0].title).toBeTruthy();
+
+    const bobsPuzzles = await listPuzzlesForUser("u2");
+    expect(bobsPuzzles).toHaveLength(1);
+    expect(alicesPuzzles[0]).not.toEqual(bobsPuzzles[0]);
+  });
+
+  it("returns an empty list for a user with no puzzles", async () => {
+    await db.insert(user).values({ id: "u3", name: "Carol", email: "carol@example.com" });
+    expect(await listPuzzlesForUser("u3")).toEqual([]);
   });
 });
 
