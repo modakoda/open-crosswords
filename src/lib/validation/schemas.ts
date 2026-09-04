@@ -83,3 +83,11 @@ export const createCategorySchema = z.object({
   languageCode: LANGUAGE_CODE,
   name: z.string().trim().min(1).max(80),
 });
+
+const cellKey = z.string().regex(/^\d{1,3},\d{1,3}$/);
+const cellLetter = z.string().trim().toUpperCase().length(1);
+
+export const solveStateSchema = z.object({
+  puzzleId: z.uuid(),
+  progress: z.record(cellKey, cellLetter),
+});

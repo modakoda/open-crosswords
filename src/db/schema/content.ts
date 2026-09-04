@@ -10,6 +10,7 @@ import {
   unique,
   uuid,
 } from "drizzle-orm/pg-core";
+import { user } from "./auth";
 
 /** A supported content language, keyed by a short code (e.g. "en", "lt", "es"). */
 export const languages = pgTable("languages", {
@@ -81,6 +82,8 @@ export const puzzles = pgTable(
     languageCode: text("language_code")
       .notNull()
       .references(() => languages.code),
+    /** Owning client, if generated while signed in. Null for anonymous puzzles. */
+    userId: text("user_id").references(() => user.id, { onDelete: "set null" }),
     paperSize: text("paper_size").notNull(),
     orientation: text("orientation").notNull(),
     width: smallint("width").notNull(),
@@ -94,5 +97,8 @@ export const puzzles = pgTable(
       .notNull()
       .default(sql`now()`),
   },
-  (t) => [index("puzzles_created_idx").on(t.createdAt)],
+  (t) => [
+    index("puzzles_created_idx").on(t.createdAt),
+    index("puzzles_user_idx").on(t.userId),
+  ],
 );

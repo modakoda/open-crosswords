@@ -277,7 +277,7 @@ export function SolveView({
         </AlertDialog>
 
         <Button variant="ghost" size="sm" asChild>
-          <a href={`/puzzles/${puzzle.slug}/print`}>
+          <a href={`/public/puzzles/${puzzle.slug}/print`}>
             <PrinterIcon />
             {t.printVersion}
           </a>

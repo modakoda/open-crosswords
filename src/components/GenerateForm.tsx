@@ -117,7 +117,7 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? t.genericError);
       toast.success(t.generatedToast);
-      router.push(`/puzzles/${data.puzzle.slug}`);
+      router.push(`/public/puzzles/${data.puzzle.slug}`);
     } catch (e) {
       const message = e instanceof Error ? e.message : t.genericError;
       setError(message);

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LoaderCircleIcon, LockIcon, TriangleAlertIcon } from "lucide-react";
+import { LoaderCircleIcon, TriangleAlertIcon, UserIcon } from "lucide-react";
 
-import { signIn } from "@/lib/auth-client";
+import { signIn, signUp } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,9 +17,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import type { Messages } from "@/lib/i18n";
 
-export default function AdminLoginPage() {
+/** Shared shape for /client/login and /public/sign-up — only the submit action differs. */
+export function ClientAuthForm({
+  mode,
+  messages,
+}: {
+  mode: "login" | "signup";
+  messages: Messages["client"];
+}) {
+  const t = messages;
   const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -29,14 +39,16 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const { error: err } = await signIn.email({ email, password });
+    const { error: err } =
+      mode === "login"
+        ? await signIn.email({ email, password })
+        : await signUp.email({ name, email, password });
     setBusy(false);
     if (err) {
-      // Generic message — never disclose whether the account exists.
-      setError("Invalid email or password.");
+      setError(mode === "login" ? "Invalid email or password." : t.errorGeneric);
       return;
     }
-    router.push("/admin/dashboard");
+    router.push("/client/dashboard");
     router.refresh();
   }
 
@@ -45,17 +57,29 @@ export default function AdminLoginPage() {
       <Card>
         <CardHeader>
           <div className="mb-1 grid size-9 place-items-center rounded-lg bg-primary/10 text-primary">
-            <LockIcon className="size-4" />
+            <UserIcon className="size-4" />
           </div>
-          <CardTitle>Admin sign in</CardTitle>
+          <CardTitle>{mode === "login" ? t.loginTitle : t.signupTitle}</CardTitle>
           <CardDescription>
-            The question library is managed by admins only.
+            {mode === "login" ? t.loginDescription : t.signupDescription}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form id="login" onSubmit={submit} className="space-y-3">
+          <form id="client-auth" onSubmit={submit} className="space-y-3">
+            {mode === "signup" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="name">{t.name}</Label>
+                <Input
+                  id="name"
+                  autoComplete="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+              </div>
+            )}
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t.email}</Label>
               <Input
                 id="email"
                 type="email"
@@ -66,14 +90,15 @@ export default function AdminLoginPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t.password}</Label>
               <Input
                 id="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete={mode === "login" ? "current-password" : "new-password"}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={mode === "signup" ? 12 : undefined}
               />
             </div>
             {error && (
@@ -85,15 +110,22 @@ export default function AdminLoginPage() {
           </form>
         </CardContent>
         <CardFooter>
-          <Button type="submit" form="login" className="w-full" disabled={busy}>
+          <Button type="submit" form="client-auth" className="w-full" disabled={busy}>
             {busy && <LoaderCircleIcon className="animate-spin" />}
-            {busy ? "Signing in…" : "Sign in"}
+            {busy ? t.submitting : mode === "login" ? t.submitLogin : t.submitSignup}
           </Button>
         </CardFooter>
       </Card>
       <p className="text-center text-xs text-muted-foreground">
-        Accounts are provisioned with <code>npm run create-admin</code>. Public
-        sign-up is disabled.
+        {mode === "login" ? (
+          <>
+            {t.noAccount} <a className="underline" href="/public/sign-up">{t.switchToSignup}</a>
+          </>
+        ) : (
+          <>
+            {t.haveAccount} <a className="underline" href="/client/login">{t.switchToLogin}</a>
+          </>
+        )}
       </p>
     </div>
   );

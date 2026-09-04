@@ -1,4 +1,4 @@
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { db } from "@/db";
 import { entries, puzzles } from "@/db/schema";
@@ -20,6 +20,7 @@ export interface PuzzleClue {
 }
 
 export interface PuzzleDTO {
+  id: string;
   slug: string;
   title: string;
   languageCode: string;
@@ -85,7 +86,17 @@ export async function fetchCandidatePool(
   return rows.map((r) => ({ ...r }));
 }
 
-export async function generatePuzzle(input: GeneratePuzzleInput): Promise<PuzzleDTO> {
+export interface PuzzleSummary {
+  slug: string;
+  title: string;
+  languageCode: string;
+  createdAt: string;
+}
+
+export async function generatePuzzle(
+  input: GeneratePuzzleInput,
+  userId: string | null = null,
+): Promise<PuzzleDTO> {
   const candidates = await fetchCandidatePool(input.languageCode, input.categoryIds);
   if (candidates.length < 4) {
     throw new NotEnoughEntriesError(
@@ -116,19 +127,23 @@ export async function generatePuzzle(input: GeneratePuzzleInput): Promise<Puzzle
     input.title ?? `${input.languageCode.toUpperCase()} crossword`;
   const usedIds = crossword.placements.map((p) => p.entryId);
 
-  await db.transaction(async (tx) => {
-    await tx.insert(puzzles).values({
-      slug,
-      title,
-      languageCode: input.languageCode,
-      paperSize: input.paperSize,
-      orientation: input.orientation,
-      width: crossword.width,
-      height: crossword.height,
-      seed,
-      placements: crossword.placements,
-      grid: crossword.grid,
-    });
+  const id = await db.transaction(async (tx) => {
+    const [inserted] = await tx
+      .insert(puzzles)
+      .values({
+        slug,
+        title,
+        languageCode: input.languageCode,
+        userId,
+        paperSize: input.paperSize,
+        orientation: input.orientation,
+        width: crossword.width,
+        height: crossword.height,
+        seed,
+        placements: crossword.placements,
+        grid: crossword.grid,
+      })
+      .returning({ id: puzzles.id });
     await tx
       .update(entries)
       .set({
@@ -136,9 +151,11 @@ export async function generatePuzzle(input: GeneratePuzzleInput): Promise<Puzzle
         lastUsedAt: new Date(),
       })
       .where(inArray(entries.id, usedIds));
+    return inserted.id;
   });
 
   return {
+    id,
     slug,
     title,
     languageCode: input.languageCode,
@@ -152,12 +169,27 @@ export async function generatePuzzle(input: GeneratePuzzleInput): Promise<Puzzle
   };
 }
 
+export async function listPuzzlesForUser(userId: string): Promise<PuzzleSummary[]> {
+  const rows = await db
+    .select({
+      slug: puzzles.slug,
+      title: puzzles.title,
+      languageCode: puzzles.languageCode,
+      createdAt: puzzles.createdAt,
+    })
+    .from(puzzles)
+    .where(eq(puzzles.userId, userId))
+    .orderBy(desc(puzzles.createdAt));
+  return rows.map((r) => ({ ...r, createdAt: r.createdAt.toISOString() }));
+}
+
 export async function getPuzzleBySlug(slug: string): Promise<PuzzleDTO | null> {
   const row = await db.query.puzzles.findFirst({
     where: eq(puzzles.slug, slug),
   });
   if (!row) return null;
   return {
+    id: row.id,
     slug: row.slug,
     title: row.title,
     languageCode: row.languageCode,

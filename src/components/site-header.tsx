@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { GridIcon, MenuIcon, ShieldIcon } from "lucide-react";
+import { GridIcon, MenuIcon, ShieldIcon, UserIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,10 +16,11 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useSession } from "@/lib/auth-client";
 import type { Messages } from "@/lib/i18n";
 
 function isActive(pathname: string, href: string) {
-  return href === "/" ? pathname === "/" : pathname.startsWith(href);
+  return pathname.startsWith(href);
 }
 
 function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -32,10 +33,14 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export function SiteHeader({ messages }: { messages: Messages["header"] }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const nav = [
-    { href: "/", label: messages.nav.generate, icon: GridIcon },
-    { href: "/admin", label: messages.nav.admin, icon: ShieldIcon },
+    { href: "/public", label: messages.nav.generate, icon: GridIcon },
+    session
+      ? { href: "/client/dashboard", label: messages.nav.client, icon: UserIcon }
+      : { href: "/client/login", label: messages.nav.signIn, icon: UserIcon },
+    { href: "/admin/dashboard", label: messages.nav.admin, icon: ShieldIcon },
   ];
 
   return (

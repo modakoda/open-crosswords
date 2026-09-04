@@ -31,3 +31,25 @@ export async function requireAdmin(): Promise<AdminUser> {
   if (!admin) throw new ForbiddenError("Admin access required");
   return admin;
 }
+
+export interface CurrentUser {
+  id: string;
+  email: string;
+}
+
+/**
+ * Resolve the current session for any signed-in client (no allow-list, no
+ * email-verification requirement — unlike admin). Returns null if signed out.
+ */
+export async function getCurrentUser(): Promise<CurrentUser | null> {
+  const session = await auth.api.getSession({ headers: await headers() });
+  if (!session?.user?.email) return null;
+  return { id: session.user.id, email: session.user.email.toLowerCase() };
+}
+
+/** Throws ForbiddenError if the caller is not signed in. */
+export async function requireUser(): Promise<CurrentUser> {
+  const current = await getCurrentUser();
+  if (!current) throw new ForbiddenError("Sign-in required");
+  return current;
+}

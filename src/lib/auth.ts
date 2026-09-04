@@ -6,10 +6,12 @@ import * as schema from "@/db/schema";
 import { env } from "@/lib/env";
 
 /**
- * Central auth instance. Email + password only, and open self-registration is
- * disabled — admin accounts are created with `npm run create-admin`. Whether an
- * authenticated user may reach /admin is decided by ADMIN_EMAILS, not by having
- * an account (see requireAdmin in ./auth-guard).
+ * Central auth instance. Email + password only. Self-registration creates a
+ * plain client account (see /public/sign-up) — admin accounts are always
+ * created out-of-band with `npm run create-admin`, and reaching /admin still
+ * requires both a verified email and membership in ADMIN_EMAILS (see
+ * requireAdmin in ./auth-guard); self-serve sign-up never sets emailVerified,
+ * so it cannot grant admin access on its own.
  */
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
@@ -25,7 +27,7 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    disableSignUp: true,
+    disableSignUp: false,
     minPasswordLength: 12,
   },
   session: {

@@ -2,7 +2,12 @@ import type { en } from "./en";
 
 export const lt: typeof en = {
   header: {
-    nav: { generate: "Generuoti", admin: "Administravimas" },
+    nav: {
+      generate: "Generuoti",
+      admin: "Administravimas",
+      client: "Mano dėlionės",
+      signIn: "Prisijungti",
+    },
     menu: "Meniu",
     source: "Šaltinis",
     sourceAria: "Šaltinis GitHub",
@@ -86,5 +91,29 @@ export const lt: typeof en = {
     withAnswersNote: "1 puslapis — dėlionė, 2 puslapis — atsakymų raktas.",
     withoutAnswersNote: "Tik dėlionė — atsakymai nespausdinami.",
     answerKeySuffix: "Atsakymų raktas",
+  },
+  client: {
+    dashboardTitle: "Mano dėlionės",
+    dashboardSubtitle: "Dėlionės, kurias sugeneravote būdami prisijungę.",
+    empty: "Kol kas nesugeneravote nė vienos dėlionės.",
+    generateCta: "Generuoti dėlionę",
+    continueSolving: "Tęsti sprendimą",
+    signOut: "Atsijungti",
+    loginTitle: "Prisijungti",
+    loginDescription: "Prisijunkite, kad išsaugotumėte dėliones savo paskyroje.",
+    signupTitle: "Sukurti paskyrą",
+    signupDescription:
+      "Išsaugokite sugeneruotas dėliones ir tęskite sprendimą bet kuriame įrenginyje.",
+    name: "Vardas",
+    email: "El. paštas",
+    password: "Slaptažodis",
+    submitLogin: "Prisijungti",
+    submitSignup: "Sukurti paskyrą",
+    submitting: "Prašome palaukti…",
+    errorGeneric: "Kažkas nutiko. Bandykite dar kartą.",
+    haveAccount: "Jau turite paskyrą?",
+    noAccount: "Reikia paskyros?",
+    switchToSignup: "Registruotis",
+    switchToLogin: "Prisijungti",
   },
 };

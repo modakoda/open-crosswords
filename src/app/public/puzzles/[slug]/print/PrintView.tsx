@@ -24,7 +24,7 @@ export function PrintView({
       <div className="no-print flex flex-wrap items-center gap-3">
         <Button onClick={() => window.print()}>{t.printSave}</Button>
         <Button variant="outline" asChild>
-          <a href={`/puzzles/${puzzle.slug}`}>{t.backToSolver}</a>
+          <a href={`/public/puzzles/${puzzle.slug}`}>{t.backToSolver}</a>
         </Button>
         <Label className="flex items-center gap-2 text-sm font-normal">
           <Checkbox
