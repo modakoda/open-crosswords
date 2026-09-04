@@ -10,16 +10,20 @@ Postgres (Neon in production, local Docker Postgres in dev).
 Stack specifics for this repo:
 - Schema lives under `src/db/schema/`, split by domain: `auth.ts` (better-auth
   tables — don't rename columns), `content.ts` (`languages`, `categories`,
-  `entries`, `puzzles`), re-exported from `index.ts`. The DB client is
+  `entries`, `puzzles`), `solve-state.ts` (`solve_states`, one row per
+  `(puzzleId, userId)`), re-exported from `index.ts`. The DB client is
   `src/db/index.ts` using **postgres.js** (`drizzle-orm/postgres-js`) — don't
   introduce a second connection method.
 - Migrations are **committed SQL** under `drizzle/`. Workflow: edit schema →
   `npm run db:generate` → review the generated file → `npm run db:migrate`. Do
   not switch this project to `db:push`.
-- The question library is a single shared resource managed by admins; there are
-  no per-user-owned rows. `puzzles` are public, addressed by a unique `slug`.
-  `entries` carries `times_used` / `last_used_at`, which the generator reads
-  (freshness) and bumps in the same transaction that inserts a puzzle.
+- The question library is a single shared resource managed by admins; there
+  are no per-user-owned rows in it. `puzzles` are public, addressed by a
+  unique `slug`, and optionally owned via a nullable `userId` (anonymous
+  generation stays unowned). `entries` carries `times_used` / `last_used_at`,
+  which the generator reads (freshness) and bumps in the same transaction
+  that inserts a puzzle. `solve_states` is per-user and must always be scoped
+  to the acting user's id.
 - Integration tests run against PGlite (`src/test/db.ts`) applying the real
   `drizzle/` migrations — a schema change that breaks migration replay will fail
   the suite.
@@ -29,7 +33,8 @@ Conventions to follow:
   concrete reason (complex aggregation, performance).
 - Watch the indexes on `entries` (`entries_lang_idx`, `entries_category_idx`,
   `entries_pick_idx`, the `entries_lang_answer_clue_unq` dedupe constraint) —
-  the generator's candidate query (`fetchCandidatePool` in `src/lib/puzzles.ts`)
+  the generator's candidate query (`fetchCandidatePool` in
+  `src/lib/puzzles/queries.ts`)
   filters by `language_code` + `enabled` and orders by `random()` so large
   entry pools get sampled instead of always returning the same rows; keep
   that path indexed and be aware `ORDER BY random()` doesn't use an index and

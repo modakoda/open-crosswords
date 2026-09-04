@@ -8,10 +8,10 @@ You review code changes in this app (Next.js App Router, Drizzle/Neon, better-au
 
 What to check:
 - **Correctness**: does the change do what it claims, including edge cases (empty/invalid input, unauthenticated request, non-existent resource id)?
-- **Consistency with existing patterns**: route handlers using the `src/lib/api.ts` helpers (`json`/`apiError`/`parse`/`adminRoute`) and matching sibling routes, component patterns matching sibling components in `src/components/**`, Drizzle query style matching `src/db/schema/**` usage elsewhere.
-- **Test coverage**: routes and non-trivial logic modules pair with a `*.test.ts(x)` (DB/route tests use PGlite via `src/test/db.ts`) — a behaviour change without a corresponding test update is a gap worth flagging.
+- **Consistency with existing patterns**: oRPC procedures built on `adminProcedure`/`userProcedure`/`publicProcedure` (`src/lib/orpc/middleware.ts`) and matching sibling procedures in `src/lib/orpc/routers/{public,admin,client}.ts`, component patterns matching sibling components in `src/components/**`, Drizzle query style matching `src/db/schema/**` usage elsewhere.
+- **Test coverage**: procedures and non-trivial logic modules pair with a `*.test.ts(x)` (DB/procedure tests use PGlite via `src/test/db.ts`) — a behaviour change without a corresponding test update is a gap worth flagging.
 - **Scope discipline**: flag unrelated refactoring, unnecessary abstraction, or speculative generality bundled into a focused change.
-- **Auth gating**: every `src/app/api/admin/**` handler must go through `adminRoute` / `requireAdmin`; flag any admin/library-mutation path that isn't (hand off to security-engineer if it looks exploitable). If a change adds per-user-owned rows, their queries must be scoped to the current user.
+- **Auth gating**: every `admin.*` oRPC procedure must be built on `adminProcedure` (→ `requireAdmin`); every per-user `client.*` procedure must be built on `userProcedure` (→ `requireUser`) and scope reads/writes to `context.user.id`; flag any admin/library-mutation or per-user-data path that isn't (hand off to security-engineer if it looks exploitable).
 - **File size/naming**: flag any changed file over 200 lines that should have been split by responsibility, and any file/component name that doesn't match this repo's existing conventions.
 
 Output format:

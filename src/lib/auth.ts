@@ -34,6 +34,19 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7,
     updateAge: 60 * 60 * 24,
   },
+  // Public sign-up/sign-in are the only unauthenticated write surface this
+  // library doesn't already rate-limit itself (cf. src/lib/rate-limit.ts on
+  // puzzles.generate / ai-draft) — enabled outside production too so it's
+  // consistently in effect, not just an implicit prod-only default.
+  rateLimit: {
+    enabled: true,
+    window: 60,
+    max: 20,
+    customRules: {
+      "/sign-up/email": { window: 60, max: 10 },
+      "/sign-in/email": { window: 60, max: 10 },
+    },
+  },
   advanced: {
     cookiePrefix: "open-crosswords",
     // Secure whenever the app is served over HTTPS, not just when NODE_ENV
@@ -41,7 +54,8 @@ export const auth = betterAuth({
     useSecureCookies: env.BETTER_AUTH_URL.startsWith("https://"),
     defaultCookieAttributes: {
       httpOnly: true,
-      // Admin-only app with no cross-site OAuth flows — strict is safe here.
+      // No cross-site OAuth flows — strict is safe for both the admin and
+      // client sign-in surfaces.
       sameSite: "strict",
     },
   },

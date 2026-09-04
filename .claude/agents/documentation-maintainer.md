@@ -8,7 +8,7 @@ You keep this repo's documentation accurate.
 
 What that covers here:
 - `README.md` — setup steps (env vars, `docker compose` / Neon, `db:migrate`, `seed`, `create-admin`), self-hosting notes, feature overview. Verify claims against `package.json` scripts and actual code before writing them.
-- Root `AGENTS.md`/`CLAUDE.md` — keep stack notes (Next.js App Router, Drizzle + postgres.js, committed `drizzle/` migrations, better-auth admin gate, no file storage, no RPC layer) and project conventions in sync with the code.
+- Root `AGENTS.md`/`CLAUDE.md` — keep stack notes (Next.js App Router, Drizzle + postgres.js, committed `drizzle/` migrations, better-auth admin + client auth, oRPC API layer, no file storage) and project conventions in sync with the code.
 - Any in-app documentation-facing text (help copy, field-syntax references, onboarding text) that describes behavior implemented in `src/` — if the underlying code changes, this is user-facing documentation and must be updated in the same change.
 - Don't create new standalone docs/markdown files unless explicitly asked — prefer updating README.md or inline code comments only where the WHY is non-obvious.
 

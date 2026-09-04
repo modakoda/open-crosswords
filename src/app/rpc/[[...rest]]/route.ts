@@ -19,7 +19,10 @@ export const maxDuration = 60; // covers the ai-draft procedure's LLM call
 const MAX_BODY_BYTES = 1024 * 1024;
 
 const handler = new RPCHandler(router, {
-  interceptors: [onError((error) => console.error(error))],
+  // Log a message/stack, not the raw error object — some failure modes
+  // (e.g. a driver-level DB error) can embed connection details in extra
+  // properties we don't want landing in logs verbatim.
+  interceptors: [onError((error) => console.error(error instanceof Error ? error.stack : error))],
 });
 
 async function handleRequest(request: Request) {

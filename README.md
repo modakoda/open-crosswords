@@ -11,6 +11,8 @@ app, easy to self-host.
   solved answer key.
 - ⌨️ **Solve online** — type into the grid, arrow/Tab navigation, check & reveal,
   progress saved in your browser; every generated puzzle has a shareable URL.
+  Sign up (`/public/sign-up`) to also save puzzles to your account and sync
+  solve progress across devices.
 - 🌍 **Any language** — the schema is language-scoped and starts empty. Grow
   the library with the admin UI, CSV/JSON import, or optional AI drafting; an
   English starter set is bundled to import if you want a running start. The
@@ -29,7 +31,7 @@ open http://localhost:3000
 ```
 
 It applies migrations automatically; the question library starts empty. To
-sign in to `/admin`, create a login and add its email to `ADMIN_EMAILS`:
+sign in to `/admin/dashboard`, create a login and add its email to `ADMIN_EMAILS`:
 
 ```bash
 docker compose -f compose.tryout.yaml exec app \
@@ -37,8 +39,8 @@ docker compose -f compose.tryout.yaml exec app \
 ADMIN_EMAILS=you@example.com docker compose -f compose.tryout.yaml up -d app
 ```
 
-Then add clues from `/admin` → *Bulk import*, or load the bundled English
-starter set: `docker compose -f compose.tryout.yaml exec app npm run seed`.
+Then add clues from `/admin/dashboard` → *Bulk import*, or load the bundled
+English starter set: `docker compose -f compose.tryout.yaml exec app npm run seed`.
 
 See the comments in [compose.tryout.yaml](./compose.tryout.yaml) for details
 (and for setting your own `BETTER_AUTH_SECRET` before exposing it beyond
@@ -64,8 +66,8 @@ npm run db:migrate            # apply migrations
 npm run dev                   # http://localhost:3000
 ```
 
-The question library starts empty. Add clues from `/admin` → *Bulk import*,
-or run `npm run seed` to load the bundled English starter set
+The question library starts empty. Add clues from `/admin/dashboard` →
+*Bulk import*, or run `npm run seed` to load the bundled English starter set
 (`data/seed-en.json`). A Lithuanian starter set is also bundled:
 `npm run seed -- data/seed-lt.json`, plus a supplementary set of harder,
 more obscure clues: `npm run seed -- data/seed-lt-hard.json`. For a much
@@ -89,14 +91,15 @@ npm run db:migrate && npm run dev
 
 ### Create an admin login
 
-Public sign-up is disabled. Provision an account, then list its email in
+Admin accounts are always provisioned out-of-band (separate from the public
+`/public/sign-up` client accounts). Provision one, then list its email in
 `ADMIN_EMAILS`:
 
 ```bash
 npm run create-admin -- you@example.com "Your Name" "a-long-password"
 ```
 
-Sign in at `/admin`.
+Sign in at `/admin/login`.
 
 ## Environment
 
@@ -105,22 +108,23 @@ Sign in at `/admin`.
 | `DATABASE_URL` | yes | Postgres connection string |
 | `BETTER_AUTH_SECRET` | yes | 32-byte random string (`openssl rand -base64 32`) |
 | `BETTER_AUTH_URL` | no | Public base URL, no trailing slash (default `http://localhost:3000`) |
-| `ADMIN_EMAILS` | no | Comma-separated emails allowed into `/admin` (default: none — set this or nobody can sign in to `/admin`) |
+| `ADMIN_EMAILS` | no | Comma-separated emails allowed into `/admin/dashboard` (default: none — set this or nobody can sign in) |
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
 | `AI_MODEL` | no | Model id for AI drafting (default `claude-sonnet-5`) |
 
 ## Adding questions
 
-- **Admin UI** (`/admin` → *Entries*) — add one clue/answer at a time, with an
-  optional category and difficulty 1–5.
-- **Bulk import** (`/admin` → *Bulk import*, or `npm run import -- <lang> <file>`):
+- **Admin UI** (`/admin/dashboard` → *Entries*) — add one clue/answer at a
+  time, with an optional category and difficulty 1–5.
+- **Bulk import** (`/admin/dashboard` → *Bulk import*, or
+  `npm run import -- <lang> <file>`):
   - JSON: `[{ "clue": "...", "answer": "...", "category": "...", "difficulty": 3 }]`
     (or `{ "entries": [...] }`)
   - CSV: header row with `clue,answer[,category][,difficulty]`
   - Answers are normalised to grid letters (accents folded, non-letters dropped).
     Unknown categories are created automatically; exact duplicates are skipped.
-- **AI draft** (`/admin` → *AI draft*, needs `ANTHROPIC_API_KEY`) — describe a
-  topic and language, review the suggestions, save the ones you want.
+- **AI draft** (`/admin/dashboard` → *AI draft*, needs `ANTHROPIC_API_KEY`) —
+  describe a topic and language, review the suggestions, save the ones you want.
 
 ### Add a language
 
@@ -141,10 +145,10 @@ reproducible. See [AGENTS.md](./AGENTS.md) for detail.
 
 ## Tech
 
-Next.js App Router · React 19 · Drizzle ORM + Postgres · better-auth · Zod ·
-Tailwind CSS v4 + shadcn/ui (light/dark theme) · Vitest (with PGlite for DB
-tests). Deploys to Vercel or any Node host; `docker compose` covers local
-dependencies.
+Next.js App Router · React 19 · oRPC (typed API layer) · Drizzle ORM +
+Postgres · better-auth · Zod · Tailwind CSS v4 + shadcn/ui (light/dark theme)
+· Vitest (with PGlite for DB tests) · Playwright (e2e). Deploys to Vercel or
+any Node host; `docker compose` covers local dependencies.
 
 ## Development
 
@@ -152,6 +156,7 @@ dependencies.
 npm test           # unit + integration
 npm run typecheck
 npm run build
+npm run test:e2e    # end-to-end (needs a real Postgres — see compose.yaml)
 ```
 
 See [CLAUDE.md](./CLAUDE.md) for architecture and the security requirements that

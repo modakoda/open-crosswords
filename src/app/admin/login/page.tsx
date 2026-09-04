@@ -92,8 +92,12 @@ export default function AdminLoginPage() {
         </CardFooter>
       </Card>
       <p className="text-center text-xs text-muted-foreground">
-        Accounts are provisioned with <code>npm run create-admin</code>. Public
-        sign-up is disabled.
+        Admin accounts are provisioned with <code>npm run create-admin</code> —
+        this is separate from the public sign-up at{" "}
+        <a className="underline" href="/public/sign-up">
+          /public/sign-up
+        </a>
+        .
       </p>
     </div>
   );

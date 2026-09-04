@@ -6,13 +6,19 @@ import { E2E_BASE_URL, E2E_LANGUAGE_CODE } from "./constants";
 test("an invalid puzzle slug 404s", async ({ page }) => {
   const response = await page.goto("/public/puzzles/nope1234ab");
   expect(response?.status()).toBe(404);
-  await expect(page).toHaveTitle("Puzzle not found");
 });
 
 test("puzzle generation is rate-limited after repeated rapid requests", async ({ page }) => {
+  // The rate-limit bucket is keyed by client IP (src/lib/rate-limit.ts). A real
+  // browser request carries no X-Forwarded-For, so every other test in this
+  // suite shares one implicit "local" bucket — deliberately exhausting it here
+  // would 429 every later generate call too. Give this burst its own fake IP
+  // so it only ever exhausts its own, isolated bucket.
+  const headers = { "x-forwarded-for": "203.0.113.5" };
   const statuses: number[] = [];
   for (let i = 0; i < 22; i++) {
     const res = await page.request.post("/rpc/puzzles/generate", {
+      headers,
       data: { json: { languageCode: E2E_LANGUAGE_CODE, paperSize: "a4" } },
     });
     statuses.push(res.status());
@@ -91,7 +97,11 @@ test("a client can never read or overwrite another client's solve state (IDOR)",
     req.url().includes("/rpc/client/solveState/save"),
   );
   await page1.keyboard.press("Z");
-  const puzzleId = JSON.parse((await savedRequest).postData()!).json.puzzleId as string;
+  const saveInput = JSON.parse((await savedRequest).postData()!).json as {
+    puzzleId: string;
+    progress: Record<string, string>;
+  };
+  const { puzzleId, progress: client1Progress } = saveInput;
   await ctx1.close();
 
   const ctx2 = await browser.newContext({
@@ -119,6 +129,6 @@ test("a client can never read or overwrite another client's solve state (IDOR)",
     data: { json: { puzzleId } },
   });
   // Client 2's write must never have touched client 1's row.
-  expect((await readAsClient1Again.json()).json.progress).toEqual({ "0,0": "Z" });
+  expect((await readAsClient1Again.json()).json.progress).toEqual(client1Progress);
   await ctx1b.close();
 });

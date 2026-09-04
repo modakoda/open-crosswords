@@ -6,44 +6,84 @@ or solve them online via a shareable link. Open source, single Next.js app.
 ## Architecture (verify against code before relying on it)
 
 - **Next.js App Router** (`src/app/**`), React 19, TypeScript, Tailwind CSS v4.
+  Routes are grouped by audience: `src/app/public/**` (generate form, solve,
+  print, sign-up — all public), `src/app/admin/**` (`/admin/login`,
+  `/admin/dashboard`), `src/app/client/**` (`/client/login`,
+  `/client/dashboard`). `/` just redirects to `/public`.
 - **UI primitives** in `src/components/ui/` are shadcn/ui components (config in
   `components.json`) — build forms and controls from these (`Button`, `Input`,
   `Select`, `Table`, `Tabs`, etc.) rather than raw `<button>`/`<input>` with
   ad hoc classes. Theme tokens live in `src/app/globals.css`.
+- **API layer** is oRPC (`@orpc/server`/`@orpc/client`), not REST route
+  handlers — a single catch-all route (`src/app/rpc/[[...rest]]/route.ts`)
+  mounts an `RPCHandler` built from `src/lib/orpc/router.ts`, which combines
+  per-audience routers (`src/lib/orpc/routers/{public,admin,client}.ts`).
+  Auth gating is middleware on the procedure builders in
+  `src/lib/orpc/middleware.ts` (`adminProcedure` / `userProcedure`), not a
+  per-handler wrapper. The browser client is `src/lib/orpc/client.ts`
+  (`orpc.<router>.<procedure>(...)` — throws on error, matching the server's
+  `ORPCError`). better-auth keeps its own separate catch-all route
+  (`src/app/api/auth/[...all]/route.ts`) — oRPC doesn't front auth.
 - **Data layer** in `src/db/`: Drizzle ORM schema split by domain under
-  `src/db/schema/` (`auth.ts`, `content.ts`, re-exported from `index.ts`); the
-  shared client is `src/db/index.ts` using **postgres.js** (`drizzle-orm/postgres-js`)
-  against Postgres (Neon in production, local Docker Postgres for dev). Node.js
-  runtime only — never `runtime = 'edge'` on a route that touches the DB.
+  `src/db/schema/` (`auth.ts`, `content.ts`, `solve-state.ts`, re-exported from
+  `index.ts`); the shared client is `src/db/index.ts` using **postgres.js**
+  (`drizzle-orm/postgres-js`) against Postgres (Neon in production, local
+  Docker Postgres for dev). Node.js runtime only — never `runtime = 'edge'` on
+  a route that touches the DB.
 - **Migrations** are committed SQL under `drizzle/`, generated with
   `npm run db:generate` and applied with `npm run db:migrate` (not `db:push`).
 - **Business logic** in `src/lib/`: the crossword engine (`src/lib/crossword/**`
   — `normalize`, `select` for smart topic-spread/freshness candidate ranking,
   `generate` for greedy interlock placement, `number` for grid numbering),
-  `puzzles.ts` (generate + persist + fetch), `entries.ts` / `import.ts`
-  (question-library CRUD and bulk import), `ai/draft.ts` (optional LLM drafting).
+  `puzzles/` (generate + persist + fetch + per-user listing, split into
+  `types.ts`/`queries.ts`), `entries.ts` / `import.ts` (question-library CRUD
+  and bulk import), `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
+  (per-user solve progress, read/write always scoped to the caller's own id).
 - **UI translation** in `src/lib/i18n/`: static `en`/`lt` dictionaries
   (`getMessages`), keyed to the app chrome, not the (separately language-scoped)
-  clue/answer library. Site-wide chrome (`layout.tsx`, the landing page) picks
-  its locale from the visitor's `Accept-Language` header
-  (`getRequestLocale`, server-only); the generate form matches whichever
-  content language is selected; the solve/print pages match the puzzle's own
-  `languageCode` (`resolveLocale`). Admin UI is not translated. Add a language
-  by adding its code to `locales` and a dictionary satisfying `typeof en`.
+  clue/answer library. Site-wide chrome (`layout.tsx`, the public pages, the
+  client sign-up/login/dashboard pages) picks its locale from the visitor's
+  `Accept-Language` header (`getRequestLocale`, server-only); the generate
+  form matches whichever content language is selected; the solve/print pages
+  match the puzzle's own `languageCode` (`resolveLocale`). Admin UI is not
+  translated. Add a language by adding its code to `locales` and a dictionary
+  satisfying `typeof en`.
 - **Auth** is better-auth (`src/lib/auth.ts`, catch-all route
   `src/app/api/auth/[...all]/route.ts`, React client `src/lib/auth-client.ts`).
-  Email+password only, **public sign-up disabled** — admin logins are created
-  with `npm run create-admin`.
-- **Authorization model**: the question library is a single shared resource
-  managed by admins. "Admin" = a signed-in user whose verified email is in
-  `ADMIN_EMAILS` (`src/lib/auth-guard.ts` → `requireAdmin`, wrapped by
-  `adminRoute` in `src/lib/api.ts`). Every `src/app/api/admin/**` route is
-  admin-gated. Generated puzzles are **public** and addressed by an
-  unguessable slug; online solve state lives in the visitor's `localStorage`
-  (no per-user rows). There is no per-user-owned data today.
-- **Tests**: Vitest. Pure logic has colocated `*.test.ts`; DB/route integration
-  tests spin up in-process Postgres via PGlite (`src/test/db.ts`) and apply the
-  real `drizzle/` migrations. UI is verified through the running dev server.
+  Email+password only. Public self-serve sign-up is **enabled** (`/public/sign-up`)
+  and creates a plain client account — admin accounts are always created
+  out-of-band with `npm run create-admin` and are a completely separate
+  concept (see Authorization model below), so self-serve sign-up can never
+  grant admin access. Sign-up/sign-in are rate-limited via better-auth's own
+  `rateLimit` config in `auth.ts` (separate from this app's own
+  `src/lib/rate-limit.ts`, used for `puzzles.generate`/`ai-draft`).
+- **Authorization model**: two independent identities layered on one
+  better-auth session — "admin" (a signed-in user whose verified email is in
+  `ADMIN_EMAILS`, checked by `getAdmin`/`requireAdmin` in
+  `src/lib/auth-guard.ts`, enforced by `adminProcedure`) and "client" (any
+  signed-in user at all — no allow-list, no verified-email requirement,
+  checked by `getCurrentUser`/`requireUser`, enforced by `userProcedure`).
+  There is deliberately no `role` column on `user` — admin-ness stays
+  out-of-band via the allow-list so there's only one source of truth for it.
+  The question library stays a single shared resource managed by admins
+  (every `admin.*` oRPC procedure is admin-gated). Generated puzzles are
+  **public** and addressed by an unguessable slug, and optionally owned by
+  the signed-in client who generated them (`puzzles.userId`, nullable —
+  anonymous generation stays unowned). Per-user solve progress
+  (`solve_states`, one row per `(puzzleId, userId)`) syncs server-side for
+  signed-in clients; anonymous solving stays `localStorage`-only, unchanged.
+  Every per-user read/write derives the acting user from the session
+  (`context.user.id` in a `userProcedure`), never from client-supplied input.
+- **Tests**: Vitest for unit/integration (pure logic has colocated
+  `*.test.ts`; DB/procedure integration tests spin up in-process Postgres via
+  PGlite (`src/test/db.ts`) and apply the real `drizzle/` migrations — see
+  `src/lib/orpc/routers/*.test.ts` for the "mock `@/db` + `@/lib/auth-guard`,
+  call the procedure directly via oRPC's `call()`" pattern). Playwright for
+  e2e (`e2e/**`, `playwright.config.ts`) — runs against a real Postgres
+  (PGlite can't back a separately-spawned `next start` process), seeded by
+  `npm run pretest:e2e` (`e2e/seed.ts`, idempotent, scoped to fixed
+  `e2e-*@example.com` accounts and a dedicated `zz` content language so it
+  never touches real admin-managed data). `npm run test:e2e` runs both.
 
 ## Security requirements
 
@@ -56,19 +96,24 @@ external input, or the AI/import paths must meet these before it's done:
   `sameSite: strict`, and `secure` whenever `BETTER_AUTH_URL` is HTTPS. Sign-in
   responses must not reveal whether an account exists (the login form shows one
   generic error).
-- **Authorization**: every `src/app/api/admin/**` handler must go through
-  `adminRoute` / `requireAdmin` — a valid session **and** a verified email in
-  `ADMIN_EMAILS` (fail closed; `npm run create-admin` marks the email verified).
-  Never infer admin from a client-supplied value, and never expose a
-  library-mutation path outside that gate. If a future
-  feature introduces per-user-owned rows, scope every read/write to the
-  authenticated user's own id (missing scoping / IDOR is a blocking defect).
-- **Input validation**: validate every external input (request bodies,
-  query/path params, form fields, env vars, CSV/JSON import text, AI output)
-  with Zod at the boundary using `safeParse`, and reject rather than coerce on
-  failure. Read bodies via `readJson` in `src/lib/api.ts` (up-front size cap).
-  Import is capped (rows and payload size); the AI endpoint is admin-only,
-  rate-limited, and disabled when `ANTHROPIC_API_KEY` is unset.
+- **Authorization**: every `admin.*` oRPC procedure must be built on
+  `adminProcedure` (`src/lib/orpc/middleware.ts`), which enforces
+  `requireAdmin` — a valid session **and** a verified email in `ADMIN_EMAILS`
+  (fail closed; `npm run create-admin` marks the email verified). Never infer
+  admin from a client-supplied value, and never expose a library-mutation
+  path outside that gate. Per-user-owned rows (`puzzles.userId`,
+  `solve_states`) must always be scoped to the id from `context.user`
+  (set by `userProcedure` from the verified session) — never from a
+  client-supplied id (missing scoping / IDOR is a blocking defect).
+- **Input validation**: validate every external input (procedure inputs,
+  form fields, env vars, CSV/JSON import text, AI output) with Zod via
+  `.input()` on the procedure (oRPC rejects on failure automatically), and
+  reject rather than coerce on failure. The RPC route
+  (`src/app/rpc/[[...rest]]/route.ts`) also checks `Content-Length` up front
+  as a soft global body-size cap; per-field Zod `.max()` limits remain the
+  hard limit either way. Import is capped (rows and payload size); the AI
+  endpoint is admin-only, rate-limited, and disabled when `ANTHROPIC_API_KEY`
+  is unset.
 - **Output handling**: rely on React's default escaping — never
   `dangerouslySetInnerHTML` or string-built HTML from user/AI input.
 - **Data access**: Drizzle query builder / parameterized queries only — never
@@ -79,7 +124,8 @@ external input, or the AI/import paths must meet these before it's done:
   or error messages.
 - **Rate limiting**: public puzzle generation and the AI endpoint are rate
   limited (`src/lib/rate-limit.ts`, in-memory — move to a shared store if
-  running multiple instances).
+  running multiple instances); sign-up/sign-in are rate limited separately via
+  better-auth's own `rateLimit` config in `src/lib/auth.ts`.
 - **Dependencies**: don't add a package that duplicates a capability already
   covered by better-auth / Drizzle / Zod; check for known-vulnerable versions.
 - **Transport & headers**: HTTPS-only in production; never disable TLS
