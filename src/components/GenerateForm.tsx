@@ -124,7 +124,7 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   }
 
   return (
-    <Card className="max-w-2xl">
+    <Card>
       <CardHeader>
         <CardTitle>{t.formTitle}</CardTitle>
         <CardDescription>{t.formDescription}</CardDescription>

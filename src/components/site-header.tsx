@@ -16,8 +16,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { useSession } from "@/lib/auth-client";
-import type { Messages } from "@/lib/i18n";
+import type { Locale, Messages } from "@/lib/i18n";
 
 function isActive(pathname: string, href: string) {
   return pathname.startsWith(href);
@@ -31,7 +32,13 @@ function GithubIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-export function SiteHeader({ messages }: { messages: Messages["header"] }) {
+export function SiteHeader({
+  messages,
+  locale,
+}: {
+  messages: Messages["header"];
+  locale: Locale;
+}) {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
@@ -81,6 +88,7 @@ export function SiteHeader({ messages }: { messages: Messages["header"] }) {
               <GithubIcon />
             </a>
           </Button>
+          <LanguageSwitcher currentLocale={locale} ariaLabel={messages.language} />
           <ThemeToggle />
 
           <Sheet open={open} onOpenChange={setOpen}>

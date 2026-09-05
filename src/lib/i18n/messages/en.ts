@@ -4,6 +4,7 @@ export const en = {
     menu: "Menu",
     source: "Source",
     sourceAria: "Source on GitHub",
+    language: "Language",
   },
   footer: {
     tagline: "Open Crosswords — open-source multilingual crossword builder.",

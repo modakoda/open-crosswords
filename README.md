@@ -17,8 +17,9 @@ app, easy to self-host.
   the library with the admin UI, CSV/JSON import, or optional AI drafting; an
   English starter set is bundled to import if you want a running start. The
   visitor-facing UI itself (generate, solve, print) is translated into English
-  and Lithuanian (`src/lib/i18n/`), matching the puzzle's language or the
-  visitor's browser.
+  and Lithuanian (`src/lib/i18n/`), matching the puzzle's language; site-wide
+  chrome defaults to the visitor's browser language and can be switched from
+  the header (persisted in a cookie).
 
 ## Try it out (Docker, no build)
 
@@ -155,6 +156,8 @@ any Node host; `docker compose` covers local dependencies.
 ```bash
 npm test           # unit + integration
 npm run typecheck
+npm run lint
+npm run knip        # unused files/deps/exports
 npm run build
 npm run test:e2e    # end-to-end (needs a real Postgres — see compose.yaml)
 ```

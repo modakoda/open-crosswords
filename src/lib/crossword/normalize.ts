@@ -11,8 +11,8 @@ export function normalizeAnswer(raw: string): string {
     .toUpperCase();
 }
 
-export const MIN_ANSWER_LENGTH = 2;
-export const MAX_ANSWER_LENGTH = 21;
+const MIN_ANSWER_LENGTH = 2;
+const MAX_ANSWER_LENGTH = 21;
 
 export function isPlaceableAnswer(normalized: string): boolean {
   return (

@@ -19,4 +19,3 @@ const client =
 if (env.NODE_ENV !== "production") globalForDb.__sql = client;
 
 export const db = drizzle(client, { schema, casing: "snake_case" });
-export { schema };

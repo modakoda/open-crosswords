@@ -161,6 +161,20 @@ export function generateCrossword(
           const dir: Direction = p.direction === "across" ? "down" : "across";
           const row = dir === "down" ? anchorR - li : anchorR;
           const col = dir === "across" ? anchorC - li : anchorC;
+          // A different candidate that fully overlaps an already-placed word
+          // (e.g. a duplicate answer in the library) would otherwise "fit"
+          // via matching crossings; reject it so two placements never share
+          // a start cell and direction, which would collide in numbering.
+          if (
+            placements.some(
+              (existing) =>
+                existing.row === row &&
+                existing.col === col &&
+                existing.direction === dir,
+            )
+          ) {
+            continue;
+          }
           const crossings = fits(w, word, row, col, dir, maxSize);
           if (crossings === null) continue;
           const growth =

@@ -42,12 +42,14 @@ or solve them online via a shareable link. Open source, single Next.js app.
 - **UI translation** in `src/lib/i18n/`: static `en`/`lt` dictionaries
   (`getMessages`), keyed to the app chrome, not the (separately language-scoped)
   clue/answer library. Site-wide chrome (`layout.tsx`, the public pages, the
-  client sign-up/login/dashboard pages) picks its locale from the visitor's
-  `Accept-Language` header (`getRequestLocale`, server-only); the generate
-  form matches whichever content language is selected; the solve/print pages
-  match the puzzle's own `languageCode` (`resolveLocale`). Admin UI is not
-  translated. Add a language by adding its code to `locales` and a dictionary
-  satisfying `typeof en`.
+  client sign-up/login/dashboard pages) resolves its locale via
+  `getRequestLocale` (server-only): the visitor's explicit choice from the
+  `locale` cookie if set (`LanguageSwitcher` in the header, persisted by the
+  `setLocale` server action in `src/lib/i18n/actions.ts`), otherwise their
+  browser's `Accept-Language` header; the generate form matches whichever
+  content language is selected; the solve/print pages match the puzzle's own
+  `languageCode` (`resolveLocale`). Admin UI is not translated. Add a language
+  by adding its code to `locales` and a dictionary satisfying `typeof en`.
 - **Auth** is better-auth (`src/lib/auth.ts`, catch-all route
   `src/app/api/auth/[...all]/route.ts`, React client `src/lib/auth-client.ts`).
   Email+password only. Public self-serve sign-up is **enabled** (`/public/sign-up`)

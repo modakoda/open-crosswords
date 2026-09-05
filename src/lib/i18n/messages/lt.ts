@@ -11,6 +11,7 @@ export const lt: typeof en = {
     menu: "Meniu",
     source: "Šaltinis",
     sourceAria: "Šaltinis GitHub",
+    language: "Kalba",
   },
   footer: {
     tagline: "Open Crosswords — atviro kodo daugiakalbis kryžiažodžių kūrėjas.",

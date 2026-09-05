@@ -3,7 +3,7 @@ import { lt } from "./messages/lt";
 import type { Locale } from "./locales";
 
 export type { Locale } from "./locales";
-export { locales, defaultLocale, resolveLocale, resolveLocaleFromAcceptLanguage } from "./locales";
+export { resolveLocale, locales, localeNames } from "./locales";
 
 export type Messages = typeof en;
 

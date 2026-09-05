@@ -105,6 +105,23 @@ describe("generateCrossword", () => {
     expect(cw.width).toBe(0);
   });
 
+  it("never places two entries at the same start cell and direction", () => {
+    // Duplicate answers (different clues, same word) are a real case in the
+    // question library and must not produce two placements that collide in
+    // numbering.
+    const dupes = pool();
+    dupes.push({ ...dupes[0], id: "dupe-1", clue: "Another clue for PARIS" });
+    dupes.push({ ...dupes[3], id: "dupe-2", clue: "Another clue for LISBON" });
+
+    const cw = generateCrossword(dupes, { seed: "dupes", targetWords: 20 });
+    const seen = new Set<string>();
+    for (const p of cw.placements) {
+      const key = `${p.row},${p.col},${p.direction}`;
+      expect(seen.has(key)).toBe(false);
+      seen.add(key);
+    }
+  });
+
   it("every crossing cell agrees on its letter", () => {
     const cw = generateCrossword(pool(), { seed: "cross", targetWords: 20 });
     // build letter map from placements; contradictions would throw in assertValid,

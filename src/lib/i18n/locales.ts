@@ -1,8 +1,17 @@
 export const locales = ["en", "lt"] as const;
 export type Locale = (typeof locales)[number];
-export const defaultLocale: Locale = "en";
+const defaultLocale: Locale = "en";
 
-function isLocale(code: unknown): code is Locale {
+/** Native display name for each supported UI locale, shown in the language switcher. */
+export const localeNames: Record<Locale, string> = {
+  en: "English",
+  lt: "Lietuvių",
+};
+
+/** Cookie the visitor's explicit locale choice is persisted under. */
+export const LOCALE_COOKIE = "locale";
+
+export function isLocale(code: unknown): code is Locale {
   return typeof code === "string" && (locales as readonly string[]).includes(code);
 }
 

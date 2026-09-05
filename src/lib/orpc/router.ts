@@ -7,5 +7,3 @@ export const router = {
   admin: adminRouter,
   client: clientRouter,
 };
-
-export type AppRouter = typeof router;

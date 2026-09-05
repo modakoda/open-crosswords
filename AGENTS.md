@@ -25,6 +25,8 @@ A single Next.js App Router app that:
 | `npm test` | Vitest (unit + PGlite-backed integration) |
 | `npm run test:e2e` | Playwright e2e (needs a real Postgres — auto-seeds fixed test accounts) |
 | `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run knip` | Find unused files, dependencies, and exports |
 | `npm run build` | Production build |
 | `npm run db:generate` | Generate SQL migration from `src/db/schema/**` |
 | `npm run db:migrate` | Apply committed migrations in `drizzle/` |

@@ -44,7 +44,7 @@ export default async function RootLayout({
         >
           <TooltipProvider delayDuration={200}>
             <div className="relative flex min-h-dvh flex-col">
-              <SiteHeader messages={messages.header} />
+              <SiteHeader messages={messages.header} locale={locale} />
               <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8 sm:py-10">
                 {children}
               </main>

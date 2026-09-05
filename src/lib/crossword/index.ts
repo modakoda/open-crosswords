@@ -1,9 +1,4 @@
 export * from "./types";
-export { normalizeAnswer, isPlaceableAnswer, MIN_ANSWER_LENGTH, MAX_ANSWER_LENGTH } from "./normalize";
-export { selectCandidates, freshness, type SelectOptions } from "./select";
-export { generateCrossword } from "./generate";
-export { assignNumbers } from "./number";
-export { makeRng, shuffle, randomSeed } from "./rng";
 
 import type { Candidate, Crossword, GenerateOptions } from "./types";
 import { selectCandidates, type SelectOptions } from "./select";
