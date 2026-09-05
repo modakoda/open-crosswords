@@ -19,10 +19,16 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { CategoryPicker } from "@/components/CategoryPicker";
+import { DifficultyField } from "@/components/DifficultyField";
 import { PaperOptionsFields } from "@/components/PaperOptionsFields";
+import { generateErrorMessage } from "@/lib/generate-error";
 import { orpc } from "@/lib/orpc/client";
 import { getMessages, type Locale } from "@/lib/i18n";
-import { ORIENTATIONS, PAPER_SIZES } from "@/lib/validation/schemas";
+import {
+  DIFFICULTY_LEVELS,
+  ORIENTATIONS,
+  PAPER_SIZES,
+} from "@/lib/validation/schemas";
 
 interface Category {
   id: string;
@@ -41,6 +47,8 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   const [paperSize, setPaperSize] = useState<(typeof PAPER_SIZES)[number]>("a4");
   const [orientation, setOrientation] =
     useState<(typeof ORIENTATIONS)[number]>("portrait");
+  const [difficulty, setDifficulty] =
+    useState<(typeof DIFFICULTY_LEVELS)[number]>("any");
   const [title, setTitle] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,12 +95,13 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
         categoryIds: selected.size ? [...selected] : undefined,
         paperSize,
         orientation,
+        difficulty,
         title: title.trim() || undefined,
       });
       toast.success(t.generatedToast);
       router.push(`/public/puzzles/${puzzle.slug}`);
     } catch (e) {
-      const message = e instanceof Error ? e.message : t.genericError;
+      const message = generateErrorMessage(e, t);
       setError(message);
       toast.error(message);
     } finally {
@@ -134,6 +143,12 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
           orientation={orientation}
           onPaperSizeChange={setPaperSize}
           onOrientationChange={setOrientation}
+          t={t}
+        />
+
+        <DifficultyField
+          difficulty={difficulty}
+          onDifficultyChange={setDifficulty}
           t={t}
         />
 

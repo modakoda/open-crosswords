@@ -14,8 +14,8 @@ const base = os.$context<RpcContext>();
 export const publicProcedure = base;
 
 /**
- * Admin-only. Mirrors the old `adminRoute` wrapper in src/lib/api.ts: derives
- * the acting admin from the session/allow-list, never from client input.
+ * Admin-only: derives the acting admin from the session and the
+ * ADMIN_EMAILS allow-list, never from client input.
  */
 export const adminProcedure = base.use(async ({ context, next }) => {
   let admin: AdminUser;

@@ -10,9 +10,9 @@ export const maxDuration = 60; // covers the ai-draft procedure's LLM call
 // ~500KB per its Zod schema) with headroom for the request envelope. This is
 // a soft, defense-in-depth check on `Content-Length` — a chunked request
 // carries none and slips past it, so `importSchema.text`'s own `.max()`
-// remains the hard limit either way (same trade-off the old `readJson`
-// helper documented). Not using oRPC's built-in `BodyLimitPlugin` here: as
-// of @orpc/server 1.15.0 it breaks under Next.js 16's Turbopack production
+// remains the hard limit either way. Not using oRPC's built-in
+// `BodyLimitPlugin` here: as of @orpc/server 1.15.0 it breaks under
+// Next.js 16's Turbopack production
 // build with "Cannot read private member #state from an object whose class
 // did not declare it" — a bundler/library incompatibility, not a config
 // mistake; revisit switching back once that's fixed upstream.

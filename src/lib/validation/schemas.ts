@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const PAPER_SIZES = ["a4", "a5", "letter", "legal"] as const;
 export const ORIENTATIONS = ["portrait", "landscape"] as const;
+export const DIFFICULTY_LEVELS = ["any", "easy", "medium", "hard"] as const;
 export const LANGUAGE_CODE = z
   .string()
   .trim()
@@ -17,6 +18,7 @@ export const generatePuzzleSchema = z.object({
   categoryIds: z.array(z.uuid()).max(24).optional(),
   paperSize: z.enum(PAPER_SIZES),
   orientation: z.enum(ORIENTATIONS).default("portrait"),
+  difficulty: z.enum(DIFFICULTY_LEVELS).optional(),
   title: z.string().trim().min(1).max(120).optional(),
   seed: z.string().trim().min(1).max(64).optional(),
 });

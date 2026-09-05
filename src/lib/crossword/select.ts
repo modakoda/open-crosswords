@@ -9,6 +9,9 @@ export interface SelectOptions {
   /** Minimum normalized answer length worth putting in a grid. Default 3. */
   minLength?: number;
   maxLength?: number;
+  /** Inclusive entry-difficulty bounds (1..5). Default: the whole scale. */
+  minDifficulty?: number;
+  maxDifficulty?: number;
   /** How many candidates to hand the placement engine. Default max(40, target*4). */
   poolSize?: number;
   targetWords?: number;
@@ -38,6 +41,8 @@ export function selectCandidates(
   const now = opts.now ?? new Date();
   const minLength = opts.minLength ?? 3;
   const maxLength = opts.maxLength ?? 21;
+  const minDifficulty = opts.minDifficulty ?? 1;
+  const maxDifficulty = opts.maxDifficulty ?? 5;
   const target = opts.targetWords ?? 18;
   const poolSize = opts.poolSize ?? Math.max(40, target * 4);
 
@@ -48,6 +53,7 @@ export function selectCandidates(
   const eligible = candidates.filter((c) => {
     const len = c.answerNormalized.length;
     if (len < minLength || len > maxLength) return false;
+    if (c.difficulty < minDifficulty || c.difficulty > maxDifficulty) return false;
     if (allowed) return allowed.has(c.categoryId ?? "null");
     return true;
   });

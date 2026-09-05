@@ -40,7 +40,12 @@ const puzzlesGenerate = publicProcedure
       return { puzzle };
     } catch (err) {
       if (err instanceof NotEnoughEntriesError) {
-        throw new ORPCError("UNPROCESSABLE_CONTENT", { message: err.message });
+        // `reason` is the machine-readable half — the client translates it,
+        // since `message` is English for logs and direct API callers.
+        throw new ORPCError("UNPROCESSABLE_CONTENT", {
+          message: err.message,
+          data: { reason: err.reason },
+        });
       }
       console.error("generate puzzle error:", err);
       throw new ORPCError("INTERNAL_SERVER_ERROR", { message: "Could not generate puzzle" });

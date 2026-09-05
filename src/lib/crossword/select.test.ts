@@ -50,6 +50,30 @@ describe("selectCandidates", () => {
     expect(new Set(cats).size).toBe(3);
   });
 
+  it("drops candidates outside the requested difficulty band", () => {
+    const mixed = [
+      cand({ id: "e1", difficulty: 1 }),
+      cand({ id: "e2", difficulty: 2 }),
+      cand({ id: "m1", difficulty: 3 }),
+      cand({ id: "h1", difficulty: 5 }),
+    ];
+    const easy = selectCandidates(mixed, {
+      seed: "s1",
+      now: NOW,
+      minDifficulty: 1,
+      maxDifficulty: 2,
+    });
+    expect(easy.map((c) => c.id).sort()).toEqual(["e1", "e2"]);
+  });
+
+  it("keeps every difficulty when no band is given", () => {
+    const mixed = [
+      cand({ id: "e1", difficulty: 1 }),
+      cand({ id: "h1", difficulty: 5 }),
+    ];
+    expect(selectCandidates(mixed, { seed: "s1", now: NOW })).toHaveLength(2);
+  });
+
   it("is deterministic for a seed and varies across seeds", () => {
     const a = selectCandidates(pool, { seed: "s1", now: NOW }).map((c) => c.id);
     const b = selectCandidates(pool, { seed: "s1", now: NOW }).map((c) => c.id);

@@ -42,6 +42,14 @@ export const lt: typeof en = {
     orientation: "Orientacija",
     portrait: "Stačias",
     landscape: "Gulsčias",
+    difficulty: "Sudėtingumas",
+    difficultyHint: "Filtruoja tik parenkamas užuominas, o ne tinklelio formą.",
+    difficulties: {
+      any: "Bet koks",
+      easy: "Lengvas",
+      medium: "Vidutinis",
+      hard: "Sunkus",
+    },
     title: "Pavadinimas (nebūtina)",
     titlePlaceholder: "Penktadienio vakaro kryžiažodis",
     generate: "Generuoti kryžiažodį",
@@ -52,6 +60,15 @@ export const lt: typeof en = {
       "arba pridėkite įrašų Administravimo skydelyje.",
     loadError: "Nepavyko įkelti užuominų bazės",
     genericError: "Generavimas nepavyko",
+    errorNoEntries:
+      "Šiam pasirinkimui tinkamų užuominų per mažai. Pasirinkite daugiau temų " +
+      "arba platesnį sudėtingumą.",
+    errorNoInterlock:
+      "Šių užuominų nepavyko sujungti į tinklelį. Pasirinkite daugiau temų " +
+      "arba platesnį sudėtingumą.",
+    errorRateLimited:
+      "Per daug dėlionių per trumpą laiką. Truputį palaukite ir bandykite vėl.",
+    errorUnknown: "Kažkas nepavyko. Bandykite dar kartą.",
     paper: { a4: "A4", letter: "JAV Letter", a5: "A5", legal: "JAV Legal" },
   },
   clues: {

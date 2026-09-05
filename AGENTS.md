@@ -23,6 +23,8 @@ A single Next.js App Router app that:
 | --- | --- |
 | `npm run dev` | Dev server (needs `DATABASE_URL`) |
 | `npm test` | Vitest (unit + PGlite-backed integration) |
+| `npm run test:watch` | Vitest in watch mode |
+| `npm run test:coverage` | Vitest with v8 coverage |
 | `npm run test:e2e` | Playwright e2e (needs a real Postgres — auto-seeds fixed test accounts) |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
@@ -30,6 +32,7 @@ A single Next.js App Router app that:
 | `npm run build` | Production build |
 | `npm run db:generate` | Generate SQL migration from `src/db/schema/**` |
 | `npm run db:migrate` | Apply committed migrations in `drizzle/` |
+| `npm run db:studio` | Drizzle Studio against `DATABASE_URL` |
 | `npm run seed -- [file]` | Load a data file (default `data/seed-en.json`) |
 | `npm run import -- <lang> <file.csv\|json>` | Bulk import into one language |
 | `npm run create-admin -- <email> <name> <password>` | Provision an admin login |
@@ -38,6 +41,8 @@ A single Next.js App Router app that:
 
 ```
 src/app/                  routes + pages (App Router)
+  page.tsx                redirects / → /public (admin/ and client/ index
+                          pages likewise redirect to their dashboards)
   icon.svg, apple-icon.tsx  file-based favicon metadata (Next auto-links both)
   rpc/[[...rest]]/        oRPC catch-all — the entire typed API surface
   api/auth/[...all]/      better-auth handler (the one non-oRPC API route)
@@ -45,14 +50,20 @@ src/app/                  routes + pages (App Router)
   admin/                  login + dashboard (admin-gated)
   client/                 login + dashboard (any signed-in user)
 src/lib/orpc/             router.ts + middleware.ts (adminProcedure/userProcedure) +
-                          routers/{public,admin,client}.ts
+                          context.ts + client.ts + routers/{public,admin,client}.ts
+src/lib/validation/       schemas.ts — every Zod input schema, in one place
 src/db/schema/            Drizzle schema: auth.ts, content.ts, solve-state.ts
 src/lib/crossword/        engine: normalize, select, generate, number, rng,
                           word (solve-UI word/cursor geometry)
 src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
-                          rate-limit, solve-state, ai/
+                          rate-limit, solve-state, slug, ai/
+src/lib/env.ts            Zod-validated server env (throws on bad config)
+src/lib/auth.ts           better-auth instance; auth-guard.ts holds the
+                          requireAdmin / requireUser gates
 src/lib/i18n/             en/lt UI dictionaries for the visitor- and client-facing pages
-src/components/           UI (PascalCase); admin/ and client/ subfolders
+src/components/           feature components PascalCase (CrosswordGrid.tsx),
+                          admin/ and client/ subfolders; shadcn primitives in
+                          ui/ and site chrome (site-header.tsx, …) kebab-case
 src/test/db.ts            PGlite test database helper (Vitest)
 e2e/                      Playwright specs + seed.ts (fixed e2e-*@example.com accounts)
 data/seed-en.json         starter English question set
@@ -66,7 +77,9 @@ drizzle/                  committed migration SQL
 ## Non-negotiables
 
 - Validate every external input with Zod via `.input()` on the oRPC
-  procedure — never a bare, unvalidated request body.
+  procedure — never a bare, unvalidated request body. Schemas live in
+  `src/lib/validation/schemas.ts`; add to that module rather than inlining a
+  one-off schema in a router.
 - Every `admin.*` procedure goes through `adminProcedure`
   (`src/lib/orpc/middleware.ts`) → `requireAdmin` (valid session + verified
   email in `ADMIN_EMAILS`, fail closed). Every per-user procedure
@@ -93,4 +106,11 @@ drizzle/                  committed migration SQL
 3. `assignNumbers` — standard row-major crossword numbering.
 
 Grid `maxSize` / `targetWords` come from `paperToGrid(paperSize, orientation)`
-in `src/lib/paper.ts`. A `seed` makes the whole thing reproducible.
+in `src/lib/paper.ts`, which reads the printable box from
+`src/lib/print-layout.ts` so the generator and the print sheet agree on the
+paper. `sheetLayout` there then fits one rendered sheet to one page: it shrinks
+the cell size until the grid fits its share of the height, then picks the clue
+font and column count that fit the space left over. The generate form's difficulty level (`any` / `easy` /
+`medium` / `hard`) maps to inclusive `entries.difficulty` bounds via
+`difficultyRange` in `src/lib/difficulty.ts`, applied both in the candidate
+query and in `selectCandidates`. A `seed` makes the whole thing reproducible.

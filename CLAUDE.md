@@ -9,7 +9,8 @@ or solve them online via a shareable link. Open source, single Next.js app.
   Routes are grouped by audience: `src/app/public/**` (generate form, solve,
   print, sign-up — all public), `src/app/admin/**` (`/admin/login`,
   `/admin/dashboard`), `src/app/client/**` (`/client/login`,
-  `/client/dashboard`). `/` just redirects to `/public`.
+  `/client/dashboard`). `/` just redirects to `/public`, and the bare
+  `/admin` and `/client` index pages redirect to their own dashboards.
 - **UI primitives** in `src/components/ui/` are shadcn/ui components (config in
   `components.json`) — build forms and controls from these (`Button`, `Input`,
   `Select`, `Table`, `Tabs`, etc.) rather than raw `<button>`/`<input>` with
@@ -40,7 +41,17 @@ or solve them online via a shareable link. Open source, single Next.js app.
   `puzzles/` (generate + persist + fetch + per-user listing, split into
   `types.ts`/`queries.ts`), `entries.ts` / `import.ts` (question-library CRUD
   and bulk import), `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
-  (per-user solve progress, read/write always scoped to the caller's own id).
+  (per-user solve progress, read/write always scoped to the caller's own id),
+  `print-layout.ts` (paper geometry: it sizes each print sheet's cells, clue
+  font and clue columns so the puzzle occupies exactly one page and the answer
+  key exactly one more — `paper.ts` sizes generated grids from the same box).
+- **Input schemas and env** each live in one module. Every Zod schema for an
+  external input is in `src/lib/validation/schemas.ts` — procedures import
+  from it rather than declaring schemas inline, so each field's limits have a
+  single definition. Server environment variables are parsed and validated
+  once by `src/lib/env.ts` (also Zod) and read through its exported `env`
+  object; it throws on invalid config, so import it from server code only,
+  never a client component.
 - **UI translation** in `src/lib/i18n/`: static `en`/`lt` dictionaries
   (`getMessages`), keyed to the app chrome, not the (separately language-scoped)
   clue/answer library. Site-wide chrome (`layout.tsx`, the public pages, the
@@ -165,8 +176,13 @@ or fix isn't done until its tests exist and pass (`npm test`).
 
 Keep source files under ~200 lines; split by responsibility when one grows past
 that. Follow existing conventions for the file's location and type: `route.ts`
-for App Router handlers, PascalCase for React component files, kebab-case for
-other modules, `*.test.ts(x)` colocated with the file under test.
+for App Router handlers, kebab-case for non-component modules, and
+`*.test.ts(x)` colocated with the file under test. Components are mixed by
+origin, and a new file should match its neighbours: feature components are
+PascalCase (`CrosswordGrid.tsx`, `admin/EntryTable.tsx`), while the shadcn/ui
+primitives in `src/components/ui/` and the site chrome around them
+(`site-header.tsx`, `language-switcher.tsx`, `theme-toggle.tsx`) stay
+kebab-case.
 
 ## Keeping docs and agent config in sync
 

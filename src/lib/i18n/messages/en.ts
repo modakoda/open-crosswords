@@ -34,6 +34,9 @@ export const en = {
     orientation: "Orientation",
     portrait: "Portrait",
     landscape: "Landscape",
+    difficulty: "Difficulty",
+    difficultyHint: "Filters which clues are drawn, not the grid shape.",
+    difficulties: { any: "Any", easy: "Easy", medium: "Medium", hard: "Hard" },
     title: "Title (optional)",
     titlePlaceholder: "Friday night crossword",
     generate: "Generate crossword",
@@ -44,6 +47,14 @@ export const en = {
       "entries in Admin.",
     loadError: "Could not load the clue library",
     genericError: "Generation failed",
+    errorNoEntries:
+      "Not enough clues match this selection. Try more topics, or a wider " +
+      "difficulty.",
+    errorNoInterlock:
+      "These clues would not interlock into a grid. Try more topics, or a " +
+      "wider difficulty.",
+    errorRateLimited: "Too many puzzles just now. Wait a moment and try again.",
+    errorUnknown: "Something went wrong. Please try again.",
     paper: { a4: "A4", letter: "US Letter", a5: "A5", legal: "US Legal" },
   },
   clues: {

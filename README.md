@@ -7,12 +7,12 @@ app, easy to self-host.
 - 🧩 **Smart selection** — each puzzle draws a fresh, topic-spread set of clues
   (favours categories you haven't just used and clues used least/least recently).
 - 🖨️ **Print-ready** — pick A4, A5, US Letter or US Legal, portrait or landscape;
-  the grid is sized to fit, and the print screen lets you include or omit the
-  solved answer key.
-- ⌨️ **Solve online** — type into the grid, arrow/Tab navigation, check & reveal,
-  progress saved in your browser; every generated puzzle has a shareable URL.
-  Sign up (`/public/sign-up`) to also save puzzles to your account and sync
-  solve progress across devices.
+  the puzzle and its clues always land on a single page, with the answer key on
+  a page of its own, and the print screen lets you include or omit that key.
+- ⌨️ **Solve online** — type into the grid, arrow/Tab navigation, check your
+  answers or reveal a word, progress saved in your browser; every generated
+  puzzle has a shareable URL. Sign up (`/public/sign-up`) to also save puzzles
+  to your account and sync solve progress across devices.
 - 🌍 **Any language** — the schema is language-scoped and starts empty. Grow
   the library with the admin UI, CSV/JSON import, or optional AI drafting; an
   English starter set is bundled to import if you want a running start. The
@@ -49,9 +49,9 @@ localhost). For actual development, use the setup below instead.
 
 ## Quick start
 
-Requires Node.js 20+ and a Postgres database (local Docker or
-[Neon](https://neon.tech)). A [`.mise.toml`](./.mise.toml) pins the Node
-version — run `mise install` (or `mise trust` on first use) if you have
+Requires Node.js 20.9+ (what Next.js 16 needs) and a Postgres database (local
+Docker or [Neon](https://neon.tech)). CI and [`.mise.toml`](./.mise.toml) both
+use Node 24 — run `mise install` (or `mise trust` on first use) if you have
 [mise](https://mise.jdx.dev) installed.
 
 ```bash
@@ -113,6 +113,11 @@ Sign in at `/admin/login`.
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
 | `AI_MODEL` | no | Model id for AI drafting (default `claude-sonnet-5`) |
 
+These are parsed and validated with Zod in [`src/lib/env.ts`](./src/lib/env.ts)
+the first time server code imports them, so a missing or malformed value fails
+the boot (or the build) with a message naming the variable rather than surfacing
+later as a runtime error.
+
 ## Adding questions
 
 - **Admin UI** (`/admin/dashboard` → *Entries*) — add one clue/answer at a
@@ -161,6 +166,10 @@ npm run knip        # unused files/deps/exports
 npm run build
 npm run test:e2e    # end-to-end (needs a real Postgres — see compose.yaml)
 ```
+
+GitHub Actions runs typecheck, lint, migrations, the unit suite and the
+Playwright suite against a Postgres service container on every push to `main`
+and every pull request ([`.github/workflows/test.yml`](./.github/workflows/test.yml)).
 
 See [CLAUDE.md](./CLAUDE.md) for architecture and the security requirements that
 gate changes to auth, authorization, SQL, and the import/AI paths.

@@ -32,7 +32,7 @@ const WORDS = [
   ["Nocturnal hooting bird", "Owl"],
 ];
 
-async function seedEntries() {
+async function seedEntries(difficulty = 3) {
   await db.insert(languages).values({ code: "en", name: "English" });
   await db.insert(entries).values(
     WORDS.map(([clue, answer]) => ({
@@ -41,7 +41,27 @@ async function seedEntries() {
       answer,
       answerNormalized: answer.toUpperCase(),
       length: answer.length,
-      difficulty: 3,
+      difficulty,
+      source: "seed",
+    })),
+  );
+}
+
+/** Adds a handful of hard-only answers on top of an existing seed. */
+async function seedHardEntries() {
+  await db.insert(entries).values(
+    [
+      ["Obscure Welsh valley", "Cwmtwrch"],
+      ["Rare earth metal", "Ytterbium"],
+      ["Old-fashioned quill holder", "Escritoire"],
+      ["Nine-sided figure", "Nonagon"],
+    ].map(([clue, answer]) => ({
+      languageCode: "en",
+      clue,
+      answer,
+      answerNormalized: answer.toUpperCase(),
+      length: answer.length,
+      difficulty: 5,
       source: "seed",
     })),
   );
@@ -121,6 +141,36 @@ describe("generatePuzzle", () => {
     expect(row.userId).toBeNull();
   });
 
+  it("only draws clues inside the requested difficulty band", async () => {
+    await seedEntries(1);
+    await seedHardEntries();
+
+    const dto = await generatePuzzle({
+      languageCode: "en",
+      paperSize: "a4",
+      orientation: "portrait",
+      difficulty: "easy",
+      seed: "diff-easy",
+    });
+
+    const easyAnswers = new Set(WORDS.map(([, a]) => a.toUpperCase()));
+    for (const c of [...dto.clues.across, ...dto.clues.down]) {
+      expect(easyAnswers.has(c.answer)).toBe(true);
+    }
+  });
+
+  it("rejects when no entry matches the requested difficulty", async () => {
+    await seedEntries(1);
+    await expect(
+      generatePuzzle({
+        languageCode: "en",
+        paperSize: "a4",
+        orientation: "portrait",
+        difficulty: "hard",
+      }),
+    ).rejects.toBeInstanceOf(NotEnoughEntriesError);
+  });
+
   it("rejects when there are too few entries", async () => {
     await db.insert(languages).values({ code: "en", name: "English" });
     await db.insert(entries).values({
@@ -155,12 +205,30 @@ describe("fetchCandidatePool", () => {
 
     const seen = new Set<string>();
     for (let i = 0; i < 8; i++) {
-      const rows = await fetchCandidatePool("en", undefined, 10);
+      const rows = await fetchCandidatePool("en", undefined, undefined, 10);
       expect(rows.length).toBe(10);
       for (const r of rows) seen.add(r.id);
     }
     // A stable (non-random) order would return the same 10 rows every time.
     expect(seen.size).toBeGreaterThan(10);
+  });
+});
+
+describe("fetchCandidatePool difficulty filter", () => {
+  it("returns only entries inside the band, and everything for \"any\"", async () => {
+    await seedEntries(1);
+    await seedHardEntries();
+
+    const easy = await fetchCandidatePool("en", undefined, "easy");
+    expect(easy.length).toBe(WORDS.length);
+    expect(easy.every((c) => c.difficulty <= 2)).toBe(true);
+
+    const hard = await fetchCandidatePool("en", undefined, "hard");
+    expect(hard.every((c) => c.difficulty >= 4)).toBe(true);
+    expect(hard.length).toBe(4);
+
+    const any = await fetchCandidatePool("en", undefined, "any");
+    expect(any.length).toBe(WORDS.length + 4);
   });
 });
 

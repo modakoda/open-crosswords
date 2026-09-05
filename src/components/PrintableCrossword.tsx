@@ -1,15 +1,13 @@
 import type { CSSProperties } from "react";
-import type { PuzzleDTO } from "@/lib/puzzles";
+import type { PuzzleDTO, PuzzleClue } from "@/lib/puzzles";
 import type { Cell } from "@/lib/crossword/types";
 import type { Messages } from "@/lib/i18n";
-import { ClueList } from "./ClueList";
+import { CLUE_GUTTER_MM, sheetLayout, type SheetLayout } from "@/lib/print-layout";
 
-const PAGE_CSS: Record<string, string> = {
-  a4: "210mm 297mm",
-  a5: "148mm 210mm",
-  letter: "8.5in 11in",
-  legal: "8.5in 14in",
-};
+/** Text a clue occupies on the sheet, used both to measure and to render. */
+function clueLine(c: PuzzleClue, withAnswer: boolean) {
+  return `${c.number}. ${c.clue} (${c.length})${withAnswer ? ` — ${c.answer}` : ""}`;
+}
 
 function StaticGrid({
   grid,
@@ -42,9 +40,81 @@ function StaticGrid({
   );
 }
 
+function ClueColumns({
+  puzzle,
+  messages,
+  withAnswers,
+}: {
+  puzzle: PuzzleDTO;
+  messages: Messages;
+  withAnswers: boolean;
+}) {
+  const section = (title: string, clues: PuzzleClue[]) => (
+    <>
+      <h3 className="print-clue-heading">{title}</h3>
+      <ol>
+        {clues.map((c) => (
+          <li key={`${c.number}-${c.row}-${c.col}`}>
+            {clueLine(c, withAnswers)}
+          </li>
+        ))}
+      </ol>
+    </>
+  );
+  return (
+    <div className="print-clues">
+      {section(messages.clues.across, puzzle.clues.across)}
+      {section(messages.clues.down, puzzle.clues.down)}
+    </div>
+  );
+}
+
+/** One physical sheet: heading, grid, then the clue text filling what's left. */
+function Sheet({
+  layout,
+  heading,
+  puzzle,
+  messages,
+  withAnswers,
+  breakAfter,
+}: {
+  layout: SheetLayout;
+  heading: string;
+  puzzle: PuzzleDTO;
+  messages: Messages;
+  withAnswers: boolean;
+  breakAfter: boolean;
+}) {
+  return (
+    <section
+      className={`print-sheet${breakAfter ? " print-page" : ""}`}
+      style={
+        {
+          "--xw-cell-size": `${layout.cellMm}mm`,
+          "--print-sheet-w": `${layout.contentWidthMm}mm`,
+          "--print-sheet-h": `${layout.contentHeightMm}mm`,
+          "--print-clue-font": `${layout.clueFontPt}pt`,
+          "--print-clue-cols": layout.clueColumns,
+          "--print-clue-gutter": `${CLUE_GUTTER_MM}mm`,
+          fontSize: `${layout.cellMm * 2.1}pt`,
+        } as CSSProperties
+      }
+    >
+      <h2 className="print-title">{heading}</h2>
+      <StaticGrid grid={puzzle.grid} withAnswers={withAnswers} />
+      <ClueColumns
+        puzzle={puzzle}
+        messages={messages}
+        withAnswers={withAnswers}
+      />
+    </section>
+  );
+}
+
 /**
- * Print-oriented view: a blank puzzle sheet, optionally followed by a filled-in
- * answer key. Pass `includeAnswers={false}` to print the puzzle only.
+ * Print-oriented view: a blank puzzle sheet on one page, optionally followed by
+ * a filled-in answer key on a second. Each sheet is sized to the paper so its
+ * grid and clues never spill onto an extra page.
  */
 export function PrintableCrossword({
   puzzle,
@@ -55,42 +125,44 @@ export function PrintableCrossword({
   includeAnswers?: boolean;
   messages: Messages;
 }) {
-  const size = PAGE_CSS[puzzle.paperSize] ?? PAGE_CSS.a4;
-  return (
-    <div
-      className="printable"
-      style={{ "--xw-cell-size": "7mm" } as CSSProperties}
-    >
-      <style>{`@page { size: ${size} ${puzzle.orientation}; margin: 14mm; }`}</style>
+  const allClues = [...puzzle.clues.across, ...puzzle.clues.down];
+  const geometry = {
+    paperSize: puzzle.paperSize,
+    orientation: puzzle.orientation,
+    cols: puzzle.grid[0]?.length ?? 0,
+    rows: puzzle.grid.length,
+  };
+  const puzzleLayout = sheetLayout({
+    ...geometry,
+    clues: allClues.map((c) => ({ length: clueLine(c, false).length })),
+  });
+  const answerLayout = sheetLayout({
+    ...geometry,
+    clues: allClues.map((c) => ({ length: clueLine(c, true).length })),
+  });
 
-      <section className={includeAnswers ? "print-page" : undefined}>
-        <h1 className="mb-3 text-xl font-bold">{puzzle.title}</h1>
-        <StaticGrid grid={puzzle.grid} withAnswers={false} />
-        <div className="mt-4 grid grid-cols-2 gap-6">
-          <ClueList title={messages.clues.across} clues={puzzle.clues.across} />
-          <ClueList title={messages.clues.down} clues={puzzle.clues.down} />
-        </div>
-      </section>
+  return (
+    <div className="printable">
+      <style>{`@page { size: ${puzzleLayout.pageCss}; margin: 12mm; }`}</style>
+
+      <Sheet
+        layout={puzzleLayout}
+        heading={puzzle.title}
+        puzzle={puzzle}
+        messages={messages}
+        withAnswers={false}
+        breakAfter={includeAnswers}
+      />
 
       {includeAnswers && (
-        <section>
-          <h2 className="mb-3 text-lg font-bold">
-            {puzzle.title} — {messages.print.answerKeySuffix}
-          </h2>
-          <StaticGrid grid={puzzle.grid} withAnswers />
-          <div className="mt-4 grid grid-cols-2 gap-6">
-            <ClueList
-              title={messages.clues.across}
-              clues={puzzle.clues.across}
-              showAnswers
-            />
-            <ClueList
-              title={messages.clues.down}
-              clues={puzzle.clues.down}
-              showAnswers
-            />
-          </div>
-        </section>
+        <Sheet
+          layout={answerLayout}
+          heading={`${puzzle.title} — ${messages.print.answerKeySuffix}`}
+          puzzle={puzzle}
+          messages={messages}
+          withAnswers
+          breakAfter={false}
+        />
       )}
     </div>
   );

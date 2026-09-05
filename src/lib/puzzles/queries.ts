@@ -1,15 +1,26 @@
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, between, desc, eq, inArray, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { db } from "@/db";
 import { entries, puzzles } from "@/db/schema";
 import { buildCrossword } from "@/lib/crossword";
 import type { Candidate, Placement } from "@/lib/crossword/types";
 import { randomSeed } from "@/lib/crossword/rng";
+import { difficultyRange, type DifficultyLevel } from "@/lib/difficulty";
 import { paperToGrid } from "@/lib/paper";
 import type { GeneratePuzzleInput } from "@/lib/validation/schemas";
 import { toClues, type PuzzleDTO, type PuzzleSummary } from "./types";
 
-export class NotEnoughEntriesError extends Error {}
+/** Why generation could not produce a puzzle, for the UI to translate. */
+export type NotEnoughEntriesReason = "no-entries" | "no-interlock";
+
+export class NotEnoughEntriesError extends Error {
+  constructor(
+    readonly reason: NotEnoughEntriesReason,
+    message: string,
+  ) {
+    super(message);
+  }
+}
 
 /**
  * Fetch a random sample of enabled entries to hand to the placement engine.
@@ -20,11 +31,14 @@ export class NotEnoughEntriesError extends Error {}
 export async function fetchCandidatePool(
   languageCode: string,
   categoryIds: string[] | undefined,
+  difficulty?: DifficultyLevel,
   limit = 2000,
 ): Promise<Candidate[]> {
+  const { min, max } = difficultyRange(difficulty);
   const filters = [
     eq(entries.languageCode, languageCode),
     eq(entries.enabled, 1),
+    between(entries.difficulty, min, max),
   ];
   if (categoryIds?.length) {
     filters.push(inArray(entries.categoryId, categoryIds));
@@ -53,10 +67,15 @@ export async function generatePuzzle(
   input: GeneratePuzzleInput,
   userId: string | null = null,
 ): Promise<PuzzleDTO> {
-  const candidates = await fetchCandidatePool(input.languageCode, input.categoryIds);
+  const candidates = await fetchCandidatePool(
+    input.languageCode,
+    input.categoryIds,
+    input.difficulty,
+  );
   if (candidates.length < 4) {
     throw new NotEnoughEntriesError(
-      "Need at least 4 enabled entries for this language/category selection",
+      "no-entries",
+      "Need at least 4 enabled entries for this language/category/difficulty selection",
     );
   }
 
@@ -65,15 +84,19 @@ export async function generatePuzzle(
     input.orientation as never,
   );
   const seed = input.seed ?? randomSeed();
+  const { min: minDifficulty, max: maxDifficulty } = difficultyRange(input.difficulty);
   const crossword = buildCrossword(candidates, {
     seed,
     maxSize,
     targetWords,
     categoryIds: input.categoryIds,
+    minDifficulty,
+    maxDifficulty,
   });
 
   if (crossword.placements.length < 4) {
     throw new NotEnoughEntriesError(
+      "no-interlock",
       "Could not interlock enough of the selected entries into a grid",
     );
   }

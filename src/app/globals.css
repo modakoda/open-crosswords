@@ -274,6 +274,70 @@
   left: 5%;
 }
 
+/* --- Printable sheet ---------------------------------------------------- */
+/* One `.print-sheet` is exactly one physical page's content box. Its custom
+   properties are computed per puzzle in `src/lib/print-layout.ts` so the grid
+   and clues always fit; nothing here may grow the box. */
+.print-sheet {
+  box-sizing: content-box;
+  width: var(--print-sheet-w);
+  height: var(--print-sheet-h);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.print-sheet .print-title {
+  font-size: 13pt;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 2mm;
+  text-align: center;
+}
+.print-sheet .xw-grid {
+  margin-inline: auto;
+  flex: none;
+}
+.print-sheet .print-clues {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: 4mm;
+  columns: var(--print-clue-cols) auto;
+  column-gap: var(--print-clue-gutter);
+  /* Balance so the two lists share the columns evenly; the sheet layout has
+     already guaranteed the text fits the box. */
+  column-fill: balance;
+  font-size: var(--print-clue-font);
+  line-height: 1.3;
+}
+.print-sheet .print-clue-heading {
+  font-size: var(--print-clue-font);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  break-after: avoid;
+}
+.print-sheet .print-clues ol {
+  margin: 0 0 1.5mm;
+  padding: 0;
+  list-style: none;
+}
+.print-sheet .print-clues li {
+  break-inside: avoid;
+  padding-left: 3mm;
+  text-indent: -3mm;
+}
+/* On screen the same box is previewed as a paper sheet. */
+@media screen {
+  .print-sheet {
+    padding: 12mm;
+    margin-bottom: 6mm;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--card);
+  }
+}
+
 /* --- Print ------------------------------------------------------------- */
 @media print {
   :root {
@@ -289,6 +353,24 @@
   }
   .print-page {
     break-after: page;
+  }
+  /* The @page margin is the paper margin, so the app chrome around a sheet
+     must contribute nothing — any leftover padding would push the last
+     millimetres of a full-height sheet onto an extra page. */
+  body > div,
+  main {
+    display: block !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .printable,
+  .print-sheet {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
   }
   .xw-cell.active,
   .xw-cell.in-word {

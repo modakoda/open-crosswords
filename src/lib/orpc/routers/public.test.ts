@@ -91,6 +91,19 @@ describe("puzzles.generate", () => {
     ).rejects.toThrow();
   });
 
+  it("tags a too-few-entries failure with a machine-readable reason", async () => {
+    await expect(
+      call(
+        publicRouter.puzzles.generate,
+        { languageCode: "en", paperSize: "a4", seed: "fixed-seed" },
+        ctx(),
+      ),
+    ).rejects.toMatchObject({
+      code: "UNPROCESSABLE_CONTENT",
+      data: { reason: "no-entries" },
+    });
+  });
+
   it("rate-limits after 20 requests in the window", async () => {
     await seed();
     let lastError: unknown;
