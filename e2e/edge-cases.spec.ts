@@ -79,6 +79,24 @@ test.describe("a signed-in client is not an admin", () => {
     await page.goto("/admin/dashboard");
     await page.waitForURL("**/admin/login");
   });
+
+  test("the header offers no admin link, and hiding it is not the control", async ({ page }) => {
+    await page.goto("/client/dashboard");
+    await expect(
+      page.getByRole("banner").getByRole("link", { name: "Admin" }),
+    ).toHaveCount(0);
+    // The link is cosmetic: the procedure gate must still reject this client.
+    const res = await page.request.post("/rpc/admin/entries/create", {
+      data: {
+        json: {
+          languageCode: E2E_LANGUAGE_CODE,
+          clue: "should never be created",
+          answer: "NOPE",
+        },
+      },
+    });
+    expect(res.status()).toBe(403);
+  });
 });
 
 test("a client can never read or overwrite another client's solve state (IDOR)", async ({

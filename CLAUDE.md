@@ -45,11 +45,13 @@ or solve them online via a shareable link. Open source, single Next.js app.
   client sign-up/login/dashboard pages) resolves its locale via
   `getRequestLocale` (server-only): the visitor's explicit choice from the
   `locale` cookie if set (`LanguageSwitcher` in the header, persisted by the
-  `setLocale` server action in `src/lib/i18n/actions.ts`), otherwise their
-  browser's `Accept-Language` header; the generate form matches whichever
-  content language is selected; the solve/print pages match the puzzle's own
-  `languageCode` (`resolveLocale`). Admin UI is not translated. Add a language
-  by adding its code to `locales` and a dictionary satisfying `typeof en`.
+  `setLocale` server action in `src/lib/i18n/actions.ts`, which validates the
+  value against `locales` before writing), otherwise the highest-`q` supported
+  language in their browser's `Accept-Language` header; the generate form
+  matches whichever content language is selected; the solve/print pages match
+  the puzzle's own `languageCode` (`resolveLocale`). Admin UI is not
+  translated. Add a language by adding its code to `locales` and a dictionary
+  satisfying `typeof en`.
 - **Auth** is better-auth (`src/lib/auth.ts`, catch-all route
   `src/app/api/auth/[...all]/route.ts`, React client `src/lib/auth-client.ts`).
   Email+password only. Public self-serve sign-up is **enabled** (`/public/sign-up`)
@@ -76,6 +78,10 @@ or solve them online via a shareable link. Open source, single Next.js app.
   signed-in clients; anonymous solving stays `localStorage`-only, unchanged.
   Every per-user read/write derives the acting user from the session
   (`context.user.id` in a `userProcedure`), never from client-supplied input.
+  The header's Admin link is shown only to admins — `layout.tsx` resolves
+  `getAdmin()` server-side and passes `isAdmin` to `SiteHeader`. That is
+  presentation only; the `/admin` pages and `admin.*` procedures still gate
+  themselves, so never treat the hidden link as an access control.
 - **Tests**: Vitest for unit/integration (pure logic has colocated
   `*.test.ts`; DB/procedure integration tests spin up in-process Postgres via
   PGlite (`src/test/db.ts`) and apply the real `drizzle/` migrations — see

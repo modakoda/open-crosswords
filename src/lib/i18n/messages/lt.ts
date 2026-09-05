@@ -16,23 +16,23 @@ export const lt: typeof en = {
   footer: {
     tagline: "Open Crosswords — atviro kodo daugiakalbis kryžiažodžių kūrėjas.",
     shareable: "Dėlionės yra viešos ir jomis galima dalintis nuoroda.",
+    createdBy: "Sukūrė",
   },
   home: {
     eyebrow: "Kryžiažodžių kūrėjas",
     title: "Generuoti kryžiažodį",
     subtitle:
-      "Pasirinkite kalbą ir (nebūtinai) temas. Kiekviena dėlionė sudaroma iš " +
-      "šviežiai parinktų, temomis paskirstytų užuominų, pritaikyta spausdinti " +
-      "ant pasirinkto popieriaus dydžio — arba spręskite internetu ir " +
-      "dalinkitės nuoroda.",
+      "Pasirinkite (nebūtinai) temas. Kiekviena dėlionė sudaroma iš šviežiai " +
+      "parinktų, temomis paskirstytų svetainės kalbos užuominų, pritaikyta " +
+      "spausdinti ant pasirinkto popieriaus dydžio — arba spręskite internetu " +
+      "ir dalinkitės nuoroda.",
     featurePrintable: "Spausdinimui paruošti PDF",
     featureOnline: "Spręskite ir dalinkitės internetu",
     featureMultilingual: "Daugiakalbė užuominų bazė",
   },
   generateForm: {
     formTitle: "Dėlionės nustatymai",
-    formDescription: "Pasirinkite kalbą ir temas, tada generuokite.",
-    language: "Kalba",
+    formDescription: "Pasirinkite temas ir generuokite.",
     categories: "Kategorijos",
     categoriesHint: "Palikite tuščią, kad būtų naudojamos visos temos.",
     clear: "Išvalyti",
@@ -48,8 +48,9 @@ export const lt: typeof en = {
     generating: "Generuojama…",
     generatedToast: "Dėlionė paruošta — atidaroma.",
     noLanguages:
-      "Kalbų dar nėra. Užpildykite duomenų bazę (npm run seed) arba pridėkite įrašų Administravimo skydelyje.",
-    loadError: "Nepavyko įkelti kalbų",
+      "Šia kalba užuominų dar nėra. Užpildykite duomenų bazę (npm run seed) " +
+      "arba pridėkite įrašų Administravimo skydelyje.",
+    loadError: "Nepavyko įkelti užuominų bazės",
     genericError: "Generavimas nepavyko",
     paper: { a4: "A4", letter: "JAV Letter", a5: "A5", legal: "JAV Legal" },
   },

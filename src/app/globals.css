@@ -152,6 +152,43 @@
   }
 }
 
+/* --- App backdrop -------------------------------------------------------
+   Decorative page chrome painted behind every route (see `PageBackdrop`):
+   a dual-tone aurora wash plus a faint crossword lattice that fades out
+   below the fold. Purely cosmetic — the element is aria-hidden and
+   `no-print`, and it never intercepts pointer events. */
+.app-backdrop {
+  background:
+    radial-gradient(
+      60rem 30rem at 12% -8%,
+      color-mix(in oklch, var(--primary) 16%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      52rem 26rem at 88% 4%,
+      color-mix(in oklch, var(--chart-5) 12%, transparent),
+      transparent 70%
+    );
+}
+.app-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in oklch, var(--foreground) 8%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklch, var(--foreground) 8%, transparent) 1px,
+      transparent 1px
+    );
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 110% 70% at 50% -10%, #000 25%, transparent 72%);
+}
+
 /* --- Crossword grid (shared by solve + print) --------------------------- */
 .xw-grid {
   display: grid;
@@ -207,6 +244,34 @@
 }
 .xw-cell.wrong input {
   color: var(--xw-wrong);
+}
+
+/* Fluid variant (solve view): cells shrink to the column they're given so a
+   large puzzle fits without an inner scrollbar, down to a legible floor —
+   below that the card scrolls horizontally instead. `--xw-cols` is set by the
+   component; the print view keeps the fixed mm sizing above. */
+.xw-grid--fluid {
+  --xw-max-cell: 2.25rem;
+  --xw-min-cell: 1.375rem;
+  container-type: inline-size;
+  grid-template-columns: repeat(var(--xw-cols), minmax(0, 1fr));
+  width: clamp(
+    calc(var(--xw-cols) * var(--xw-min-cell)),
+    100%,
+    calc(var(--xw-cols) * var(--xw-max-cell))
+  );
+}
+.xw-grid--fluid .xw-cell {
+  width: auto;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  /* One cell is 100cqw / cols wide; keep glyphs a fixed fraction of that. */
+  font-size: calc(52cqw / var(--xw-cols));
+}
+.xw-grid--fluid .xw-num {
+  font-size: calc(30cqw / var(--xw-cols));
+  top: 2%;
+  left: 5%;
 }
 
 /* --- Print ------------------------------------------------------------- */

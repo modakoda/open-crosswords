@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
@@ -11,8 +12,11 @@ export interface AdminUser {
  * Resolve the current session and confirm the user is an allow-listed admin.
  * Returns null when there is no session or the email is not in ADMIN_EMAILS.
  * Every /admin route and /api/admin handler must gate on this.
+ *
+ * React `cache` de-dupes this per request only (the root layout and the page
+ * both ask) — it never spans requests, so no session state crosses viewers.
  */
-export async function getAdmin(): Promise<AdminUser | null> {
+export const getAdmin = cache(async function getAdmin(): Promise<AdminUser | null> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.email) return null;
   const email = session.user.email.toLowerCase();
@@ -21,7 +25,7 @@ export async function getAdmin(): Promise<AdminUser | null> {
   if (!session.user.emailVerified) return null;
   if (!env.ADMIN_EMAILS.includes(email)) return null;
   return { id: session.user.id, email };
-}
+});
 
 export class ForbiddenError extends Error {}
 
@@ -40,12 +44,13 @@ export interface CurrentUser {
 /**
  * Resolve the current session for any signed-in client (no allow-list, no
  * email-verification requirement — unlike admin). Returns null if signed out.
+ * Per-request memoized like getAdmin; the cache never spans requests.
  */
-export async function getCurrentUser(): Promise<CurrentUser | null> {
+export const getCurrentUser = cache(async function getCurrentUser(): Promise<CurrentUser | null> {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.email) return null;
   return { id: session.user.id, email: session.user.email.toLowerCase() };
-}
+});
 
 /** Throws ForbiddenError if the caller is not signed in. */
 export async function requireUser(): Promise<CurrentUser> {

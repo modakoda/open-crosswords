@@ -1,11 +1,10 @@
 import { test, expect } from "@playwright/test";
-import { selectRadixOption } from "./helpers";
-import { E2E_LANGUAGE_NAME } from "./constants";
 
 test("generates a puzzle from the public form and lands on the solve view", async ({ page }) => {
   await page.goto("/public");
 
-  await selectRadixOption(page, "language", E2E_LANGUAGE_NAME);
+  // No language picker — the form builds from the site locale.
+  await expect(page.locator("#language")).toHaveCount(0);
   await page.locator("#title").fill("E2E Generated Puzzle");
   await page.getByRole("button", { name: /^Generate crossword$/ }).click();
 

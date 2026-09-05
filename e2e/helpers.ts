@@ -6,14 +6,7 @@ import {
   E2E_CLIENT_PASSWORD,
   E2E_CLIENT2_EMAIL,
   E2E_CLIENT2_PASSWORD,
-  E2E_LANGUAGE_NAME,
 } from "./constants";
-
-/** Radix Select is a combobox trigger + a portal-rendered listbox of options. */
-export async function selectRadixOption(page: Page, triggerId: string, optionText: string) {
-  await page.locator(`#${triggerId}`).click();
-  await page.getByRole("option", { name: optionText, exact: true }).click();
-}
 
 export async function loginAsAdmin(page: Page) {
   await page.goto("/admin/login");
@@ -39,10 +32,9 @@ export async function loginAsClient2(page: Page) {
   await page.waitForURL("**/client/dashboard");
 }
 
-/** Fills the generate form for the dedicated e2e content language and submits it. */
+/** Submits the generate form, which builds from the site locale (no picker). */
 export async function generatePuzzleViaUi(page: Page) {
   await page.goto("/public");
-  await selectRadixOption(page, "language", E2E_LANGUAGE_NAME);
   await page.getByRole("button", { name: /^Generate crossword$/ }).click();
   await page.waitForURL(/\/public\/puzzles\/[A-Za-z0-9_-]{10}$/);
 }

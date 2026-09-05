@@ -18,3 +18,10 @@ export const E2E_BASE_URL = `http://localhost:${E2E_PORT}`;
 /** Dedicated content-library language, isolated from any real seeded data. */
 export const E2E_LANGUAGE_CODE = "zz";
 export const E2E_LANGUAGE_NAME = "E2E Test Language";
+
+/**
+ * The public generate form has no language picker — it always builds from the
+ * site locale, which is `en` for the browser locale Playwright runs with. So
+ * the UI-driven specs need clues under `en` as well as the isolated `zz` set.
+ */
+export const E2E_UI_LANGUAGE_CODE = "en";

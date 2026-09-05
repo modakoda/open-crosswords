@@ -38,6 +38,7 @@ A single Next.js App Router app that:
 
 ```
 src/app/                  routes + pages (App Router)
+  icon.svg, apple-icon.tsx  file-based favicon metadata (Next auto-links both)
   rpc/[[...rest]]/        oRPC catch-all — the entire typed API surface
   api/auth/[...all]/      better-auth handler (the one non-oRPC API route)
   public/                 generate form, sign-up, puzzles/[slug] solver + /print

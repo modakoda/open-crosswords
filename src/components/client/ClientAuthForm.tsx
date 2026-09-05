@@ -54,9 +54,9 @@ export function ClientAuthForm({
 
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-4 py-8">
-      <Card>
+      <Card className="border-border/60 bg-card/60 shadow-sm backdrop-blur-sm">
         <CardHeader>
-          <div className="mb-1 grid size-9 place-items-center rounded-lg bg-primary/10 text-primary">
+          <div className="mb-1 grid size-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-chart-5 text-primary-foreground shadow-sm ring-1 ring-primary/25">
             <UserIcon className="size-4" />
           </div>
           <CardTitle>{mode === "login" ? t.loginTitle : t.signupTitle}</CardTitle>
@@ -110,7 +110,12 @@ export function ClientAuthForm({
           </form>
         </CardContent>
         <CardFooter>
-          <Button type="submit" form="client-auth" className="w-full" disabled={busy}>
+          <Button
+            type="submit"
+            form="client-auth"
+            className="w-full bg-gradient-to-r from-primary to-chart-5 text-primary-foreground shadow-md transition-shadow hover:shadow-lg hover:brightness-105"
+            disabled={busy}
+          >
             {busy && <LoaderCircleIcon className="animate-spin" />}
             {busy ? t.submitting : mode === "login" ? t.submitLogin : t.submitSignup}
           </Button>
@@ -119,11 +124,11 @@ export function ClientAuthForm({
       <p className="text-center text-xs text-muted-foreground">
         {mode === "login" ? (
           <>
-            {t.noAccount} <a className="underline" href="/public/sign-up">{t.switchToSignup}</a>
+            {t.noAccount} <a className="font-medium text-foreground underline-offset-4 hover:underline" href="/public/sign-up">{t.switchToSignup}</a>
           </>
         ) : (
           <>
-            {t.haveAccount} <a className="underline" href="/client/login">{t.switchToLogin}</a>
+            {t.haveAccount} <a className="font-medium text-foreground underline-offset-4 hover:underline" href="/client/login">{t.switchToLogin}</a>
           </>
         )}
       </p>

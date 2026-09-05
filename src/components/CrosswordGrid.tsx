@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, type CSSProperties } from "react";
 import type { Cell, Direction } from "@/lib/crossword/types";
 
 const key = (r: number, c: number) => `${r},${c}`;
@@ -91,8 +91,8 @@ export function CrosswordGrid({
 
   return (
     <div
-      className="xw-grid select-none"
-      style={{ gridTemplateColumns: `repeat(${cols}, var(--xw-cell-size, 34px))` }}
+      className="xw-grid xw-grid--fluid select-none"
+      style={{ "--xw-cols": cols } as CSSProperties}
     >
       {grid.flatMap((row, r) =>
         row.map((cell, c) => {

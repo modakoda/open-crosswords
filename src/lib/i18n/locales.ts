@@ -23,11 +23,30 @@ export function resolveLocale(
   return isLocale(code) ? code : fallback;
 }
 
-/** Picks the first UI locale the browser's `Accept-Language` header prefers. */
+/**
+ * Picks the UI locale from the browser's `Accept-Language` header: the
+ * highest-quality supported language it asks for, otherwise the default.
+ * Entries are ranked by their `q` weight (defaulting to 1, per RFC 9110)
+ * rather than trusting the header's own order.
+ */
 export function resolveLocaleFromAcceptLanguage(header: string | null | undefined): Locale {
   if (!header) return defaultLocale;
-  const preferred = header
+  const ranked = header
     .split(",")
-    .map((part) => part.split(";")[0]!.trim().slice(0, 2).toLowerCase());
-  return preferred.find(isLocale) ?? defaultLocale;
+    .map((part, index) => {
+      const [tag, ...params] = part.split(";").map((piece) => piece.trim());
+      const q = params
+        .map((param) => /^q=(.*)$/i.exec(param)?.[1])
+        .find((value) => value !== undefined);
+      const quality = q === undefined ? 1 : Number.parseFloat(q);
+      return {
+        code: tag!.slice(0, 2).toLowerCase(),
+        quality: Number.isNaN(quality) ? 0 : quality,
+        index,
+      };
+    })
+    .filter(({ code, quality }) => isLocale(code) && quality > 0)
+    // Ties keep the header's own order, which is the client's stated preference.
+    .sort((a, b) => b.quality - a.quality || a.index - b.index);
+  return (ranked[0]?.code as Locale | undefined) ?? defaultLocale;
 }

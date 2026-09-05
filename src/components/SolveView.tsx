@@ -10,6 +10,7 @@ import { CrosswordGrid } from "./CrosswordGrid";
 import { SolveToolbar } from "./SolveToolbar";
 import { SolveStatus } from "./SolveStatus";
 import { CluePanels } from "./CluePanels";
+import { ActiveClue } from "./ActiveClue";
 import { Card } from "@/components/ui/card";
 import { orpc } from "@/lib/orpc/client";
 import { useSession } from "@/lib/auth-client";
@@ -162,7 +163,7 @@ export function SolveView({
     }
   }
 
-  const activeNumber = useMemo(() => {
+  const activeClue = useMemo(() => {
     if (!active) return null;
     const [r, c] = active.split(",").map(Number);
     const list = direction === "across" ? puzzle.clues.across : puzzle.clues.down;
@@ -174,7 +175,7 @@ export function SolveView({
       sr -= dr;
       sc -= dc;
     }
-    return list.find((cl) => cl.row === sr && cl.col === sc)?.number ?? null;
+    return list.find((cl) => cl.row === sr && cl.col === sc) ?? null;
   }, [active, direction, puzzle]);
 
   return (
@@ -192,23 +193,35 @@ export function SolveView({
 
       <SolveStatus t={t} pct={pct} filledCells={filledCells} totalCells={totalCells} status={status} />
 
-      <div className="grid gap-6 xl:grid-cols-[auto_minmax(20rem,1fr)] xl:items-start">
-        <Card className="w-fit max-w-full overflow-auto p-3 sm:p-4">
-          <CrosswordGrid
-            grid={puzzle.grid}
-            values={values}
-            wrong={wrong}
-            active={active}
+      <div className="grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-6 xl:grid-cols-[minmax(0,1fr)_24rem]">
+        {/* Pinned beside the clue lists on wide screens: the page scrolls
+            through the clues while the grid stays put. */}
+        <div className="min-w-0 space-y-3 lg:sticky lg:top-[4.5rem]">
+          <ActiveClue
+            clue={activeClue}
             direction={direction}
-            onChange={setLetter}
-            onActivate={activate}
+            messages={messages}
+            className="lg:hidden"
           />
-        </Card>
+          {/* The grid shrinks to this column; it only scrolls when the puzzle
+              can't fit at a legible cell size (narrow phones, big grids). */}
+          <Card className="max-w-full overflow-x-auto border-border/60 bg-card/60 p-2 shadow-sm backdrop-blur-sm sm:p-3">
+            <CrosswordGrid
+              grid={puzzle.grid}
+              values={values}
+              wrong={wrong}
+              active={active}
+              direction={direction}
+              onChange={setLetter}
+              onActivate={activate}
+            />
+          </Card>
+        </div>
         <CluePanels
           puzzle={puzzle}
           messages={messages}
           direction={direction}
-          activeNumber={activeNumber}
+          activeNumber={activeClue?.number ?? null}
           onSelectClue={selectClue}
         />
       </div>

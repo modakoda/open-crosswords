@@ -4,6 +4,13 @@ import { E2E_LANGUAGE_CODE, E2E_LANGUAGE_NAME } from "./constants";
 
 test.use({ storageState: ADMIN_STORAGE_STATE });
 
+test("the header shows the admin link to an admin", async ({ page }) => {
+  await page.goto("/public");
+  await expect(
+    page.getByRole("banner").getByRole("link", { name: "Admin" }).first(),
+  ).toBeVisible();
+});
+
 test.describe("admin dashboard", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/admin/dashboard");

@@ -37,17 +37,17 @@ export default async function PuzzlePage({
   return (
     <div className="space-y-5">
       <header className="space-y-3">
-        <h1 className="text-2xl font-semibold tracking-tight text-balance sm:text-3xl">
+        <h1 className="bg-gradient-to-br from-foreground to-primary bg-clip-text text-2xl font-semibold tracking-tight text-balance text-transparent sm:text-3xl">
           {puzzle.title}
         </h1>
         <div className="flex flex-wrap items-center gap-2 text-sm">
-          <Badge variant="secondary" className="tabular-nums">
+          <Badge variant="secondary" className="rounded-full tabular-nums">
             {puzzle.width}×{puzzle.height}
           </Badge>
-          <Badge variant="outline" className="tabular-nums font-normal">
+          <Badge variant="outline" className="rounded-full bg-background/60 tabular-nums font-normal backdrop-blur">
             {puzzle.clues.across.length} {messages.clues.across}
           </Badge>
-          <Badge variant="outline" className="tabular-nums font-normal">
+          <Badge variant="outline" className="rounded-full bg-background/60 tabular-nums font-normal backdrop-blur">
             {puzzle.clues.down.length} {messages.clues.down}
           </Badge>
           <span className="text-muted-foreground uppercase text-xs tracking-wide">

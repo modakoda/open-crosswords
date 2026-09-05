@@ -9,22 +9,22 @@ export const en = {
   footer: {
     tagline: "Open Crosswords — open-source multilingual crossword builder.",
     shareable: "Puzzles are public and shareable by link.",
+    createdBy: "Created by",
   },
   home: {
     eyebrow: "Crossword builder",
     title: "Generate a crossword",
     subtitle:
-      "Pick a language and (optionally) some topics. Every puzzle is built " +
-      "from a fresh, topic-spread selection of clues, sized to print on your " +
-      "chosen paper — or solve it online and share the link.",
+      "Pick (optionally) some topics. Every puzzle is built from a fresh, " +
+      "topic-spread selection of clues in your site language, sized to print " +
+      "on your chosen paper — or solve it online and share the link.",
     featurePrintable: "Print-ready PDFs",
     featureOnline: "Solve & share online",
     featureMultilingual: "Multilingual clue bank",
   },
   generateForm: {
     formTitle: "Puzzle setup",
-    formDescription: "Choose a language and topics, then generate.",
-    language: "Language",
+    formDescription: "Choose your topics, then generate.",
     categories: "Categories",
     categoriesHint: "Leave empty to draw from every topic.",
     clear: "Clear",
@@ -40,8 +40,9 @@ export const en = {
     generating: "Generating…",
     generatedToast: "Puzzle ready — opening it now.",
     noLanguages:
-      "No languages yet. Seed the database (npm run seed) or add entries in Admin.",
-    loadError: "Could not load languages",
+      "No clues in this language yet. Seed the database (npm run seed) or add " +
+      "entries in Admin.",
+    loadError: "Could not load the clue library",
     genericError: "Generation failed",
     paper: { a4: "A4", letter: "US Letter", a5: "A5", legal: "US Legal" },
   },

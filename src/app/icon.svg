@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <title>Open Crosswords</title>
+  <!-- Brand mark: the header's primary-filled rounded tile (globals.css
+       primary token, oklch(0.52 0.16 264) = #3862c4) carrying a 3x3 crossword
+       grid with two blocked corner squares. One asset for light and dark
+       tabs; the solid tile keeps contrast either way. Keep this in sync with
+       apple-icon.tsx, which renders the same pattern to PNG for iOS. -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4874d8" />
+      <stop offset="1" stop-color="#3862c4" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="url(#tile)" />
+  <g fill="#fafafa">
+    <rect x="5.2" y="5.2" width="6.4" height="6.4" rx="1.2" />
+    <rect x="12.8" y="5.2" width="6.4" height="6.4" rx="1.2" />
+    <rect x="5.2" y="12.8" width="6.4" height="6.4" rx="1.2" />
+    <rect x="12.8" y="12.8" width="6.4" height="6.4" rx="1.2" />
+    <rect x="20.4" y="12.8" width="6.4" height="6.4" rx="1.2" />
+    <rect x="12.8" y="20.4" width="6.4" height="6.4" rx="1.2" />
+    <rect x="20.4" y="20.4" width="6.4" height="6.4" rx="1.2" />
+  </g>
+  <g fill="#163275">
+    <rect x="20.4" y="5.2" width="6.4" height="6.4" rx="1.2" />
+    <rect x="5.2" y="20.4" width="6.4" height="6.4" rx="1.2" />
+  </g>
+</svg>

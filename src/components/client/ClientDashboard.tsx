@@ -23,7 +23,9 @@ export function ClientDashboard({
     <div className="space-y-6">
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{t.dashboardTitle}</h1>
+          <h1 className="bg-gradient-to-br from-foreground to-primary bg-clip-text text-2xl font-semibold tracking-tight text-transparent">
+            {t.dashboardTitle}
+          </h1>
           <p className="text-sm text-muted-foreground">{t.dashboardSubtitle}</p>
         </div>
         <div className="flex items-center gap-2">
@@ -40,9 +42,11 @@ export function ClientDashboard({
       </header>
 
       {puzzles.length === 0 ? (
-        <Card>
-          <CardContent className="flex flex-col items-center gap-3 py-10 text-center text-sm text-muted-foreground">
-            <PuzzleIcon className="size-6" />
+        <Card className="border-border/60 border-dashed bg-card/60 backdrop-blur-sm">
+          <CardContent className="flex flex-col items-center gap-3 py-12 text-center text-sm text-muted-foreground">
+            <span className="grid size-11 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
+              <PuzzleIcon className="size-5" />
+            </span>
             <p>{t.empty}</p>
             <Button asChild size="sm">
               <a href="/public">{t.generateCta}</a>
@@ -52,7 +56,10 @@ export function ClientDashboard({
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {puzzles.map((p) => (
-            <Card key={p.slug}>
+            <Card
+              key={p.slug}
+              className="border-border/60 bg-card/60 backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-md"
+            >
               <CardContent className="flex items-center justify-between gap-3 py-4">
                 <div className="min-w-0">
                   <p className="truncate font-medium">{p.title}</p>

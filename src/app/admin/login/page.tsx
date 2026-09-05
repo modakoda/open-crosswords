@@ -42,9 +42,9 @@ export default function AdminLoginPage() {
 
   return (
     <div className="mx-auto flex max-w-sm flex-col gap-4 py-8">
-      <Card>
+      <Card className="border-border/60 bg-card/60 shadow-sm backdrop-blur-sm">
         <CardHeader>
-          <div className="mb-1 grid size-9 place-items-center rounded-lg bg-primary/10 text-primary">
+          <div className="mb-1 grid size-9 place-items-center rounded-lg bg-gradient-to-br from-primary to-chart-5 text-primary-foreground shadow-sm ring-1 ring-primary/25">
             <LockIcon className="size-4" />
           </div>
           <CardTitle>Admin sign in</CardTitle>
@@ -85,7 +85,12 @@ export default function AdminLoginPage() {
           </form>
         </CardContent>
         <CardFooter>
-          <Button type="submit" form="login" className="w-full" disabled={busy}>
+          <Button
+            type="submit"
+            form="login"
+            className="w-full bg-gradient-to-r from-primary to-chart-5 text-primary-foreground shadow-md transition-shadow hover:shadow-lg hover:brightness-105"
+            disabled={busy}
+          >
             {busy && <LoaderCircleIcon className="animate-spin" />}
             {busy ? "Signing in…" : "Sign in"}
           </Button>

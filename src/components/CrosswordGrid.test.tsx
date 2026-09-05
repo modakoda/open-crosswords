@@ -61,6 +61,13 @@ describe("CrosswordGrid", () => {
     expect(onActivate).toHaveBeenCalledWith(0, 0, "down");
   });
 
+  it("sizes itself from the column count so it fits its container", () => {
+    setup();
+    const grid = document.querySelector(".xw-grid");
+    expect(grid).toHaveClass("xw-grid--fluid");
+    expect(grid).toHaveStyle({ "--xw-cols": "3" });
+  });
+
   it("marks wrong cells", () => {
     const onChange = vi.fn();
     render(

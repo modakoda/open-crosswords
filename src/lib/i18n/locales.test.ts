@@ -18,8 +18,24 @@ describe("resolveLocale", () => {
 });
 
 describe("resolveLocaleFromAcceptLanguage", () => {
-  it("picks the first supported language in the header", () => {
+  it("picks the highest-quality supported language in the header", () => {
     expect(resolveLocaleFromAcceptLanguage("fr-FR,fr;q=0.9,lt;q=0.8,en;q=0.7")).toBe("lt");
+  });
+
+  it("ranks by q weight rather than header order", () => {
+    expect(resolveLocaleFromAcceptLanguage("en;q=0.5,lt;q=0.9")).toBe("lt");
+  });
+
+  it("treats a weightless entry as q=1", () => {
+    expect(resolveLocaleFromAcceptLanguage("en,lt;q=0.9")).toBe("en");
+  });
+
+  it("keeps header order for equal weights", () => {
+    expect(resolveLocaleFromAcceptLanguage("lt,en")).toBe("lt");
+  });
+
+  it("ignores an explicitly refused language (q=0)", () => {
+    expect(resolveLocaleFromAcceptLanguage("lt;q=0,en;q=0.5")).toBe("en");
   });
 
   it("defaults to en when nothing supported is listed", () => {

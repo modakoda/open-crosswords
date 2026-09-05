@@ -14,6 +14,7 @@ import {
   E2E_LANGUAGE_CODE,
   E2E_LANGUAGE_NAME,
   E2E_SIGNUP_EMAIL,
+  E2E_UI_LANGUAGE_CODE,
 } from "./constants";
 
 /** Reliably interlocks into a crossword — verified in src/lib/puzzles/queries.test.ts. */
@@ -32,18 +33,12 @@ const WORDS = [
   "Vienna",
 ];
 
-/** Dedicated e2e content, isolated from any real question-library data. */
-async function seedQuestionLibrary() {
-  await db
-    .insert(schema.languages)
-    .values({ code: E2E_LANGUAGE_CODE, name: E2E_LANGUAGE_NAME })
-    .onConflictDoNothing();
-
+async function seedEntries(languageCode: string) {
   await db
     .insert(schema.entries)
     .values(
       WORDS.map((answer, i) => ({
-        languageCode: E2E_LANGUAGE_CODE,
+        languageCode,
         clue: `E2E capital clue ${i}`,
         answer,
         answerNormalized: answer.toUpperCase(),
@@ -53,6 +48,26 @@ async function seedQuestionLibrary() {
       })),
     )
     .onConflictDoNothing();
+}
+
+/**
+ * Dedicated e2e content. The `zz` language stays fully isolated from any real
+ * question-library data; the `en` set exists only because the public generate
+ * form builds from the site locale (no picker), so a UI-driven generate needs
+ * clues there. Both are marked by the "E2E capital clue" prefix and inserted
+ * with `onConflictDoNothing`, so an existing `en` library is left untouched.
+ */
+async function seedQuestionLibrary() {
+  await db
+    .insert(schema.languages)
+    .values([
+      { code: E2E_LANGUAGE_CODE, name: E2E_LANGUAGE_NAME },
+      { code: E2E_UI_LANGUAGE_CODE, name: "English" },
+    ])
+    .onConflictDoNothing();
+
+  await seedEntries(E2E_LANGUAGE_CODE);
+  await seedEntries(E2E_UI_LANGUAGE_CODE);
 }
 
 /**

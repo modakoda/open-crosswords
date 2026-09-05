@@ -18,23 +18,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { CategoryPicker } from "@/components/CategoryPicker";
 import { PaperOptionsFields } from "@/components/PaperOptionsFields";
 import { orpc } from "@/lib/orpc/client";
-import { getMessages, resolveLocale, type Locale } from "@/lib/i18n";
+import { getMessages, type Locale } from "@/lib/i18n";
 import { ORIENTATIONS, PAPER_SIZES } from "@/lib/validation/schemas";
 
-interface Language {
-  code: string;
-  name: string;
-}
 interface Category {
   id: string;
   name: string;
@@ -42,8 +31,10 @@ interface Category {
 
 export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   const router = useRouter();
-  const [languages, setLanguages] = useState<Language[]>([]);
-  const [language, setLanguage] = useState("");
+  // The content language always follows the site's UI locale — there is no
+  // separate picker, so a visitor browsing in Lithuanian gets Lithuanian clues.
+  const language = initialLocale;
+  const [available, setAvailable] = useState<boolean | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [catLoading, setCatLoading] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -54,22 +45,23 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const t = getMessages(resolveLocale(language, initialLocale)).generateForm;
+  const t = getMessages(initialLocale).generateForm;
 
   useEffect(() => {
+    // Only to tell "this locale has no clue library yet" apart from "this
+    // library has no categories" — the result never changes what's selected.
     orpc.languages
       .list()
-      .then((d) => {
-        setLanguages(d.languages);
-        if (d.languages[0]) setLanguage(d.languages[0].code);
-      })
-      .catch(() => setError(getMessages(initialLocale).generateForm.loadError));
-    // Runs once on mount — `initialLocale` is fixed for the component's lifetime.
+      .then((d) => setAvailable(d.languages.some((l) => l.code === language)))
+      .catch(() => {
+        setAvailable(false);
+        setError(t.loadError);
+      });
+    // Runs once on mount — the locale is fixed for the component's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!language) return;
     setCatLoading(true);
     orpc.categories
       .list({ languageCode: language })
@@ -77,11 +69,6 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
       .catch(() => setCategories([]))
       .finally(() => setCatLoading(false));
   }, [language]);
-
-  function changeLanguage(code: string) {
-    setLanguage(code);
-    setSelected(new Set());
-  }
 
   function toggle(id: string) {
     setSelected((prev) => {
@@ -113,9 +100,9 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
     }
   }
 
-  if (languages.length === 0) {
+  if (available === false) {
     return (
-      <Card>
+      <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
         <CardContent className="py-8 text-sm text-muted-foreground">
           {error ?? t.noLanguages}
         </CardContent>
@@ -124,29 +111,13 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   }
 
   return (
-    <Card>
+    <Card className="border-border/60 bg-card/60 shadow-sm backdrop-blur-sm">
       <CardHeader>
         <CardTitle>{t.formTitle}</CardTitle>
         <CardDescription>{t.formDescription}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <div className="space-y-1.5">
-          <Label htmlFor="language">{t.language}</Label>
-          <Select value={language} onValueChange={changeLanguage}>
-            <SelectTrigger id="language" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {languages.map((l) => (
-                <SelectItem key={l.code} value={l.code}>
-                  {l.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         <CategoryPicker
           categories={categories}
           loading={catLoading}
@@ -186,7 +157,12 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
       </CardContent>
 
       <CardFooter>
-        <Button size="lg" onClick={generate} disabled={busy || !language}>
+        <Button
+          size="lg"
+          onClick={generate}
+          disabled={busy}
+          className="w-full bg-gradient-to-r from-primary to-chart-5 text-primary-foreground shadow-md transition-shadow hover:shadow-lg hover:brightness-105 sm:w-auto"
+        >
           {busy ? <LoaderCircleIcon className="animate-spin" /> : <SparklesIcon />}
           {busy ? t.generating : t.generate}
         </Button>
