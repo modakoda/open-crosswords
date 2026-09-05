@@ -4,7 +4,7 @@ import { SLUG_ADJECTIVES, SLUG_NOUNS } from "./slug-words";
 import { puzzleSlugSchema } from "./validation/schemas";
 
 describe("generatePuzzleSlug", () => {
-  it("produces four words followed by a six-digit number", () => {
+  it("produces four words followed by an eight-digit number", () => {
     for (let i = 0; i < 200; i++) {
       const slug = generatePuzzleSlug();
       expect(slug).toMatch(PUZZLE_SLUG_PATTERN);
@@ -13,8 +13,8 @@ describe("generatePuzzleSlug", () => {
       expect(SLUG_ADJECTIVES).toContain(parts[1]);
       expect(SLUG_NOUNS).toContain(parts[2]);
       expect(SLUG_NOUNS).toContain(parts[3]);
-      expect(Number(parts[4])).toBeGreaterThanOrEqual(100_000);
-      expect(Number(parts[4])).toBeLessThanOrEqual(999_999);
+      expect(Number(parts[4])).toBeGreaterThanOrEqual(10_000_000);
+      expect(Number(parts[4])).toBeLessThanOrEqual(99_999_999);
     }
   });
 

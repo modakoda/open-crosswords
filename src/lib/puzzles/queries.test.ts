@@ -1,12 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { sql } from "drizzle-orm";
 
+vi.mock("@/lib/puzzle-slug", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/puzzle-slug")>();
+  return { ...actual, generatePuzzleSlug: vi.fn(actual.generatePuzzleSlug) };
+});
+
 vi.mock("@/db", async () => {
   const { makeTestDb } = await import("@/test/db");
   const store = await makeTestDb();
   return { db: store.db, schema: await import("@/db/schema") };
 });
 
+const { generatePuzzleSlug } = await import("@/lib/puzzle-slug");
 const { db } = await import("@/db");
 const { entries, languages, puzzles, user } = await import("@/db/schema");
 const {
@@ -83,7 +89,7 @@ describe("generatePuzzle", () => {
       seed: "fixed-seed",
     });
 
-    expect(dto.slug).toMatch(/^[a-z]+(-[a-z]+){3}-\d{6}$/);
+    expect(dto.slug).toMatch(/^[a-z]+(-[a-z]+){3}-\d{8}$/);
     expect(dto.clues.across.length + dto.clues.down.length).toBeGreaterThanOrEqual(4);
     expect(dto.width).toBeLessThanOrEqual(23);
 
@@ -121,6 +127,32 @@ describe("generatePuzzle", () => {
     const [row] = await db.select().from(puzzles);
     expect(row.seed).toBe("my-seed");
     expect(row.slug).toBe(dto.slug);
+  });
+
+  it("retries a real slug collision against the unique index", async () => {
+    await seedEntries();
+    const taken = "amber-quiet-otter-canyon-12345678";
+    // Force the first insert to hit the slug unique index, so the retry path is
+    // exercised against the driver's own error rather than a synthetic one.
+    vi.mocked(generatePuzzleSlug).mockReturnValueOnce(taken).mockReturnValueOnce(taken);
+    const first = await generatePuzzle({
+      languageCode: "en",
+      paperSize: "a4",
+      orientation: "portrait",
+      seed: "collide-1",
+    });
+    expect(first.slug).toBe(taken);
+
+    const second = await generatePuzzle({
+      languageCode: "en",
+      paperSize: "a4",
+      orientation: "portrait",
+      seed: "collide-2",
+    });
+    expect(second.slug).not.toBe(taken);
+    expect(second.slug).toMatch(/^[a-z]+(-[a-z]+){3}-\d{8}$/);
+    const rows = await db.select().from(puzzles);
+    expect(rows.length).toBe(2);
   });
 
   it("attaches the generating user's id when signed in", async () => {

@@ -10,7 +10,7 @@ export const LANGUAGE_CODE = z
   .regex(/^[a-z]{2}(-[a-z]{2})?$/, "Expected a BCP-47 code like 'en' or 'pt-br'");
 
 /**
- * Public puzzle slug. Generated ones read `amber-quiet-otter-canyon-483921`
+ * Public puzzle slug. Generated ones read `amber-quiet-otter-canyon-48392174`
  * (see `generatePuzzleSlug`); the wider character set and length keep the
  * short random ids issued before that format valid too.
  */

@@ -85,7 +85,7 @@ or solve them online via a shareable link. Open source, single Next.js app.
   The question library stays a single shared resource managed by admins
   (every `admin.*` oRPC procedure is admin-gated). Generated puzzles are
   **public** and addressed by an unguessable word-and-number slug (e.g.
-  `amber-quiet-otter-canyon-483921`), and optionally owned by
+  `amber-quiet-otter-canyon-48392174`), and optionally owned by
   the signed-in client who generated them (`puzzles.userId`, nullable —
   anonymous generation stays unowned). Per-user solve progress
   (`solve_states`, one row per `(puzzleId, userId)`) syncs server-side for
@@ -141,8 +141,10 @@ external input, or the AI/import paths must meet these before it's done:
 - **Data access**: Drizzle query builder / parameterized queries only — never
   interpolate user input into SQL. Puzzle slugs are server-generated
   (`generatePuzzleSlug` in `src/lib/puzzle-slug.ts` — two adjectives, two nouns
-  and a six-digit number drawn from `node:crypto`, ~50 bits), never derived
-  from client input.
+  and an eight-digit number drawn from `node:crypto`, ~56 bits), never derived
+  from client input. Nothing rate-limits puzzle reads, so that entropy is the
+  only thing standing between a scraper and the whole library — keep it there
+  if the format changes again.
 - **Secrets**: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `ANTHROPIC_API_KEY` live
   only in env vars — never hardcoded, logged, committed, or echoed in responses
   or error messages.

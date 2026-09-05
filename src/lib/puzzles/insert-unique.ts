@@ -1,10 +1,17 @@
 import { generatePuzzleSlug } from "@/lib/puzzle-slug";
 
-/** Postgres unique-violation, however the driver wraps it. */
+/**
+ * Postgres unique-violation, however deeply the driver wraps it — Drizzle
+ * re-throws the driver error as the `cause` of its own, and that chain grows a
+ * link whenever either side changes, so walk it rather than peeling one layer.
+ */
 function isSlugCollision(error: unknown): boolean {
-  const code = (error as { code?: string; cause?: { code?: string } })?.code;
-  const causeCode = (error as { cause?: { code?: string } })?.cause?.code;
-  return code === "23505" || causeCode === "23505";
+  for (let e = error, depth = 0; e && depth < 5; depth++) {
+    const { code, cause } = e as { code?: string; cause?: unknown };
+    if (code === "23505") return true;
+    e = cause;
+  }
+  return false;
 }
 
 /**

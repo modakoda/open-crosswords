@@ -1,7 +1,7 @@
 /**
  * Word pools for public puzzle slugs. Both sizes are powers of two (128
  * adjectives, 256 nouns) so a slug's entropy is easy to state: two adjectives,
- * two nouns and a six-digit number give ~50 bits, which keeps a slug
+ * two nouns and an eight-digit number give ~56 bits, which keeps a slug
  * unguessable while staying readable. All words are lowercase ASCII.
  */
 
