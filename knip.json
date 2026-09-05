@@ -1,9 +1,10 @@
 {
   "$schema": "https://unpkg.com/knip@6/schema.json",
-  "next": {
-    "entry": ["next.config.ts", "src/middleware.ts"]
-  },
-  "entry": ["scripts/*.ts", "e2e/**/*.spec.ts"],
+  "entry": [
+    "scripts/*.ts",
+    "e2e/**/*.spec.ts",
+    "src/components/ui/**/*.tsx"
+  ],
   "project": ["src/**/*.{ts,tsx}", "scripts/**/*.ts", "e2e/**/*.ts"],
-  "ignoreDependencies": ["tw-animate-css"]
+  "ignoreDependencies": ["tw-animate-css", "shadcn", "tailwindcss"]
 }
