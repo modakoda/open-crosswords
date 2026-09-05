@@ -56,7 +56,8 @@ src/db/schema/            Drizzle schema: auth.ts, content.ts, solve-state.ts
 src/lib/crossword/        engine: normalize, select, generate, number, rng,
                           word (solve-UI word/cursor geometry)
 src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
-                          rate-limit, solve-state, slug, ai/
+                          rate-limit, solve-state, slug, puzzle-slug (public
+                          word+number slugs) + slug-words, ai/
 src/lib/env.ts            Zod-validated server env (throws on bad config)
 src/lib/auth.ts           better-auth instance; auth-guard.ts holds the
                           requireAdmin / requireUser gates
@@ -86,7 +87,8 @@ drizzle/                  committed migration SQL
   (`client.*`) goes through `userProcedure` → `requireUser`, and scopes every
   read/write to `context.user.id` — never a client-supplied id.
 - Drizzle query builder only — no string-built SQL. Puzzle slugs are
-  server-generated, never from client input.
+  server-generated from `node:crypto` (`src/lib/puzzle-slug.ts`), never from
+  client input.
 - Node.js runtime on any route that touches the DB (never `edge`).
 - Keep files under ~200 lines; colocate `*.test.ts(x)`.
 - Changes to auth, authorization, raw SQL, or the import/AI input paths need a

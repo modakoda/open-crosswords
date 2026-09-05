@@ -1,0 +1,60 @@
+/**
+ * Word pools for public puzzle slugs. Both sizes are powers of two (128
+ * adjectives, 256 nouns) so a slug's entropy is easy to state: two adjectives,
+ * two nouns and a six-digit number give ~50 bits, which keeps a slug
+ * unguessable while staying readable. All words are lowercase ASCII.
+ */
+
+export const SLUG_ADJECTIVES = [
+  "amber", "ancient", "autumn", "azure", "blazing", "blissful", "bold", "brave",
+  "breezy", "bright", "brisk", "bronze", "calm", "candid", "cheerful", "chilly",
+  "clever", "cobalt", "cosmic", "cozy", "crimson", "crisp", "curious", "daring",
+  "dazzling", "deep", "dewy", "distant", "dreamy", "eager", "early", "earthy",
+  "easy", "elder", "electric", "elegant", "emerald", "endless", "fabled", "faint",
+  "fearless", "fertile", "fiery", "floral", "fluent", "fond", "frosty", "gentle",
+  "gilded", "glad", "gleaming", "golden", "graceful", "grand", "grassy", "handy",
+  "happy", "hardy", "hazel", "hidden", "honest", "humble", "icy", "idle",
+  "indigo", "ivory", "jolly", "keen", "kindly", "lively", "lofty", "loyal",
+  "lucid", "lucky", "lunar", "marble", "mellow", "merry", "mighty", "mild",
+  "misty", "modest", "mossy", "noble", "nimble", "olive", "opal", "patient",
+  "peaceful", "plucky", "polar", "prime", "proud", "quiet", "quirky", "radiant",
+  "rapid", "restful", "rosy", "royal", "ruby", "rustic", "sandy", "scarlet",
+  "serene", "shady", "sharp", "silent", "silver", "sleek", "smooth", "snowy",
+  "solar", "spry", "stellar", "sturdy", "sunny", "swift", "tender", "tidy",
+  "timely", "tranquil", "trusty", "upbeat", "velvet", "vivid", "warm", "witty",
+] as const;
+
+export const SLUG_NOUNS = [
+  "acorn", "alcove", "almond", "anchor", "apple", "arbor", "arch", "arrow",
+  "aspen", "aurora", "avenue", "badger", "bamboo", "banner", "basil", "basin",
+  "beacon", "beagle", "bean", "bell", "birch", "bison", "blossom", "bluff",
+  "bonsai", "border", "boulder", "bramble", "branch", "brook", "buffalo", "bugle",
+  "bundle", "burrow", "cabin", "cactus", "camel", "canary", "candle", "canoe",
+  "canopy", "canyon", "cardinal", "carousel", "carrot", "castle", "cattail", "cedar",
+  "cello", "chalk", "chapel", "cherry", "chestnut", "chimney", "cider", "cinder",
+  "cliff", "clover", "cobble", "comet", "compass", "coral", "cottage", "cove",
+  "coyote", "crane", "crater", "crayon", "creek", "crescent", "crocus", "cypress",
+  "daisy", "dandelion", "delta", "dolphin", "donkey", "dragon", "dune", "eagle",
+  "echo", "eddy", "elder", "elk", "ember", "estuary", "falcon", "fawn",
+  "fennel", "fern", "ferry", "fiddle", "finch", "fjord", "flamingo", "flint",
+  "flute", "forest", "fountain", "fox", "galaxy", "garden", "gazelle", "geode",
+  "geyser", "ginger", "glacier", "glade", "glider", "gopher", "granite", "grotto",
+  "grove", "gull", "hamlet", "harbor", "harvest", "hawk", "hazel", "heather",
+  "hedge", "heron", "hickory", "hollow", "honey", "horizon", "iceberg", "iris",
+  "island", "ivy", "jackal", "jasmine", "jetty", "juniper", "kayak", "kernel",
+  "kestrel", "kettle", "kingfisher", "kite", "koala", "lagoon", "lantern", "lark",
+  "laurel", "lavender", "ledge", "lemon", "lighthouse", "lilac", "lily", "linden",
+  "lion", "lizard", "llama", "lotus", "lynx", "magnolia", "mallard", "mango",
+  "manor", "maple", "marigold", "marina", "marsh", "meadow", "melody", "mesa",
+  "meteor", "mimosa", "minnow", "mint", "mirage", "moose", "mosaic", "moth",
+  "mountain", "mulberry", "narwhal", "nectar", "needle", "nest", "nettle", "nightingale",
+  "nomad", "nutmeg", "oak", "oasis", "ocean", "octopus", "orbit", "orchard",
+  "orchid", "oriole", "osprey", "otter", "owl", "oyster", "paddle", "pagoda",
+  "palm", "pampas", "panda", "pansy", "parsley", "pasture", "peak", "pear",
+  "pebble", "pelican", "penguin", "peony", "pepper", "petal", "pewter", "pier",
+  "pigeon", "pillar", "pine", "plateau", "plum", "pollen", "pond", "poppy",
+  "prairie", "puffin", "pumpkin", "quail", "quarry", "quartz", "quiver", "rabbit",
+  "raccoon", "radish", "rainbow", "rapids", "raven", "reef", "ribbon", "ridge",
+  "river", "robin", "rosemary", "sable", "saffron", "sage", "sailboat", "salmon",
+  "sandbar", "sapling", "sequoia", "shadow", "shale", "shore", "sierra", "silo",
+] as const;

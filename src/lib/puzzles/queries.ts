@@ -1,5 +1,4 @@
 import { and, between, desc, eq, inArray, sql } from "drizzle-orm";
-import { nanoid } from "nanoid";
 import { db } from "@/db";
 import { entries, puzzles } from "@/db/schema";
 import { buildCrossword } from "@/lib/crossword";
@@ -8,6 +7,7 @@ import { randomSeed } from "@/lib/crossword/rng";
 import { difficultyRange, type DifficultyLevel } from "@/lib/difficulty";
 import { paperToGrid } from "@/lib/paper";
 import type { GeneratePuzzleInput } from "@/lib/validation/schemas";
+import { insertUniquePuzzle } from "./insert-unique";
 import { toClues, type PuzzleDTO, type PuzzleSummary } from "./types";
 
 /** Why generation could not produce a puzzle, for the UI to translate. */
@@ -101,37 +101,39 @@ export async function generatePuzzle(
     );
   }
 
-  const slug = nanoid(10);
   const title =
     input.title ?? `${input.languageCode.toUpperCase()} crossword`;
   const usedIds = crossword.placements.map((p) => p.entryId);
 
-  const id = await db.transaction(async (tx) => {
-    const [inserted] = await tx
-      .insert(puzzles)
-      .values({
-        slug,
-        title,
-        languageCode: input.languageCode,
-        userId,
-        paperSize: input.paperSize,
-        orientation: input.orientation,
-        width: crossword.width,
-        height: crossword.height,
-        seed,
-        placements: crossword.placements,
-        grid: crossword.grid,
-      })
-      .returning({ id: puzzles.id });
-    await tx
-      .update(entries)
-      .set({
-        timesUsed: sql`${entries.timesUsed} + 1`,
-        lastUsedAt: new Date(),
-      })
-      .where(inArray(entries.id, usedIds));
-    return inserted.id;
-  });
+  const insertWithSlug = (slug: string) =>
+    db.transaction(async (tx) => {
+      const [inserted] = await tx
+        .insert(puzzles)
+        .values({
+          slug,
+          title,
+          languageCode: input.languageCode,
+          userId,
+          paperSize: input.paperSize,
+          orientation: input.orientation,
+          width: crossword.width,
+          height: crossword.height,
+          seed,
+          placements: crossword.placements,
+          grid: crossword.grid,
+        })
+        .returning({ id: puzzles.id });
+      await tx
+        .update(entries)
+        .set({
+          timesUsed: sql`${entries.timesUsed} + 1`,
+          lastUsedAt: new Date(),
+        })
+        .where(inArray(entries.id, usedIds));
+      return inserted.id;
+    });
+
+  const { id, slug } = await insertUniquePuzzle(insertWithSlug);
 
   return {
     id,

@@ -9,9 +9,14 @@ export const LANGUAGE_CODE = z
   .toLowerCase()
   .regex(/^[a-z]{2}(-[a-z]{2})?$/, "Expected a BCP-47 code like 'en' or 'pt-br'");
 
+/**
+ * Public puzzle slug. Generated ones read `amber-quiet-otter-canyon-483921`
+ * (see `generatePuzzleSlug`); the wider character set and length keep the
+ * short random ids issued before that format valid too.
+ */
 export const puzzleSlugSchema = z
   .string()
-  .regex(/^[A-Za-z0-9_-]{6,16}$/, "Bad slug");
+  .regex(/^[A-Za-z0-9_-]{6,64}$/, "Bad slug");
 
 export const generatePuzzleSchema = z.object({
   languageCode: LANGUAGE_CODE,

@@ -84,7 +84,8 @@ or solve them online via a shareable link. Open source, single Next.js app.
   out-of-band via the allow-list so there's only one source of truth for it.
   The question library stays a single shared resource managed by admins
   (every `admin.*` oRPC procedure is admin-gated). Generated puzzles are
-  **public** and addressed by an unguessable slug, and optionally owned by
+  **public** and addressed by an unguessable word-and-number slug (e.g.
+  `amber-quiet-otter-canyon-483921`), and optionally owned by
   the signed-in client who generated them (`puzzles.userId`, nullable —
   anonymous generation stays unowned). Per-user solve progress
   (`solve_states`, one row per `(puzzleId, userId)`) syncs server-side for
@@ -138,8 +139,10 @@ external input, or the AI/import paths must meet these before it's done:
 - **Output handling**: rely on React's default escaping — never
   `dangerouslySetInnerHTML` or string-built HTML from user/AI input.
 - **Data access**: Drizzle query builder / parameterized queries only — never
-  interpolate user input into SQL. Puzzle slugs are server-generated (`nanoid`),
-  never derived from client input.
+  interpolate user input into SQL. Puzzle slugs are server-generated
+  (`generatePuzzleSlug` in `src/lib/puzzle-slug.ts` — two adjectives, two nouns
+  and a six-digit number drawn from `node:crypto`, ~50 bits), never derived
+  from client input.
 - **Secrets**: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `ANTHROPIC_API_KEY` live
   only in env vars — never hardcoded, logged, committed, or echoed in responses
   or error messages.

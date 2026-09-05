@@ -83,7 +83,7 @@ describe("generatePuzzle", () => {
       seed: "fixed-seed",
     });
 
-    expect(dto.slug).toMatch(/^[A-Za-z0-9_-]{10}$/);
+    expect(dto.slug).toMatch(/^[a-z]+(-[a-z]+){3}-\d{6}$/);
     expect(dto.clues.across.length + dto.clues.down.length).toBeGreaterThanOrEqual(4);
     expect(dto.width).toBeLessThanOrEqual(23);
 
