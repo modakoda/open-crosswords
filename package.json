@@ -22,7 +22,8 @@
     "db:studio": "drizzle-kit studio",
     "seed": "tsx scripts/seed.ts",
     "import": "tsx scripts/import.ts",
-    "create-admin": "tsx scripts/create-admin.ts"
+    "create-admin": "tsx scripts/create-admin.ts",
+    "knip": "node --env-file-if-exists=.env node_modules/.bin/knip"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^4.0.49",
@@ -64,6 +65,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "16.3.4",
     "jsdom": "^30.0.1",
+    "knip": "^6.34.0",
     "tailwindcss": "^4.1.11",
     "tsx": "^4.20.3",
     "typescript": "^6.0.3",
