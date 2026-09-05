@@ -32,7 +32,14 @@ export function CluePanels({
   ).map(([dir, label, clues]) => (
     <Card
       key={dir}
-      className="flex max-h-[65vh] min-h-56 min-w-0 flex-col gap-0 overflow-hidden py-0 lg:max-h-none"
+      data-direction={dir}
+      className={cn(
+        "flex max-h-[65vh] min-h-56 min-w-0 flex-col gap-0 overflow-hidden py-0 lg:max-h-none",
+        // Whichever direction is being solved leads the stack, so its clues are
+        // the ones in view. Only while the panels are stacked — side by side
+        // (sm..lg) reordering would just swap the columns around.
+        direction === dir && "order-first sm:order-none lg:order-first",
+      )}
     >
       <CardHeader className="bg-primary/5 py-3">
         <CardTitle className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">

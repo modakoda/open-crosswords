@@ -297,6 +297,18 @@
 .print-sheet .xw-grid {
   margin-inline: auto;
   flex: none;
+  /* Paper look, on screen as well as on paper: no fills anywhere, only the
+     letter cells outlined; blocked squares stay blank. */
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.print-sheet .xw-cell {
+  background: transparent;
+}
+.print-sheet .xw-cell.block {
+  background: transparent;
+  border-color: transparent;
 }
 .print-sheet .print-clues {
   flex: 1 1 auto;
@@ -372,8 +384,20 @@
     border: 0 !important;
     background: transparent !important;
   }
+  /* Ink-free grid: the paper shows through, and only the letter cells are
+     outlined — blocked squares leave plain white space. */
+  .xw-grid {
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+  .xw-cell,
   .xw-cell.active,
   .xw-cell.in-word {
     background: transparent;
+  }
+  .xw-cell.block {
+    background: transparent;
+    border-color: transparent;
   }
 }
