@@ -110,6 +110,7 @@ Sign in at `/admin/login`.
 | `BETTER_AUTH_SECRET` | yes | 32-byte random string (`openssl rand -base64 32`) |
 | `BETTER_AUTH_URL` | no | Public base URL, no trailing slash (default `http://localhost:3000`) |
 | `ADMIN_EMAILS` | no | Comma-separated emails allowed into `/admin/dashboard` (default: none — set this or nobody can sign in) |
+| `AUTH_TRUSTED_PROXIES` | no | Comma-separated IPs/CIDRs of reverse proxies in front of the app, so sign-in rate limiting can read a client IP from a multi-hop `x-forwarded-for` (unneeded on Vercel/Cloudflare or behind a proxy that sets `x-real-ip`) |
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
 | `AI_MODEL` | no | Model id for AI drafting (default `claude-sonnet-5`) |
 

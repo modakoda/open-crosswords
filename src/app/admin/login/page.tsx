@@ -32,8 +32,14 @@ export default function AdminLoginPage() {
     const { error: err } = await signIn.email({ email, password });
     setBusy(false);
     if (err) {
-      // Generic message — never disclose whether the account exists.
-      setError("Invalid email or password.");
+      // Generic message — never disclose whether the account exists. A 429 is
+      // the per-account backoff or the rate limiter, and is equally generic:
+      // failed attempts are counted for unregistered emails too.
+      setError(
+        err.status === 429
+          ? "Too many failed sign-in attempts. Please wait a few minutes and try again."
+          : "Invalid email or password.",
+      );
       return;
     }
     router.push("/admin/dashboard");

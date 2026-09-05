@@ -1,6 +1,8 @@
 import {
+  bigint,
   boolean,
   index,
+  integer,
   pgTable,
   text,
   timestamp,
@@ -72,3 +74,47 @@ export const verification = pgTable("verification", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
+
+/**
+ * better-auth's own rate-limit counters. Registered with the Drizzle adapter so
+ * `rateLimit.storage: "database"` in ./auth.ts shares one counter across every
+ * instance — the default in-memory store is per-process, so on a multi-instance
+ * or serverless deployment the effective sign-in limit was multiplied by the
+ * number of live instances and reset on every cold start.
+ *
+ * Shape follows better-auth's schema contract (key/count/lastRequest); do not
+ * rename the fields. `lastRequest` is epoch milliseconds, so it needs bigint.
+ */
+export const rateLimit = pgTable(
+  "rate_limit",
+  {
+    id: text("id").primaryKey(),
+    key: text("key").notNull().unique(),
+    count: integer("count").notNull(),
+    lastRequest: bigint("last_request", { mode: "number" }).notNull(),
+  },
+  // better-auth sweeps rows past the longest window by `last_request`.
+  (t) => [index("rate_limit_last_request_idx").on(t.lastRequest)],
+);
+
+/**
+ * Sign-in attempt counters behind the exponential backoff in
+ * src/lib/auth-throttle.ts — one row per account-and-caller and one per
+ * account. The IP-keyed limiter above does nothing against a distributed
+ * guess-one-account attack, so attempts are counted per identifier too.
+ *
+ * `identifier` is a keyed digest of the scope and the lowercased email, never
+ * the address itself: a row exists for any attempted email, including ones with
+ * no account, so the table must not become a list of who does and doesn't have
+ * an account.
+ */
+export const signInAttempt = pgTable(
+  "sign_in_attempt",
+  {
+    identifier: text("identifier").primaryKey(),
+    failedCount: integer("failed_count").notNull().default(0),
+    lastFailedAt: timestamp("last_failed_at").notNull().defaultNow(),
+  },
+  // Supports the sweep of decayed rows in src/lib/auth-throttle.ts.
+  (t) => [index("sign_in_attempt_last_failed_at_idx").on(t.lastFailedAt)],
+);

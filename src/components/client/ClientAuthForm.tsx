@@ -45,7 +45,11 @@ export function ClientAuthForm({
         : await signUp.email({ name, email, password });
     setBusy(false);
     if (err) {
-      setError(mode === "login" ? "Invalid email or password." : t.errorGeneric);
+      // One generic message for every credential failure — never disclose
+      // whether the account exists. A 429 is the per-account backoff or the
+      // rate limiter, which says nothing about the account either.
+      if (err.status === 429) setError(t.errorTooManyAttempts);
+      else setError(mode === "login" ? t.errorCredentials : t.errorGeneric);
       return;
     }
     router.push("/client/dashboard");

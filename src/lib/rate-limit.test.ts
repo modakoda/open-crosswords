@@ -29,20 +29,18 @@ describe("rateLimit", () => {
 });
 
 describe("clientKey", () => {
-  it("uses the last (proxy-appended) x-forwarded-for hop, not the client-controlled first", () => {
-    const h = new Headers({ "x-forwarded-for": "1.2.3.4, 5.6.7.8" });
+  it("keys on the address header the deployment trusts", () => {
+    const h = new Headers({ "x-vercel-forwarded-for": "5.6.7.8" });
     expect(clientKey(h, "gen")).toBe("gen:5.6.7.8");
   });
 
-  it("prefers a trusted platform header over x-forwarded-for", () => {
+  it("ignores headers a caller can forge, so the key can't be rotated", () => {
     const h = new Headers({
       "x-forwarded-for": "9.9.9.9",
-      "x-vercel-forwarded-for": "5.6.7.8",
+      "cf-connecting-ip": "8.8.8.8",
+      "x-real-ip": "7.7.7.7",
     });
-    expect(clientKey(h, "gen")).toBe("gen:5.6.7.8");
-  });
-
-  it("falls back to a fixed key without proxy headers", () => {
-    expect(clientKey(new Headers(), "gen")).toBe("gen:local");
+    // Only AUTH_IP_HEADER counts; the rest resolve to the same shared bucket.
+    expect(clientKey(h, "gen")).toBe(clientKey(new Headers(), "gen"));
   });
 });

@@ -1,3 +1,5 @@
+import { clientIp } from "@/lib/client-ip";
+
 interface Bucket {
   count: number;
   resetAt: number;
@@ -32,28 +34,18 @@ export function rateLimit(
 }
 
 /**
- * Client key for rate limiting. Prefers headers set by the hosting platform
- * itself (not forgeable by the client); for a plain `x-forwarded-for` it uses
- * the LAST hop, which the trusted proxy appends, rather than the first token
- * (which the client controls and could rotate to evade the limiter).
+ * Client key for rate limiting, from the one address source this deployment
+ * trusts (see ./client-ip.ts) — never a union of candidate headers, any of
+ * which a caller could send and rotate to escape the limit.
  *
- * Deployment assumption: the platform sets one of these headers. If it does
- * not, every caller collapses to the shared `"local"` bucket and the public
- * generate endpoint is throttled globally — deploy behind a proxy that
- * provides a trusted client IP (Vercel does), or replace this with a real
+ * Deployment assumption: the platform sets that header. If it does not, every
+ * caller collapses to the shared `"local"` bucket and the public generate
+ * endpoint is throttled globally — configure AUTH_IP_HEADER or
+ * AUTH_TRUSTED_PROXIES for the deployment, or replace this with a real
  * shared-store limiter.
  */
 export function clientKey(headers: Headers, scope: string): string {
-  const trusted =
-    headers.get("x-vercel-forwarded-for") ??
-    headers.get("cf-connecting-ip") ??
-    headers.get("x-real-ip");
-  let ip = trusted?.trim();
-  if (!ip) {
-    const hops = headers.get("x-forwarded-for")?.split(",").map((h) => h.trim()).filter(Boolean);
-    ip = hops?.[hops.length - 1];
-  }
-  return `${scope}:${ip || "local"}`;
+  return `${scope}:${clientIp(headers) || "local"}`;
 }
 
 /** Test helper. */

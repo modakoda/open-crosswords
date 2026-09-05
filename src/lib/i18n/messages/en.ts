@@ -115,6 +115,9 @@ export const en = {
     submitSignup: "Create account",
     submitting: "Please wait…",
     errorGeneric: "Something went wrong. Please try again.",
+    errorCredentials: "Invalid email or password.",
+    errorTooManyAttempts:
+      "Too many failed sign-in attempts. Please wait a few minutes and try again.",
     haveAccount: "Already have an account?",
     noAccount: "Need an account?",
     switchToSignup: "Sign up",

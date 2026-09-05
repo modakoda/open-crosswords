@@ -56,7 +56,8 @@ src/db/schema/            Drizzle schema: auth.ts, content.ts, solve-state.ts
 src/lib/crossword/        engine: normalize, select, generate, number, rng,
                           word (solve-UI word/cursor geometry)
 src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
-                          rate-limit, solve-state, slug, puzzle-slug (public
+                          rate-limit, auth-throttle (per-account sign-in
+                          backoff), solve-state, slug, puzzle-slug (public
                           word+number slugs) + slug-words, ai/
 src/lib/env.ts            Zod-validated server env (throws on bad config)
 src/lib/auth.ts           better-auth instance; auth-guard.ts holds the

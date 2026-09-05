@@ -130,6 +130,9 @@ export const lt: typeof en = {
     submitSignup: "Sukurti paskyrą",
     submitting: "Prašome palaukti…",
     errorGeneric: "Kažkas nutiko. Bandykite dar kartą.",
+    errorCredentials: "Neteisingas el. paštas arba slaptažodis.",
+    errorTooManyAttempts:
+      "Per daug nepavykusių bandymų prisijungti. Palaukite kelias minutes ir bandykite dar kartą.",
     haveAccount: "Jau turite paskyrą?",
     noAccount: "Reikia paskyros?",
     switchToSignup: "Registruotis",

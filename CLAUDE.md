@@ -73,7 +73,13 @@ or solve them online via a shareable link. Open source, single Next.js app.
   concept (see Authorization model below), so self-serve sign-up can never
   grant admin access. Sign-up/sign-in are rate-limited via better-auth's own
   `rateLimit` config in `auth.ts` (separate from this app's own
-  `src/lib/rate-limit.ts`, used for `puzzles.generate`/`ai-draft`).
+  `src/lib/rate-limit.ts`, used for `puzzles.generate`/`ai-draft`) — keyed to
+  the client IP better-auth reads from the platform headers listed in
+  `auth.ts`, with counters in Postgres (`rate_limit`) rather than per-process
+  memory. Sign-in additionally carries a per-account exponential backoff
+  (`src/lib/auth-throttle.ts`, `sign_in_attempt`), wired in as better-auth
+  `hooks.before`/`hooks.after`; it counts failures for any attempted email,
+  registered or not, so it can't be used to probe which accounts exist.
 - **Authorization model**: two independent identities layered on one
   better-auth session — "admin" (a signed-in user whose verified email is in
   `ADMIN_EMAILS`, checked by `getAdmin`/`requireAdmin` in
@@ -151,7 +157,12 @@ external input, or the AI/import paths must meet these before it's done:
 - **Rate limiting**: public puzzle generation and the AI endpoint are rate
   limited (`src/lib/rate-limit.ts`, in-memory — move to a shared store if
   running multiple instances); sign-up/sign-in are rate limited separately via
-  better-auth's own `rateLimit` config in `src/lib/auth.ts`.
+  better-auth's own `rateLimit` config in `src/lib/auth.ts`, whose counters do
+  live in Postgres so they hold across instances. Password guessing is bounded
+  on two axes and both must stay: per IP by that config, and per account by the
+  backoff in `src/lib/auth-throttle.ts`. Keep the account-side lock generic
+  (recorded for unregistered emails too, capped in duration, never permanent),
+  or it becomes either an enumeration oracle or a way to lock a victim out.
 - **Dependencies**: don't add a package that duplicates a capability already
   covered by better-auth / Drizzle / Zod; check for known-vulnerable versions.
 - **Transport & headers**: HTTPS-only in production; never disable TLS
