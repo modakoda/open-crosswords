@@ -7,7 +7,7 @@ tools: Read, Grep, Glob, Bash
 You own test coverage and flow verification for this app.
 
 Stack specifics for this repo:
-- Test runner is Vitest (`npm test`, `npm run test:watch`, `npm run test:coverage`) with jsdom + Testing Library for components. Test env vars are set in `vitest.config.ts`.
+- Test runner is Vitest (`npm test`, `npm run test:watch`, `npm run test:coverage`) with jsdom + Testing Library for components. Test env vars are set in `vitest.config.ts`; `vitest.setup.ts` loads jest-dom matchers and stubs `ResizeObserver` (jsdom has none, and Radix primitives like ScrollArea need it).
 - Tests are colocated: `foo.ts` → `foo.test.ts`, `Bar.tsx` → `Bar.test.tsx`. Follow that convention rather than a separate `__tests__` tree.
 - DB / API route tests spin up in-process Postgres via PGlite — `makeTestDb()` in `src/test/db.ts` applies the real `drizzle/` migrations. The established pattern: `vi.mock("@/db", ...)` returning a PGlite-backed drizzle client, `truncate ... restart identity cascade` in `beforeEach`, and (for admin routes) `vi.mock("@/lib/auth-guard")` to toggle `requireAdmin`. See `src/lib/puzzles.test.ts` and `src/app/api/**/route.test.ts`.
 - The crossword engine (`src/lib/crossword/**`) is covered by pure unit tests asserting structural grid invariants and seed determinism — extend those when changing placement/selection.

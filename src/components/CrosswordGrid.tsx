@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, type CSSProperties } from "react";
 import type { Cell, Direction } from "@/lib/crossword/types";
-
-const key = (r: number, c: number) => `${r},${c}`;
+import { cellKey as key, wordCells, wordEntryCell } from "@/lib/crossword/word";
 
 interface Props {
   grid: Cell[][];
@@ -26,27 +25,41 @@ export function CrosswordGrid({
 }: Props) {
   const cols = grid[0]?.length ?? 0;
   const refs = useRef(new Map<string, HTMLInputElement>());
+  // The browser focuses the input as the default action of the press, and that
+  // focus already activates the cell — so by the time the click handler runs,
+  // `active` is this cell whether or not it was selected beforehand. Remember
+  // what was selected before the press so only a genuine second click toggles.
+  const activeBeforePress = useRef<string | null>(null);
 
-  const wordCells = useMemo(() => {
-    const set = new Set<string>();
-    if (!active) return set;
+  const wordCellsAt = useCallback(
+    (r: number, c: number, dir: Direction) => wordCells(grid, r, c, dir),
+    [grid],
+  );
+
+  // Keys of the cells in the word being edited, for the "in-word" highlight.
+  const activeWordKeys = useMemo(() => {
+    if (!active) return new Set<string>();
     const [ar, ac] = active.split(",").map(Number);
-    if (!grid[ar]?.[ac]) return set;
-    const dr = direction === "down" ? 1 : 0;
-    const dc = direction === "across" ? 1 : 0;
-    let r = ar;
-    let c = ac;
-    while (grid[r - dr]?.[c - dc]) {
-      r -= dr;
-      c -= dc;
+    return new Set(wordCellsAt(ar, ac, direction).map(([r, c]) => key(r, c)));
+  }, [active, direction, wordCellsAt]);
+
+  // Every word in the grid, across first then down, each in reading order — the
+  // order Tab walks. A lone white cell isn't a word, so it never gets a turn.
+  const words = useMemo(() => {
+    const out: { dir: Direction; cells: [number, number][] }[] = [];
+    for (const dir of ["across", "down"] as const) {
+      const dr = dir === "down" ? 1 : 0;
+      const dc = dir === "across" ? 1 : 0;
+      for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < (grid[r]?.length ?? 0); c++) {
+          if (!grid[r][c] || grid[r - dr]?.[c - dc]) continue;
+          const cells = wordCellsAt(r, c, dir);
+          if (cells.length > 1) out.push({ dir, cells });
+        }
+      }
     }
-    while (grid[r]?.[c]) {
-      set.add(key(r, c));
-      r += dr;
-      c += dc;
-    }
-    return set;
-  }, [active, direction, grid]);
+    return out;
+  }, [grid, wordCellsAt]);
 
   useEffect(() => {
     if (active) refs.current.get(active)?.focus();
@@ -67,25 +80,94 @@ export function CrosswordGrid({
     }
   }
 
+  // After typing, stay inside the current word: go to the next empty cell
+  // ahead of the cursor, otherwise wrap back to the first empty cell from the
+  // start of the word. A fully filled word keeps the cursor on its last cell.
+  function advanceWithinWord(r: number, c: number, dir: Direction) {
+    const cells = wordCellsAt(r, c, dir);
+    const i = cells.findIndex(([cr, cc]) => cr === r && cc === c);
+    if (i < 0) return;
+    const empty = ([cr, cc]: [number, number]) => !values[key(cr, cc)];
+    const target =
+      cells.slice(i + 1).find(empty) ??
+      cells.slice(0, i).find(empty) ??
+      cells[Math.min(i + 1, cells.length - 1)];
+    onActivate(target[0], target[1], dir);
+  }
+
+  // A white cell need not sit in a word both ways: an unchecked square crosses
+  // nothing, and the preferred direction would trap the cursor in a word one
+  // cell long. Fall back to the direction a real word actually runs in.
+  function dirWithWord(r: number, c: number, preferred: Direction): Direction {
+    if (wordCellsAt(r, c, preferred).length > 1) return preferred;
+    const other = preferred === "across" ? "down" : "across";
+    return wordCellsAt(r, c, other).length > 1 ? other : preferred;
+  }
+
+  // Switching direction moves into the crossing word, so start at its first
+  // empty cell rather than wherever the crossing happened to be.
+  function activateWordStart(r: number, c: number, dir: Direction) {
+    const [sr, sc] = wordEntryCell(wordCellsAt(r, c, dir), values) ?? [r, c];
+    onActivate(sr, sc, dir);
+  }
+
+  // Tab jumps to the next word (Shift+Tab the previous one), wrapping around
+  // the across-then-down order, and lands on that word's first empty cell.
+  function moveToWord(r: number, c: number, dir: Direction, back = false) {
+    if (!words.length) return;
+    const [sr, sc] = wordCellsAt(r, c, dir)[0] ?? [r, c];
+    const i = words.findIndex(
+      (w) => w.dir === dir && w.cells[0][0] === sr && w.cells[0][1] === sc,
+    );
+    const at = i < 0 ? 0 : i + (back ? -1 : 1);
+    const next = words[(at + words.length) % words.length];
+    activateWordStart(next.cells[0][0], next.cells[0][1], next.dir);
+  }
+
+  // Backspace on an empty cell steps back one cell, never past the word start.
+  function stepBackWithinWord(r: number, c: number, dir: Direction) {
+    const cells = wordCellsAt(r, c, dir);
+    const i = cells.findIndex(([cr, cc]) => cr === r && cc === c);
+    if (i <= 0) return;
+    const [pr, pc] = cells[i - 1];
+    onActivate(pr, pc, dir);
+  }
+
+  // Clicking a cell selects it; clicking the one already selected switches to
+  // the crossing word, when the cell has one.
+  function selectCell(r: number, c: number, wasSelected: boolean) {
+    const crossing = direction === "across" ? "down" : "across";
+    if (wasSelected && wordCellsAt(r, c, crossing).length > 1) {
+      return activateWordStart(r, c, crossing);
+    }
+    onActivate(r, c, dirWithWord(r, c, direction));
+  }
+
   function handleKey(r: number, c: number, e: React.KeyboardEvent) {
     if (e.key === "ArrowRight") return onActivate(r, c, "across"), move(r, c, "across");
     if (e.key === "ArrowLeft") return onActivate(r, c, "across"), move(r, c, "across", true);
     if (e.key === "ArrowDown") return onActivate(r, c, "down"), move(r, c, "down");
     if (e.key === "ArrowUp") return onActivate(r, c, "down"), move(r, c, "down", true);
+    if (e.key === "Tab") {
+      e.preventDefault();
+      return moveToWord(r, c, direction, e.shiftKey);
+    }
     if (e.key === " ") {
       e.preventDefault();
-      return onActivate(r, c, direction === "across" ? "down" : "across");
+      const crossing = direction === "across" ? "down" : "across";
+      if (wordCellsAt(r, c, crossing).length > 1) activateWordStart(r, c, crossing);
+      return;
     }
     if (e.key === "Backspace") {
       e.preventDefault();
       if (values[key(r, c)]) onChange(r, c, "");
-      else move(r, c, direction, true);
+      else stepBackWithinWord(r, c, direction);
       return;
     }
     if (/^[\p{L}]$/u.test(e.key)) {
       e.preventDefault();
       onChange(r, c, e.key.toUpperCase());
-      move(r, c, direction);
+      advanceWithinWord(r, c, direction);
     }
   }
 
@@ -100,7 +182,7 @@ export function CrosswordGrid({
           if (!cell) return <div key={k} className="xw-cell block" />;
           const classes = [
             "xw-cell",
-            active === k ? "active" : wordCells.has(k) ? "in-word" : "",
+            active === k ? "active" : activeWordKeys.has(k) ? "in-word" : "",
             wrong.has(k) ? "wrong" : "",
           ]
             .filter(Boolean)
@@ -119,17 +201,10 @@ export function CrosswordGrid({
                 value={values[k] ?? ""}
                 onChange={() => {}}
                 onFocus={() => onActivate(r, c, direction)}
-                onClick={() =>
-                  onActivate(
-                    r,
-                    c,
-                    active === k
-                      ? direction === "across"
-                        ? "down"
-                        : "across"
-                      : direction,
-                  )
-                }
+                onPointerDown={() => {
+                  activeBeforePress.current = active;
+                }}
+                onClick={() => selectCell(r, c, activeBeforePress.current === k)}
                 onKeyDown={(e) => handleKey(r, c, e)}
               />
             </div>

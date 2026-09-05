@@ -34,7 +34,9 @@ or solve them online via a shareable link. Open source, single Next.js app.
   `npm run db:generate` and applied with `npm run db:migrate` (not `db:push`).
 - **Business logic** in `src/lib/`: the crossword engine (`src/lib/crossword/**`
   — `normalize`, `select` for smart topic-spread/freshness candidate ranking,
-  `generate` for greedy interlock placement, `number` for grid numbering),
+  `generate` for greedy interlock placement, `number` for grid numbering,
+  `word` for the solve UI's word/cursor geometry shared by `CrosswordGrid`
+  and `SolveView`),
   `puzzles/` (generate + persist + fetch + per-user listing, split into
   `types.ts`/`queries.ts`), `entries.ts` / `import.ts` (question-library CRUD
   and bulk import), `ai/draft.ts` (optional LLM drafting), `solve-state.ts`

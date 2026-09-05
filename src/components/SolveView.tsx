@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { PuzzleClue, PuzzleDTO } from "@/lib/puzzles";
 import type { Direction } from "@/lib/crossword/types";
 import type { Messages } from "@/lib/i18n";
+import { cellKey, wordCells, wordEntryCell } from "@/lib/crossword/word";
 import { CrosswordGrid } from "./CrosswordGrid";
 import { SolveToolbar } from "./SolveToolbar";
 import { SolveStatus } from "./SolveStatus";
@@ -15,7 +16,6 @@ import { Card } from "@/components/ui/card";
 import { orpc } from "@/lib/orpc/client";
 import { useSession } from "@/lib/auth-client";
 
-const cellKey = (r: number, c: number) => `${r},${c}`;
 const currentUrl = () => (typeof window === "undefined" ? "" : window.location.href);
 
 export function SolveView({
@@ -109,8 +109,12 @@ export function SolveView({
     setDirection(dir);
   }
 
+  // Picking a clue enters its word at the first cell still missing a letter,
+  // matching the grid's own behaviour when it switches word.
   function selectClue(clue: PuzzleClue, dir: Direction) {
-    setActive(cellKey(clue.row, clue.col));
+    const cells = wordCells(puzzle.grid, clue.row, clue.col, dir);
+    const [r, c] = wordEntryCell(cells, values) ?? [clue.row, clue.col];
+    setActive(cellKey(r, c));
     setDirection(dir);
   }
 

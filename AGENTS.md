@@ -47,7 +47,8 @@ src/app/                  routes + pages (App Router)
 src/lib/orpc/             router.ts + middleware.ts (adminProcedure/userProcedure) +
                           routers/{public,admin,client}.ts
 src/db/schema/            Drizzle schema: auth.ts, content.ts, solve-state.ts
-src/lib/crossword/        engine: normalize, select, generate, number, rng
+src/lib/crossword/        engine: normalize, select, generate, number, rng,
+                          word (solve-UI word/cursor geometry)
 src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
                           rate-limit, solve-state, ai/
 src/lib/i18n/             en/lt UI dictionaries for the visitor- and client-facing pages
