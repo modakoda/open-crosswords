@@ -45,9 +45,11 @@ services:
     command: ["npm", "run", "db:migrate"]
     environment:
       DATABASE_URL: postgresql://user:password@postgres:5432/open_crosswords
-      # src/lib/env.ts validates the whole schema on import, even for scripts
-      # that only touch the DB — BETTER_AUTH_SECRET must be set here too.
+      # src/lib/env.ts validates the whole environment on every startup, this
+      # one included, even though migrating only needs DATABASE_URL — so the
+      # values the app service sets below must be set here too.
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-tryout-only-please-change-me-32-bytes}
+      AUTH_IP_HEADER: ${AUTH_IP_HEADER:-}
     depends_on:
       postgres:
         condition: service_healthy

@@ -48,10 +48,15 @@ or solve them online via a shareable link. Open source, single Next.js app.
 - **Input schemas and env** each live in one module. Every Zod schema for an
   external input is in `src/lib/validation/schemas.ts` — procedures import
   from it rather than declaring schemas inline, so each field's limits have a
-  single definition. Server environment variables are parsed and validated
-  once by `src/lib/env.ts` (also Zod) and read through its exported `env`
-  object; it throws on invalid config, so import it from server code only,
-  never a client component.
+  single definition. Every server environment variable is declared once in
+  `src/lib/env.ts` (also Zod) and read through its exported `env` object —
+  nothing else in the repo touches `process.env` for configuration, including
+  `drizzle.config.ts` and the `scripts/` entry points. It throws on invalid
+  config, so import it from server code only, never a client component.
+  `src/instrumentation.ts` imports it in Next's `register()` hook so every
+  server start validates the whole environment up front, instead of waiting
+  for the first request that reads a value; `parseEnv(source)` is the same
+  check as a pure function, which is how it is tested.
 - **UI translation** in `src/lib/i18n/`: static `en`/`lt` dictionaries
   (`getMessages`), keyed to the app chrome, not the (separately language-scoped)
   clue/answer library. Site-wide chrome (`layout.tsx`, the public pages, the

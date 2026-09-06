@@ -86,7 +86,15 @@ export const signInThrottleHooks = {
         // Signing out is this browser saying it is no longer the account's.
         // Nothing here can reach a copy of the cookie on another machine, so
         // dropping it on the way out is the one revocation available.
-        ctx.setCookie(KNOWN_DEVICE_COOKIE, "", { path: "/", maxAge: 0 });
+        // Same attributes the issue path sets, so the delete is subject to the
+        // same cross-site restrictions as the cookie it replaces.
+        ctx.setCookie(KNOWN_DEVICE_COOKIE, "", {
+          httpOnly: true,
+          sameSite: "strict",
+          secure: env.BETTER_AUTH_URL.startsWith("https://"),
+          path: "/",
+          maxAge: 0,
+        });
         return;
       }
       if (ctx.path !== SIGN_IN_PATH || !isSignedIn(ctx.context.returned)) return;

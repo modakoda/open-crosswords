@@ -60,7 +60,9 @@ src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
                           header), auth-throttle (per-account sign-in backoff)
                           + known-device, solve-state, slug, puzzle-slug
                           (public word+number slugs) + slug-words, ai/
-src/lib/env.ts            Zod-validated server env (throws on bad config)
+src/lib/env.ts            Zod-validated server env, the only reader of process.env
+                          (throws on bad config); src/instrumentation.ts runs it
+                          on every server start
 src/lib/auth.ts           better-auth instance; auth-guard.ts holds the
                           requireAdmin / requireUser gates
 src/lib/i18n/             en/lt UI dictionaries for the visitor- and client-facing pages

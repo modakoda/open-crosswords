@@ -13,9 +13,10 @@ env:
   BETTER_AUTH_SECRET: ci-only-not-a-real-secret-do-not-reuse
   BETTER_AUTH_URL: http://localhost:3100
   ADMIN_EMAILS: e2e-admin@example.com
-  # The e2e server is `next start` on localhost with no proxy in front, so no
-  # forwarded-for header is worth believing. Empty says so explicitly, which
-  # src/lib/env.ts requires of any production boot outside Vercel.
+  # Unit tests pin their own value in vitest.config.ts and the e2e server sets
+  # one in playwright.config.ts, so this only covers anything else that boots
+  # here: empty says "trust no header", which src/lib/env.ts requires of any
+  # production boot outside Vercel.
   AUTH_IP_HEADER: ""
 
 jobs:

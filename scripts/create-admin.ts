@@ -5,6 +5,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../src/db";
 import * as schema from "../src/db/schema";
+import { env } from "../src/lib/env";
 
 /**
  * Create (or update the password of) an admin account. Public sign-up at
@@ -13,9 +14,6 @@ import * as schema from "../src/db/schema";
  * email is in ADMIN_EMAILS.
  */
 async function main() {
-  const secret = process.env.BETTER_AUTH_SECRET;
-  if (!secret) throw new Error("BETTER_AUTH_SECRET must be set");
-
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const email = (process.argv[2] ?? (await rl.question("Email: "))).trim().toLowerCase();
   const name = process.argv[3] ?? ((await rl.question("Name: ")) || "Admin");
@@ -25,7 +23,7 @@ async function main() {
   if (password.length < 12) throw new Error("Password must be at least 12 characters");
 
   const provisioning = betterAuth({
-    secret,
+    secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
       provider: "pg",
       schema: {
@@ -46,7 +44,7 @@ async function main() {
     .set({ emailVerified: true })
     .where(eq(schema.user.email, email));
   console.log(`Created admin user ${email}.`);
-  if (!(process.env.ADMIN_EMAILS ?? "").toLowerCase().includes(email)) {
+  if (!env.ADMIN_EMAILS.includes(email)) {
     console.warn(`Reminder: add ${email} to ADMIN_EMAILS to grant /admin access.`);
   }
   process.exit(0);

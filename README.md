@@ -115,10 +115,14 @@ Sign in at `/admin/login`.
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
 | `AI_MODEL` | no | Model id for AI drafting (default `claude-sonnet-5`) |
 
-These are parsed and validated with Zod in [`src/lib/env.ts`](./src/lib/env.ts)
-the first time server code imports them, so a missing or malformed value fails
-the boot (or the build) with a message naming the variable rather than surfacing
-later as a runtime error.
+Every one of them is declared and validated with Zod in
+[`src/lib/env.ts`](./src/lib/env.ts), the only place in the project that reads
+`process.env` for configuration — the app, `drizzle.config.ts` and the scripts
+under `scripts/` all go through it. Next.js runs it from
+[`src/instrumentation.ts`](./src/instrumentation.ts) on every server start, so a
+missing or malformed value fails the boot (or the build) with a message naming
+the variable, rather than surfacing later as a runtime error on whichever
+request first needed it.
 
 ## Deploy
 

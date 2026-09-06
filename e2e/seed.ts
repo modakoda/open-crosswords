@@ -4,6 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../src/db";
 import * as schema from "../src/db/schema";
+import { env } from "../src/lib/env";
 import {
   E2E_ADMIN_EMAIL,
   E2E_ADMIN_PASSWORD,
@@ -77,9 +78,6 @@ async function seedQuestionLibrary() {
  * never touches any other data in the database this points at.
  */
 async function main() {
-  const secret = process.env.BETTER_AUTH_SECRET;
-  if (!secret) throw new Error("BETTER_AUTH_SECRET must be set to seed e2e accounts");
-
   await db
     .delete(schema.user)
     .where(
@@ -93,7 +91,7 @@ async function main() {
   await seedQuestionLibrary();
 
   const provisioning = betterAuth({
-    secret,
+    secret: env.BETTER_AUTH_SECRET,
     database: drizzleAdapter(db, {
       provider: "pg",
       schema: {
