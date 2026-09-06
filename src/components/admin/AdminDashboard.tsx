@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { LogOutIcon, SparklesIcon, TableIcon, UploadIcon } from "lucide-react";
 
 import { signOut } from "@/lib/auth-client";
@@ -33,7 +34,9 @@ export interface Category {
 type Tab = "entries" | "import" | "ai";
 
 export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
+  const router = useRouter();
   const [tab, setTab] = useState<Tab>("entries");
+  const [signOutFailed, setSignOutFailed] = useState(false);
   const [languages, setLanguages] = useState<Language[]>([]);
   const [language, setLanguage] = useState("en");
   const [newLang, setNewLang] = useState("");
@@ -56,6 +59,19 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
 
   useEffect(reloadLanguages, []); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(reloadCategories, [language]);
+
+  // better-auth's client resolves to `{ data, error }` rather than throwing,
+  // so a rejected sign-out (its rate limit covers /sign-out too) would
+  // otherwise land on the login page with the session cookie still live.
+  async function handleSignOut() {
+    const result = await signOut();
+    if (result?.error) {
+      setSignOutFailed(true);
+      return;
+    }
+    router.push("/admin/login");
+    router.refresh();
+  }
 
   return (
     <div className="space-y-5">
@@ -113,11 +129,16 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
           <Button
             variant="ghost"
             className="ml-auto text-muted-foreground"
-            onClick={() => signOut().then(() => location.assign("/admin/login"))}
+            onClick={handleSignOut}
           >
             <LogOutIcon />
             Sign out
           </Button>
+          {signOutFailed && (
+            <span role="alert" className="text-sm text-destructive">
+              Sign out failed. Please try again.
+            </span>
+          )}
         </CardContent>
       </Card>
 

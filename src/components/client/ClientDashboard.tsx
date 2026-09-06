@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { LogOutIcon, PuzzleIcon } from "lucide-react";
 
 import { signOut } from "@/lib/auth-client";
@@ -17,7 +19,22 @@ export function ClientDashboard({
   puzzles: PuzzleSummary[];
   messages: Messages["client"];
 }) {
+  const router = useRouter();
+  const [signOutFailed, setSignOutFailed] = useState(false);
   const t = messages;
+
+  // better-auth's client resolves to `{ data, error }` rather than throwing,
+  // so a rejected sign-out (its rate limit covers /sign-out too) would
+  // otherwise land on the login page with the session cookie still live.
+  async function handleSignOut() {
+    const result = await signOut();
+    if (result?.error) {
+      setSignOutFailed(true);
+      return;
+    }
+    router.push("/client/login");
+    router.refresh();
+  }
 
   return (
     <div className="space-y-6">
@@ -30,10 +47,15 @@ export function ClientDashboard({
         </div>
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">{email}</span>
+          {signOutFailed && (
+            <span role="alert" className="text-sm text-destructive">
+              {t.errorGeneric}
+            </span>
+          )}
           <Button
             variant="outline"
             size="sm"
-            onClick={() => signOut().then(() => location.assign("/client/login"))}
+            onClick={handleSignOut}
           >
             <LogOutIcon />
             {t.signOut}
