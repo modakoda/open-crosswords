@@ -137,7 +137,10 @@ Three things hold wherever you put it:
   only at runtime. They only have to be well-formed, not real — the
   [Dockerfile](./Dockerfile) builds with placeholders and takes the real values
   at container start. Settings that only a running server can act on, such as
-  `AUTH_IP_HEADER`, are not demanded during a build.
+  `AUTH_IP_HEADER`, are not demanded during a build; `npm run build` says it is
+  a build by setting `OPEN_CROSSWORDS_BUILD=1`, so build through that script
+  rather than calling `next build` directly. Never set that variable on a
+  running server — a server that carries it is refused at boot anyway.
 - **`AUTH_IP_HEADER` must name the header your proxy actually sets.** It is how
   sign-in rate limiting identifies a caller, and the default names Vercel's
   header, so a production boot anywhere else refuses to start until you state

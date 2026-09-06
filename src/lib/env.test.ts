@@ -81,20 +81,25 @@ describe("AUTH_IP_HEADER", () => {
     );
   });
 
-  it("does not demand one during `next build`, which serves no requests", () => {
-    const env = parseEnv({ ...production, NEXT_PHASE: "phase-production-build" });
+  it("does not demand one during `npm run build`, which serves no requests", () => {
+    const env = parseEnv({ ...production, OPEN_CROSSWORDS_BUILD: "1" });
     expect(env.AUTH_IP_HEADER).toBe("x-vercel-forwarded-for");
   });
 
-  it("still demands one in a serving process that reports the build phase", () => {
-    // NEXT_RUNTIME is set only in a process that answers requests, so a stray
-    // NEXT_PHASE in a deployed environment can't switch the guard off.
+  it("still demands one in a serving process carrying the build flag", () => {
+    // The boot hook in src/instrumentation.ts passes `serving`, so a flag that
+    // leaked from a build environment into a deployed one is refused.
     expect(() =>
-      parseEnv({
-        ...production,
-        NEXT_PHASE: "phase-production-build",
-        NEXT_RUNTIME: "nodejs",
-      }),
+      parseEnv({ ...production, OPEN_CROSSWORDS_BUILD: "1" }, { serving: true }),
+    ).toThrow(/AUTH_IP_HEADER/);
+  });
+
+  it("is not excused by Next's own NEXT_PHASE", () => {
+    // NEXT_PHASE is ambient — a build environment carried into a deployed one
+    // sets it — and Next skips the register() hook whenever it is present, so
+    // nothing would catch it later. Only this repo's own build flag excuses.
+    expect(() =>
+      parseEnv({ ...production, NEXT_PHASE: "phase-production-build" }),
     ).toThrow(/AUTH_IP_HEADER/);
   });
 

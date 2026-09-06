@@ -89,19 +89,6 @@ function withCrossFieldChecks(source: EnvSource) {
   const authIpHeaderNamesOne = (source.AUTH_IP_HEADER ?? "").trim().length > 0;
   const onVercel = source.VERCEL !== undefined;
 
-  // `next build` imports server modules to collect route metadata, and does it
-  // with NODE_ENV already "production". A build answers no requests, so it has
-  // no caller to identify and nothing to decide about headers — only a running
-  // server does. Without this, `npm run build` and the Dockerfile's build stage
-  // would both have to be handed a placeholder for a value they never read.
-  // NEXT_RUNTIME is set in a serving process and not while collecting build
-  // metadata, so requiring its absence keeps a stray NEXT_PHASE in a deployed
-  // environment from switching the guard off on a server that does take
-  // requests.
-  const isProductionBuild =
-    source.NEXT_PHASE === "phase-production-build" &&
-    source.NEXT_RUNTIME === undefined;
-
   return schema
     .refine((v) => !(v.AUTH_TRUSTED_PROXIES.length > 0 && authIpHeaderNamesOne), {
       error:
@@ -114,10 +101,19 @@ function withCrossFieldChecks(source: EnvSource) {
     // thought about it, refuse to boot until it is stated: the header the proxy
     // in front actually sets, its address in AUTH_TRUSTED_PROXIES, or "" to
     // trust none.
+    //
+    // A production `next build` has to state it too, though it answers no
+    // requests and never reads the value — the same as DATABASE_URL and
+    // BETTER_AUTH_SECRET, which builds already supply as placeholders. There is
+    // deliberately no exemption for a build: any signal a build could offer is
+    // an environment variable, and an environment variable that switches this
+    // check off is one a deployed server can end up carrying — from an .env
+    // file that travelled, or a runner that exported its build variables. Next
+    // also skips the `register()` hook whenever NEXT_PHASE is set, so a boot
+    // check cannot be relied on to catch that.
     .refine(
       (v) =>
         v.NODE_ENV !== "production" ||
-        isProductionBuild ||
         onVercel ||
         authIpHeaderStated ||
         v.AUTH_TRUSTED_PROXIES.length > 0,
@@ -135,7 +131,6 @@ function withCrossFieldChecks(source: EnvSource) {
  * hold secrets.
  */
 export function parseEnv(source: EnvSource = process.env): Env {
-  console.error("ENVDEBUG", JSON.stringify({phase: source.NEXT_PHASE, runtime: source.NEXT_RUNTIME, nodeEnv: source.NODE_ENV, vercel: source.VERCEL}));
   const parsed = withCrossFieldChecks(source).safeParse(source);
   if (parsed.success) return parsed.data;
 
