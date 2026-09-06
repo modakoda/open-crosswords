@@ -8,6 +8,7 @@ import {
   ensureCategory,
   ensureLanguage,
   listEntries,
+  listLanguages,
   updateEntry,
   DuplicateEntryError,
   InvalidAnswerError,
@@ -18,11 +19,19 @@ import { isAiEnabled } from "@/lib/env/server";
 import {
   createCategorySchema,
   createEntrySchema,
+  createLanguageSchema,
   importSchema,
   listEntriesQuerySchema,
   updateEntrySchema,
   aiDraftSchema,
 } from "@/lib/validation/schemas";
+
+const languagesCreate = adminProcedure
+  .input(createLanguageSchema)
+  .handler(async ({ input }) => {
+    await ensureLanguage(input.code, input.name);
+    return { languages: await listLanguages() };
+  });
 
 const categoriesCreate = adminProcedure
   .input(createCategorySchema)
@@ -117,6 +126,7 @@ const entriesAiDraft = adminProcedure
   });
 
 export const adminRouter = {
+  languages: { create: languagesCreate },
   categories: { create: categoriesCreate },
   entries: {
     list: entriesList,

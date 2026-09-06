@@ -85,6 +85,11 @@ export const aiDraftSchema = z.object({
 });
 export type AiDraftInput = z.infer<typeof aiDraftSchema>;
 
+export const createLanguageSchema = z.object({
+  code: LANGUAGE_CODE,
+  name: z.string().trim().min(1).max(80).optional(),
+});
+
 export const createCategorySchema = z.object({
   languageCode: LANGUAGE_CODE,
   name: z.string().trim().min(1).max(80),

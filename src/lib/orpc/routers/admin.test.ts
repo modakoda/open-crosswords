@@ -170,3 +170,29 @@ describe("admin.entries.aiDraft", () => {
     ).rejects.toThrow();
   });
 });
+
+describe("admin.languages.create", () => {
+  it("rejects a non-admin", async () => {
+    adminState.allow = false;
+    await expect(call(adminRouter.languages.create, { code: "lt" }, ctx())).rejects.toThrow();
+  });
+
+  it("persists the language and returns the full list", async () => {
+    const { languages: list } = await call(adminRouter.languages.create, { code: "LT" }, ctx());
+    expect(list.map((l) => l.code)).toContain("lt");
+    expect(await db.select().from(languages)).toHaveLength(1);
+  });
+
+  it("is idempotent and keeps the original name", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lithuanian" }, ctx());
+    const { languages: list } = await call(adminRouter.languages.create, { code: "lt" }, ctx());
+    expect(list).toHaveLength(1);
+    expect(list[0].name).toBe("Lithuanian");
+  });
+
+  it("rejects a code that is not BCP-47 shaped", async () => {
+    await expect(
+      call(adminRouter.languages.create, { code: "klingon" }, ctx()),
+    ).rejects.toThrow();
+  });
+});

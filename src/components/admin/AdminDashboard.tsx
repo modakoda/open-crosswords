@@ -40,16 +40,40 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
   const [languages, setLanguages] = useState<Language[]>([]);
   const [language, setLanguage] = useState("en");
   const [newLang, setNewLang] = useState("");
+  const [langError, setLangError] = useState<string | null>(null);
+  const [addingLang, setAddingLang] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
 
   function reloadLanguages() {
-    orpc.languages.list().then((d) => {
-      setLanguages(d.languages);
-      if (d.languages.length && !d.languages.some((l) => l.code === language)) {
-        setLanguage(d.languages[0].code);
-      }
-    });
+    orpc.languages.list().then(applyLanguages).catch(() => setLanguages([]));
   }
+
+  function applyLanguages(d: { languages: Language[] }) {
+    setLanguages(d.languages);
+    if (d.languages.length && !d.languages.some((l) => l.code === language)) {
+      setLanguage(d.languages[0].code);
+    }
+  }
+
+  // The code has to reach the `languages` table before it can be selected —
+  // setting local state alone would leave the Select with nothing to show.
+  async function handleAddLanguage() {
+    const code = newLang.trim().toLowerCase();
+    if (!code || addingLang) return;
+    setAddingLang(true);
+    setLangError(null);
+    try {
+      const d = await orpc.admin.languages.create({ code });
+      setLanguages(d.languages);
+      setLanguage(code);
+      setNewLang("");
+    } catch {
+      setLangError("Could not add that language. Use a code like 'lt'.");
+    } finally {
+      setAddingLang(false);
+    }
+  }
+
   function reloadCategories() {
     orpc.categories
       .list({ languageCode: language })
@@ -107,21 +131,27 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
                 className="w-28"
                 placeholder="e.g. lt"
                 value={newLang}
-                onChange={(e) => setNewLang(e.target.value)}
+                onChange={(e) => {
+                  setNewLang(e.target.value);
+                  setLangError(null);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddLanguage();
+                }}
               />
               <Button
                 variant="outline"
-                onClick={() => {
-                  const code = newLang.trim().toLowerCase();
-                  if (code) {
-                    setLanguage(code);
-                    setNewLang("");
-                  }
-                }}
+                disabled={addingLang || !newLang.trim()}
+                onClick={handleAddLanguage}
               >
-                Use
+                {addingLang ? "Adding..." : "Add"}
               </Button>
             </div>
+            {langError && (
+              <p role="alert" className="text-xs text-destructive">
+                {langError}
+              </p>
+            )}
           </div>
 
           <Separator orientation="vertical" className="mx-1 hidden h-9 sm:block" />
