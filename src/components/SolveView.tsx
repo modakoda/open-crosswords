@@ -39,6 +39,10 @@ export function SolveView({
   useEffect(() => {
     try {
       const raw = localStorage.getItem(storageKey);
+      // Has to happen after mount rather than during render: the server has no
+      // access to this device's cache, so seeding state from it up front would
+      // make the server and client markup disagree.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (raw) setValues(JSON.parse(raw));
     } catch {
       /* ignore unreadable storage */

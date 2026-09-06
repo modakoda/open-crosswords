@@ -55,7 +55,7 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
   }
 
   useEffect(reloadLanguages, []); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(reloadCategories, [language]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(reloadCategories, [language]);
 
   return (
     <div className="space-y-5">

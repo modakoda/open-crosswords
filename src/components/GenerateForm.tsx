@@ -41,8 +41,13 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   // separate picker, so a visitor browsing in Lithuanian gets Lithuanian clues.
   const language = initialLocale;
   const [available, setAvailable] = useState<boolean | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [catLoading, setCatLoading] = useState(false);
+  // The list and the language it belongs to are one piece of state, so
+  // "still loading" is derived during render instead of being set from inside
+  // the effect (which would cascade renders).
+  const [loaded, setLoaded] = useState<{
+    language: string;
+    categories: Category[];
+  } | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [paperSize, setPaperSize] = useState<(typeof PAPER_SIZES)[number]>("a4");
   const [orientation, setOrientation] =
@@ -70,18 +75,28 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   }, []);
 
   useEffect(() => {
-    setCatLoading(true);
+    let cancelled = false;
+    const settle = (categories: Category[]) => {
+      if (!cancelled) setLoaded({ language, categories });
+    };
     orpc.categories
       .list({ languageCode: language })
-      .then((d) => setCategories(d.categories))
-      .catch(() => setCategories([]))
-      .finally(() => setCatLoading(false));
+      .then((d) => settle(d.categories))
+      .catch(() => settle([]));
+    return () => {
+      cancelled = true;
+    };
   }, [language]);
+
+  // A list fetched for a previous language still reads as "loading".
+  const categories = loaded?.language === language ? loaded.categories : [];
+  const catLoading = loaded?.language !== language;
 
   function toggle(id: string) {
     setSelected((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   }
