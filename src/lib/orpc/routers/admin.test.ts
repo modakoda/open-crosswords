@@ -87,6 +87,56 @@ describe("admin.entries.list", () => {
     expect(data.total).toBe(1);
     expect(data.rows[0].clue).toBe("Capital of France");
   });
+
+  it("filters by language and can list every language at once", async () => {
+    await call(adminRouter.languages.create, { code: "lt" }, ctx());
+    await call(
+      adminRouter.entries.create,
+      { languageCode: "en", clue: "Capital of France", answer: "Paris" },
+      ctx(),
+    );
+    await call(
+      adminRouter.entries.create,
+      { languageCode: "lt", clue: "Prancuzijos sostine", answer: "Paryzius" },
+      ctx(),
+    );
+
+    const lt = await call(adminRouter.entries.list, { languageCode: "lt" }, ctx());
+    expect(lt.total).toBe(1);
+    expect(lt.rows[0].languageCode).toBe("lt");
+
+    const all = await call(adminRouter.entries.list, {}, ctx());
+    expect(all.total).toBe(2);
+    expect(all.rows.map((r) => r.languageCode).sort()).toEqual(["en", "lt"]);
+  });
+
+  it("labels each row with its own category name", async () => {
+    const { category } = await call(
+      adminRouter.categories.create,
+      { languageCode: "en", name: "Geography" },
+      ctx(),
+    );
+    await call(
+      adminRouter.entries.create,
+      {
+        languageCode: "en",
+        clue: "Capital of France",
+        answer: "Paris",
+        categoryId: category.id,
+      },
+      ctx(),
+    );
+    await call(
+      adminRouter.entries.create,
+      { languageCode: "en", clue: "Uncategorised clue", answer: "Alpha" },
+      ctx(),
+    );
+
+    const data = await call(adminRouter.entries.list, { languageCode: "en" }, ctx());
+    const byClue = Object.fromEntries(data.rows.map((r) => [r.clue, r.categoryName]));
+    expect(byClue["Capital of France"]).toBe("Geography");
+    expect(byClue["Uncategorised clue"]).toBeNull();
+  });
 });
 
 describe("admin.entries.update / delete", () => {

@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
-import type { Category } from "./AdminDashboard";
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -35,6 +34,8 @@ import {
 
 export interface Entry {
   id: string;
+  languageCode: string;
+  categoryName: string | null;
   clue: string;
   answer: string;
   answerNormalized: string;
@@ -56,12 +57,12 @@ const DIFF_TONE = [
 export function EntryTable({
   rows,
   q,
-  categories,
+  showLanguage,
   onChanged,
 }: {
   rows: Entry[];
   q: string;
-  categories: Category[];
+  showLanguage: boolean;
   onChanged: () => void;
 }) {
   const [pendingDelete, setPendingDelete] = useState<Entry | null>(null);
@@ -78,14 +79,13 @@ export function EntryTable({
     onChanged();
   }
 
-  const catName = (id: string | null) => categories.find((c) => c.id === id)?.name ?? "—";
-
   return (
     <>
       <div className="overflow-hidden rounded-lg border border-border">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
+              {showLanguage && <TableHead>Lang</TableHead>}
               <TableHead>Clue</TableHead>
               <TableHead>Answer</TableHead>
               <TableHead>Category</TableHead>
@@ -98,16 +98,23 @@ export function EntryTable({
           <TableBody>
             {rows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={7} className="py-10 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={showLanguage ? 8 : 7} className="py-10 text-center text-sm text-muted-foreground">
                   No entries {q ? "match your search" : "yet"}.
                 </TableCell>
               </TableRow>
             )}
             {rows.map((e) => (
               <TableRow key={e.id} data-disabled={!e.enabled}>
+                {showLanguage && (
+                  <TableCell>
+                    <Badge variant="outline" className="font-mono text-xs uppercase">
+                      {e.languageCode}
+                    </Badge>
+                  </TableCell>
+                )}
                 <TableCell className="max-w-sm whitespace-normal">{e.clue}</TableCell>
                 <TableCell className="font-mono text-xs">{e.answerNormalized}</TableCell>
-                <TableCell className="text-muted-foreground">{catName(e.categoryId)}</TableCell>
+                <TableCell className="text-muted-foreground">{e.categoryName ?? "—"}</TableCell>
                 <TableCell
                   className={`text-center font-semibold tabular-nums ${DIFF_TONE[e.difficulty] ?? ""}`}
                 >

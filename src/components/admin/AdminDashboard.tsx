@@ -190,6 +190,7 @@ export function AdminDashboard({ aiEnabled }: { aiEnabled: boolean }) {
         <TabsContent value="entries" className="mt-4">
           <EntryManager
             language={language}
+            languages={languages}
             categories={categories}
             onCategoriesChanged={reloadCategories}
           />

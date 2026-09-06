@@ -59,9 +59,25 @@ export async function listEntries(q: ListQuery) {
   const where = filters.length ? and(...filters) : undefined;
 
   const [rows, [{ count }]] = await Promise.all([
+    // Join the category name so a listing spanning several languages can label
+    // each row — the caller only holds the categories of one language.
     db
-      .select()
+      .select({
+        id: entries.id,
+        languageCode: entries.languageCode,
+        categoryId: entries.categoryId,
+        categoryName: categories.name,
+        clue: entries.clue,
+        answer: entries.answer,
+        answerNormalized: entries.answerNormalized,
+        length: entries.length,
+        difficulty: entries.difficulty,
+        enabled: entries.enabled,
+        timesUsed: entries.timesUsed,
+        createdAt: entries.createdAt,
+      })
       .from(entries)
+      .leftJoin(categories, eq(entries.categoryId, categories.id))
       .where(where)
       .orderBy(desc(entries.createdAt))
       .limit(q.limit)
