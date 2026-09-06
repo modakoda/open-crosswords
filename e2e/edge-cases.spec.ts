@@ -81,6 +81,15 @@ test.describe("a signed-in client is not an admin", () => {
     await page.waitForURL("**/admin/login");
   });
 
+  // Every view is its own route now, so the gate has to sit on the layout —
+  // deep-linking straight to one must not slip past it.
+  for (const view of ["entries", "puzzles", "import", "ai"]) {
+    test(`deep-linking to the ${view} view redirects to admin login`, async ({ page }) => {
+      await page.goto(`/admin/dashboard/${view}`);
+      await page.waitForURL("**/admin/login");
+    });
+  }
+
   test("the header offers no admin link, and hiding it is not the control", async ({ page }) => {
     await page.goto("/client/dashboard");
     await expect(

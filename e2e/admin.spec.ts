@@ -4,6 +4,9 @@ import { E2E_LANGUAGE_CODE, E2E_LANGUAGE_NAME } from "./constants";
 
 test.use({ storageState: ADMIN_STORAGE_STATE });
 
+/** Scope all admin work to the dedicated e2e language, never the real library. */
+const ENTRIES = `/admin/dashboard/entries?lang=${E2E_LANGUAGE_CODE}`;
+
 test("the header shows the admin link to an admin", async ({ page }) => {
   await page.goto("/public");
   await expect(
@@ -11,14 +14,60 @@ test("the header shows the admin link to an admin", async ({ page }) => {
   ).toBeVisible();
 });
 
-test.describe("admin dashboard", () => {
-  test.beforeEach(async ({ page }) => {
+test.describe("admin view routing", () => {
+  test("the dashboard root redirects to the entries view", async ({ page }) => {
     await page.goto("/admin/dashboard");
-    // Scope all admin work to the dedicated e2e language, never the real library.
+    await page.waitForURL(/\/admin\/dashboard\/entries/);
+    await expect(page.getByRole("button", { name: "New entry" })).toBeVisible();
+  });
+
+  test("every view is reachable by its own URL", async ({ page }) => {
+    await page.goto(`/admin/dashboard/puzzles?lang=${E2E_LANGUAGE_CODE}`);
+    await expect(page.getByPlaceholder("Search title or link…")).toBeVisible();
+
+    await page.goto(`/admin/dashboard/import?lang=${E2E_LANGUAGE_CODE}`);
+    await expect(page.getByLabel("Choose a JSON or CSV file")).toBeVisible();
+
+    await page.goto(`/admin/dashboard/ai?lang=${E2E_LANGUAGE_CODE}`);
+    await expect(page.getByText("AI drafting is disabled")).toBeVisible();
+  });
+
+  test("navigating changes the URL and the back button returns", async ({ page }) => {
+    await page.goto(ENTRIES);
+    await page.getByRole("link", { name: "Puzzles" }).click();
+
+    // The working language rides along, so the linked view stays scoped.
+    await expect(page).toHaveURL(
+      `/admin/dashboard/puzzles?lang=${E2E_LANGUAGE_CODE}`,
+    );
+    await expect(page.getByPlaceholder("Search title or link…")).toBeVisible();
+
+    await page.goBack();
+    await expect(page).toHaveURL(ENTRIES);
+    await expect(page.getByRole("button", { name: "New entry" })).toBeVisible();
+  });
+
+  test("the working language is written to the URL and survives a reload", async ({
+    page,
+  }) => {
+    await page.goto("/admin/dashboard/entries");
     await page.getByRole("combobox").first().click();
     await page
       .getByRole("option", { name: `${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})` })
       .click();
+
+    await expect(page).toHaveURL(new RegExp(`lang=${E2E_LANGUAGE_CODE}`));
+
+    await page.reload();
+    await expect(page.getByRole("combobox").first()).toHaveText(
+      `${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})`,
+    );
+  });
+});
+
+test.describe("admin dashboard", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(ENTRIES);
   });
 
   test("creates, disables, and deletes an entry", async ({ page }) => {
@@ -45,14 +94,34 @@ test.describe("admin dashboard", () => {
 
   test("imports entries via bulk import", async ({ page }) => {
     const clue = `E2E import clue ${Date.now()}`;
-    await page.getByRole("tab", { name: "Bulk import" }).click();
+    await page.getByRole("link", { name: "Bulk import" }).click();
     await page
       .locator("textarea")
       .fill(JSON.stringify([{ clue, answer: "Imported" }]));
     await page.getByRole("button", { name: "Import" }).click();
     await expect(page.getByText(/Inserted 1, skipped 0 duplicate\(s\), 0 error\(s\)\./)).toBeVisible();
 
-    await page.getByRole("tab", { name: "Entries" }).click();
+    await page.getByRole("link", { name: "Entries" }).click();
+    await expect(page.getByRole("row").filter({ hasText: clue })).toBeVisible();
+  });
+
+  test("imports entries from a chosen JSON file", async ({ page }) => {
+    const clue = `E2E file import clue ${Date.now()}`;
+    await page.getByRole("link", { name: "Bulk import" }).click();
+
+    await page.getByLabel("Choose a JSON or CSV file").setInputFiles({
+      name: "entries.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify([{ clue, answer: "Filed" }])),
+    });
+
+    await expect(page.getByText("entries.json")).toBeVisible();
+    await expect(page.locator("textarea")).toHaveValue(new RegExp(clue));
+
+    await page.getByRole("button", { name: "Import" }).click();
+    await expect(page.getByText(/Inserted 1, skipped 0 duplicate\(s\), 0 error\(s\)\./)).toBeVisible();
+
+    await page.getByRole("link", { name: "Entries" }).click();
     await expect(page.getByRole("row").filter({ hasText: clue })).toBeVisible();
   });
 
@@ -75,7 +144,7 @@ test.describe("admin dashboard", () => {
   });
 
   test("shows AI drafting as disabled when no API key is configured", async ({ page }) => {
-    await page.getByRole("tab", { name: "AI draft" }).click();
+    await page.getByRole("link", { name: "AI draft" }).click();
     await expect(page.getByText("AI drafting is disabled")).toBeVisible();
   });
 });
