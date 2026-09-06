@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { LibraryBigIcon } from "lucide-react";
 
 import { getAdmin } from "@/lib/auth-guard";
-import { isAiEnabled } from "@/lib/env";
+import { isAiEnabled } from "@/lib/env/server";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { Badge } from "@/components/ui/badge";
 

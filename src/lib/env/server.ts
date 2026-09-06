@@ -1,9 +1,10 @@
 import { z } from "zod";
+import { envError, publicSchema, type EnvSource } from "./client";
 
 /**
- * The single source of truth for this app's server environment. Every variable
- * the app reads is declared here with its Zod rule, and nothing else in the
- * codebase touches `process.env` — one place to look for what a deployment has
+ * The server's environment: the public variables from ./client.ts plus every
+ * variable only the server may read. Nothing else in the codebase touches
+ * `process.env` for configuration — one place to look for what a deployment has
  * to supply, and one place where a bad value is rejected.
  *
  * Validation runs on every startup: `src/instrumentation.ts` imports this
@@ -11,13 +12,12 @@ import { z } from "zod";
  * immediately rather than on the first request that happens to need a value.
  *
  * Import only from server code (route handlers, server components, scripts,
- * drizzle.config.ts) — never from a client component.
+ * drizzle.config.ts) — never from a client component, which would put a
+ * connection string and an API key in the browser bundle. Client code imports
+ * ./client.ts instead, and eslint.config.mjs bars the components tree from
+ * reaching this file at all.
  */
-
-/** Anything shaped like `process.env`. */
-export type EnvSource = Record<string, string | undefined>;
-
-const schema = z.object({
+const schema = publicSchema.extend({
   DATABASE_URL: z.url("DATABASE_URL must be a valid connection string"),
   BETTER_AUTH_SECRET: z
     .string()
@@ -109,8 +109,8 @@ function withCrossFieldChecks(source: EnvSource) {
     // an environment variable, and an environment variable that switches this
     // check off is one a deployed server can end up carrying — from an .env
     // file that travelled, or a runner that exported its build variables. Next
-    // also skips the `register()` hook whenever NEXT_PHASE is set, so a boot
-    // check cannot be relied on to catch that.
+    // also skips the `register()` hook whenever NEXT_PHASE is the production
+    // build phase, so a boot check cannot be relied on to catch that.
     .refine(
       (v) =>
         v.NODE_ENV !== "production" ||
@@ -125,19 +125,11 @@ function withCrossFieldChecks(source: EnvSource) {
     );
 }
 
-/**
- * Validate an environment, or throw with every problem listed at once. Only
- * variable names and rule messages reach the message — never the values, which
- * hold secrets.
- */
+/** Validate a server environment, or throw with every problem listed at once. */
 export function parseEnv(source: EnvSource = process.env): Env {
   const parsed = withCrossFieldChecks(source).safeParse(source);
-  if (parsed.success) return parsed.data;
-
-  const issues = parsed.error.issues
-    .map((i) => `  - ${i.path.join(".")}: ${i.message}`)
-    .join("\n");
-  throw new Error(`Invalid environment configuration:\n${issues}`);
+  if (!parsed.success) throw envError(parsed.error);
+  return parsed.data;
 }
 
 /** The validated environment of this process, parsed once at import. */

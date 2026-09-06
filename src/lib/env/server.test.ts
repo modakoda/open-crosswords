@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseEnv } from "./env";
+import { parseEnv } from "./server";
 
 /**
  * `parseEnv` takes the environment it validates, so every case here states its
@@ -81,23 +81,12 @@ describe("AUTH_IP_HEADER", () => {
     );
   });
 
-  it("does not demand one during `npm run build`, which serves no requests", () => {
-    const env = parseEnv({ ...production, OPEN_CROSSWORDS_BUILD: "1" });
-    expect(env.AUTH_IP_HEADER).toBe("x-vercel-forwarded-for");
-  });
-
-  it("still demands one in a serving process carrying the build flag", () => {
-    // The boot hook in src/instrumentation.ts passes `serving`, so a flag that
-    // leaked from a build environment into a deployed one is refused.
-    expect(() =>
-      parseEnv({ ...production, OPEN_CROSSWORDS_BUILD: "1" }, { serving: true }),
-    ).toThrow(/AUTH_IP_HEADER/);
-  });
-
-  it("is not excused by Next's own NEXT_PHASE", () => {
-    // NEXT_PHASE is ambient — a build environment carried into a deployed one
-    // sets it — and Next skips the register() hook whenever it is present, so
-    // nothing would catch it later. Only this repo's own build flag excuses.
+  it("demands one during a production build too", () => {
+    // A build reads no addresses, so a placeholder would do — but no
+    // environment variable may switch this check off, because a deployed server
+    // can end up carrying one (an .env file that travelled, a runner that
+    // exported its build variables), and Next skips the register() hook when
+    // NEXT_PHASE is the production build phase, so no boot check would see it.
     expect(() =>
       parseEnv({ ...production, NEXT_PHASE: "phase-production-build" }),
     ).toThrow(/AUTH_IP_HEADER/);

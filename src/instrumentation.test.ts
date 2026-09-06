@@ -3,11 +3,11 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 /**
  * The hook's job is to make a bad configuration stop the boot, so these cases
  * assert on whether it validates at all — the rules themselves are covered in
- * src/lib/env.test.ts.
+ * src/lib/env/server.test.ts.
  */
 async function runRegister() {
   const parseEnv = vi.fn();
-  vi.doMock("@/lib/env", () => ({ parseEnv }));
+  vi.doMock("@/lib/env/server", () => ({ parseEnv }));
   vi.resetModules();
   const { register } = await import("./instrumentation");
   register();
@@ -16,17 +16,14 @@ async function runRegister() {
 
 afterEach(() => {
   vi.unstubAllEnvs();
-  vi.doUnmock("@/lib/env");
+  vi.doUnmock("@/lib/env/server");
   vi.resetModules();
 });
 
 describe("register", () => {
   it("validates the environment when a Node.js server starts", async () => {
     vi.stubEnv("NEXT_RUNTIME", "nodejs");
-    expect(await runRegister()).toHaveBeenCalledWith(
-      process.env,
-      expect.objectContaining({ serving: true }),
-    );
+    expect(await runRegister()).toHaveBeenCalledWith(process.env);
   });
 
   it("skips runtimes that do not serve this app's routes", async () => {
@@ -36,7 +33,7 @@ describe("register", () => {
 
   it("propagates the failure so the server does not come up", async () => {
     vi.stubEnv("NEXT_RUNTIME", "nodejs");
-    vi.doMock("@/lib/env", () => ({
+    vi.doMock("@/lib/env/server", () => ({
       parseEnv: () => {
         throw new Error("Invalid environment configuration:\n  - DATABASE_URL: bad");
       },

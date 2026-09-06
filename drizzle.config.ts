@@ -1,8 +1,8 @@
 import "./scripts/load-env";
 import { defineConfig } from "drizzle-kit";
-import { env } from "./src/lib/env";
+import { env } from "./src/lib/env/server";
 
-// The connection string is validated by src/lib/env.ts, the one place every
+// The connection string is validated by src/lib/env/server.ts, the one place every
 // environment variable in this project is declared — drizzle-kit gets the same
 // checked value the app runs on rather than its own ad-hoc read.
 export default defineConfig({

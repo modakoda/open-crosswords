@@ -4,7 +4,7 @@ import {
   consumeSignInAttempt,
 } from "@/lib/auth-throttle";
 import { clientIp } from "@/lib/client-ip";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env/server";
 import {
   isKnownDevice,
   withKnownDevice,

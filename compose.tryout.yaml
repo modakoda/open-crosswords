@@ -10,6 +10,10 @@
 #   docker compose -f compose.tryout.yaml up -d
 #   open http://localhost:3000
 #
+# The app container applies pending migrations itself before it starts serving
+# (scripts/docker-entrypoint.sh in the image), so there is no migration step
+# here and none to remember on an upgrade.
+#
 # Create an admin login once containers are up:
 #   docker compose -f compose.tryout.yaml exec app \
 #     npm run create-admin -- you@example.com "Your Name" "a-long-password"
@@ -40,20 +44,6 @@ services:
       timeout: 5s
       retries: 10
 
-  migrate:
-    image: ghcr.io/modakoda/open-crosswords:latest
-    command: ["npm", "run", "db:migrate"]
-    environment:
-      DATABASE_URL: postgresql://user:password@postgres:5432/open_crosswords
-      # src/lib/env.ts validates the whole environment on every startup, this
-      # one included, even though migrating only needs DATABASE_URL — so the
-      # values the app service sets below must be set here too.
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-tryout-only-please-change-me-32-bytes}
-      AUTH_IP_HEADER: ${AUTH_IP_HEADER:-}
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   app:
     image: ghcr.io/modakoda/open-crosswords:latest
     restart: unless-stopped
@@ -75,8 +65,8 @@ services:
       AUTH_IP_HEADER: ${AUTH_IP_HEADER:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
 
 volumes:
   open-crosswords-tryout-pgdata:

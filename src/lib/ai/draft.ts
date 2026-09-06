@@ -1,7 +1,7 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateText, Output } from "ai";
 import { z } from "zod";
-import { env, isAiEnabled } from "@/lib/env";
+import { env, isAiEnabled } from "@/lib/env/server";
 import { normalizeAnswer, isPlaceableAnswer } from "@/lib/crossword/normalize";
 import type { AiDraftInput } from "@/lib/validation/schemas";
 

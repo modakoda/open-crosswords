@@ -4,7 +4,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../src/db";
 import * as schema from "../src/db/schema";
-import { env } from "../src/lib/env";
+import { env } from "../src/lib/env/server";
 import {
   E2E_ADMIN_EMAIL,
   E2E_ADMIN_PASSWORD,

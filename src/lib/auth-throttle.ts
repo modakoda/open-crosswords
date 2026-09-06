@@ -2,7 +2,7 @@ import { createHmac } from "node:crypto";
 import { eq, lt, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { signInAttempt } from "@/db/schema";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env/server";
 
 /**
  * Sign-in backoff keyed to the account, layered on better-auth's address-keyed

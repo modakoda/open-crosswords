@@ -5,7 +5,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../src/db";
 import * as schema from "../src/db/schema";
-import { env } from "../src/lib/env";
+import { env } from "../src/lib/env/server";
 
 /**
  * Create (or update the password of) an admin account. Public sign-up at

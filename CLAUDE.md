@@ -33,6 +33,9 @@ or solve them online via a shareable link. Open source, single Next.js app.
   a route that touches the DB.
 - **Migrations** are committed SQL under `drizzle/`, generated with
   `npm run db:generate` and applied with `npm run db:migrate` (not `db:push`).
+  The Docker image applies them on every container start via its entrypoint
+  (`scripts/docker-entrypoint.sh`, opt out with `SKIP_DB_MIGRATE=1`); every
+  other host still runs them as its own deploy step.
 - **Business logic** in `src/lib/`: the crossword engine (`src/lib/crossword/**`
   — `normalize`, `select` for smart topic-spread/freshness candidate ranking,
   `generate` for greedy interlock placement, `number` for grid numbering,
@@ -48,11 +51,16 @@ or solve them online via a shareable link. Open source, single Next.js app.
 - **Input schemas and env** each live in one module. Every Zod schema for an
   external input is in `src/lib/validation/schemas.ts` — procedures import
   from it rather than declaring schemas inline, so each field's limits have a
-  single definition. Every server environment variable is declared once in
-  `src/lib/env.ts` (also Zod) and read through its exported `env` object —
-  nothing else in the repo touches `process.env` for configuration, including
-  `drizzle.config.ts` and the `scripts/` entry points. It throws on invalid
-  config, so import it from server code only, never a client component.
+  single definition. Environment variables are declared once (also Zod) and
+  split by audience: `src/lib/env/client.ts` holds the public,
+  `NEXT_PUBLIC_`-prefixed contract the browser may see (empty today) and is
+  safe to import anywhere, and `src/lib/env/server.ts` extends that schema
+  with everything only the server may read, exposed as `env`. Nothing else in
+  the repo touches `process.env` for configuration, including
+  `drizzle.config.ts` and the `scripts/` entry points. The server file throws
+  on invalid config and must never be imported from a client component —
+  `eslint.config.mjs` bars `src/components/**` from importing it, since doing
+  so would inline the connection string and API key into the browser bundle.
   `src/instrumentation.ts` imports it in Next's `register()` hook so every
   server start validates the whole environment up front, instead of waiting
   for the first request that reads a value; `parseEnv(source)` is the same

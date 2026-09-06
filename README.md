@@ -31,7 +31,8 @@ docker compose -f compose.tryout.yaml up -d
 open http://localhost:3000
 ```
 
-It applies migrations automatically; the question library starts empty. To
+The app container migrates its database on every start, so upgrading is just
+pulling a newer image. The question library starts empty. To
 sign in to `/admin/dashboard`, create a login and add its email to `ADMIN_EMAILS`:
 
 ```bash
@@ -115,10 +116,13 @@ Sign in at `/admin/login`.
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
 | `AI_MODEL` | no | Model id for AI drafting (default `claude-sonnet-5`) |
 
-Every one of them is declared and validated with Zod in
-[`src/lib/env.ts`](./src/lib/env.ts), the only place in the project that reads
+Every one of them is declared and validated with Zod under
+[`src/lib/env/`](./src/lib/env), the only place in the project that reads
 `process.env` for configuration — the app, `drizzle.config.ts` and the scripts
-under `scripts/` all go through it. Next.js runs it from
+under `scripts/` all go through it. The table above is
+[`server.ts`](./src/lib/env/server.ts); [`client.ts`](./src/lib/env/client.ts)
+holds the public `NEXT_PUBLIC_` variables the browser may see, and is empty
+today. Next.js runs it from
 [`src/instrumentation.ts`](./src/instrumentation.ts) on every server start, so a
 missing or malformed value fails the boot (or the build) with a message naming
 the variable, rather than surfacing later as a runtime error on whichever
@@ -129,18 +133,22 @@ request first needed it.
 Any host that runs Node.js 20.9+ and can reach a Postgres will serve this app.
 Three things hold wherever you put it:
 
-- **Migrations never run themselves.** Apply them with `npm run db:migrate`
-  against the production `DATABASE_URL` on every deploy that adds one.
+- **Migrations run themselves only in the Docker image.** Its entrypoint
+  ([`scripts/docker-entrypoint.sh`](./scripts/docker-entrypoint.sh)) applies
+  pending migrations before the app starts serving, and stops the container if
+  one fails. Set `SKIP_DB_MIGRATE=1` to turn that off — which you should on
+  every replica but the first, since concurrent migrators are not locked
+  against each other. Anywhere the image is not what runs (Vercel, a plain
+  `next start`), apply them with `npm run db:migrate` against the production
+  `DATABASE_URL` on every deploy that adds one.
 - **The environment is validated at build time too.** `next build` imports
-  server modules, which import [`src/lib/env.ts`](./src/lib/env.ts), so
+  server modules, which import [`src/lib/env/server.ts`](./src/lib/env/server.ts), so
   `DATABASE_URL` and `BETTER_AUTH_SECRET` must be present for the build and not
   only at runtime. They only have to be well-formed, not real — the
   [Dockerfile](./Dockerfile) builds with placeholders and takes the real values
-  at container start. Settings that only a running server can act on, such as
-  `AUTH_IP_HEADER`, are not demanded during a build; `npm run build` says it is
-  a build by setting `OPEN_CROSSWORDS_BUILD=1`, so build through that script
-  rather than calling `next build` directly. Never set that variable on a
-  running server — a server that carries it is refused at boot anyway.
+  at container start. `AUTH_IP_HEADER` counts as one of them: a build never
+  reads an address, but no variable is allowed to switch that check off, so
+  state it for the build as well (the Dockerfile passes an empty placeholder).
 - **`AUTH_IP_HEADER` must name the header your proxy actually sets.** It is how
   sign-in rate limiting identifies a caller, and the default names Vercel's
   header, so a production boot anywhere else refuses to start until you state
@@ -220,9 +228,9 @@ persistent volume; all state lives in Postgres.
    which case leave `AUTH_IP_HEADER` empty and put the proxy's address in
    `AUTH_TRUSTED_PROXIES` instead. Setting neither refuses to boot, which is
    deliberate — see the note above.
-4. **Run the migrations on each deploy.** Set the application's pre-deployment
-   command to `npm run db:migrate`. It runs from the same image, so it needs no
-   extra configuration.
+4. **Migrations need no deploy step.** The image applies them on every start.
+   Leave the pre-deployment command empty; if you scale past one instance, set
+   `SKIP_DB_MIGRATE=1` on the extra ones and migrate as its own step.
 5. **Create the admin login** from Coolify's terminal for the running
    container, then add that email to `ADMIN_EMAILS` and redeploy:
 
@@ -287,6 +295,9 @@ npm run test:e2e    # end-to-end (needs a real Postgres — see compose.yaml)
 GitHub Actions runs typecheck, lint, migrations, the unit suite and the
 Playwright suite against a Postgres service container on every push to `main`
 and every pull request ([`.github/workflows/test.yml`](./.github/workflows/test.yml)).
+Every push to `main` also builds the [Dockerfile](./Dockerfile) and publishes it
+to `ghcr.io/modakoda/open-crosswords:latest`, tagged with the commit's short SHA
+as well ([`.github/workflows/docker-publish.yml`](./.github/workflows/docker-publish.yml)).
 
 See [CLAUDE.md](./CLAUDE.md) for architecture and the security requirements that
 gate changes to auth, authorization, SQL, and the import/AI paths.

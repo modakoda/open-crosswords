@@ -5,7 +5,7 @@ import { db } from "@/db";
 import * as schema from "@/db/schema";
 import { signInThrottleHooks } from "@/lib/auth-hooks";
 import { ipAddressConfig } from "@/lib/client-ip";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env/server";
 
 /**
  * Central auth instance. Email + password only. Self-registration creates a

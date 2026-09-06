@@ -14,7 +14,7 @@ import {
 } from "@/lib/entries";
 import { importEntries, parseImportText } from "@/lib/import";
 import { draftEntries, AiDisabledError } from "@/lib/ai/draft";
-import { isAiEnabled } from "@/lib/env";
+import { isAiEnabled } from "@/lib/env/server";
 import {
   createCategorySchema,
   createEntrySchema,

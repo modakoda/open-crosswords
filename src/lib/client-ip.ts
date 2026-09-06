@@ -1,5 +1,5 @@
 import { getIP } from "better-auth/api";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env/server";
 
 /**
  * Client-address resolution, shared by better-auth's rate limiting

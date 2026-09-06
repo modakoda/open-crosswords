@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { env } from "@/lib/env";
+import { env } from "@/lib/env/server";
 
 export interface AdminUser {
   id: string;

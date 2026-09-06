@@ -60,9 +60,11 @@ src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
                           header), auth-throttle (per-account sign-in backoff)
                           + known-device, solve-state, slug, puzzle-slug
                           (public word+number slugs) + slug-words, ai/
-src/lib/env.ts            Zod-validated server env, the only reader of process.env
-                          (throws on bad config); src/instrumentation.ts runs it
-                          on every server start
+src/lib/env/              Zod-validated env, the only reader of process.env:
+                          client.ts (public NEXT_PUBLIC_ contract, safe in the
+                          browser) and server.ts (extends it; throws on bad
+                          config, barred from src/components by eslint);
+                          src/instrumentation.ts runs it on every server start
 src/lib/auth.ts           better-auth instance; auth-guard.ts holds the
                           requireAdmin / requireUser gates
 src/lib/i18n/             en/lt UI dictionaries for the visitor- and client-facing pages
