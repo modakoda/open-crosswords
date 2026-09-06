@@ -8,10 +8,23 @@ export interface ImportResult {
   errors: { row: number; message: string }[];
 }
 
+/** Thrown when the input holds more rows than one request may carry. */
+export class ImportTooLargeError extends Error {}
+
 /** Turn raw JSON/CSV text into validated rows (or throw on unparseable input). */
-export function parseImportText(text: string, format: "json" | "csv"): ImportRow[] {
+export function parseImportText(
+  text: string,
+  format: "json" | "csv",
+  /** Trusted callers (the CLI scripts) pass nothing and stay unbounded. */
+  maxRows: number = Number.POSITIVE_INFINITY,
+): ImportRow[] {
   const raw: unknown[] =
     format === "json" ? fromJson(text) : fromCsv(text);
+  // Counted before validating, so an oversized payload costs one length check
+  // rather than a full per-row parse of rows that are about to be rejected.
+  if (raw.length > maxRows) {
+    throw new ImportTooLargeError(`Import capped at ${maxRows} rows per request`);
+  }
   return raw.map((r, i) => {
     const parsed = importRowSchema.safeParse(r);
     if (!parsed.success) {

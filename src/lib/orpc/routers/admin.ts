@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import { adminProcedure } from "@/lib/orpc/middleware";
+import { adminPuzzlesRouter } from "./admin-puzzles";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import {
   createEntry,
@@ -13,7 +14,7 @@ import {
   DuplicateEntryError,
   InvalidAnswerError,
 } from "@/lib/entries";
-import { importEntries, parseImportText } from "@/lib/import";
+import { importEntries, parseImportText, ImportTooLargeError } from "@/lib/import";
 import { draftEntries, AiDisabledError } from "@/lib/ai/draft";
 import { isAiEnabled } from "@/lib/env/server";
 import {
@@ -83,18 +84,18 @@ const entriesDelete = adminProcedure
     return { deleted: true };
   });
 
+const MAX_IMPORT_ROWS = 2000;
+
 const entriesImport = adminProcedure.input(importSchema).handler(async ({ input }) => {
   let rows;
   try {
-    rows = parseImportText(input.text, input.format);
+    rows = parseImportText(input.text, input.format, MAX_IMPORT_ROWS);
   } catch (err) {
+    if (err instanceof ImportTooLargeError) {
+      throw new ORPCError("UNPROCESSABLE_CONTENT", { message: err.message });
+    }
     throw new ORPCError("UNPROCESSABLE_CONTENT", {
       message: `Could not parse ${input.format}: ${err instanceof Error ? err.message : String(err)}`,
-    });
-  }
-  if (rows.length > 2000) {
-    throw new ORPCError("UNPROCESSABLE_CONTENT", {
-      message: "Import capped at 2000 rows per request",
     });
   }
   await ensureLanguage(input.languageCode);
@@ -127,6 +128,7 @@ const entriesAiDraft = adminProcedure
 
 export const adminRouter = {
   languages: { create: languagesCreate },
+  puzzles: adminPuzzlesRouter,
   categories: { create: categoriesCreate },
   entries: {
     list: entriesList,

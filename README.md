@@ -70,18 +70,22 @@ npm run dev                   # http://localhost:3000
 
 The question library starts empty. Add clues from `/admin/dashboard` →
 *Bulk import*, or run `npm run seed` to load the bundled English starter set
-(`data/seed-en.json`). A Lithuanian starter set is also bundled:
-`npm run seed -- data/seed-lt.json`, plus a supplementary set of harder,
-more obscure clues: `npm run seed -- data/seed-lt-hard.json`. For a much
-larger English pool (~1.1M
-entries programmatically generated from WordNet — definitions plus
+(`data/seed-en.json`). A Lithuanian starter set is also bundled
+(`npm run seed -- data/seed-lt.json`), covering easy through hard, more
+obscure clues. For a much larger English pool (~1.1M entries
+programmatically generated from WordNet — definitions plus
 synonym/hypernym/hyponym/meronym/antonym relations; quality is more variable
 than the hand-curated starter set, especially in obscure/taxonomic corners),
 run `npm run seed -- data/seed-en-large.json.gz` (takes ~30 minutes; `npm run
 seed` gunzips `.gz` paths automatically).
 
 (There is also a `Tiltfile` — `tilt up` runs Postgres, migrations and the dev
-server together with live reload.)
+server together on `127.0.0.1` with live reload, and provisions a local admin
+login: `admin@example.com` / `local-dev-password`. Those are throwaway
+credentials for a database on your own machine, and that password is refused
+against any other `DATABASE_URL`. Override both with `tilt up
+-- --admin-email=you@example.com --admin-password='a-long-password'`, keeping
+`ADMIN_EMAILS` in `.env` in sync.)
 
 ### Option B — Neon
 
@@ -264,6 +268,15 @@ dashboard and start adding entries, or:
 ```bash
 npm run import -- lt data/my-lithuanian-clues.csv
 ```
+
+## Managing generated puzzles
+
+`/admin/dashboard` → *Puzzles* lists every puzzle the app has generated —
+newest first, filterable by language and searchable by title or link. Each row
+shows its grid size, word count, paper setting and who generated it (or
+*Anonymous*), and links straight to the solve and print views. From the row
+menu you can retitle a puzzle (its shared link is unchanged) or delete it —
+deleting also removes any saved solve progress and dead-links the shared URL.
 
 ## How a puzzle is built
 

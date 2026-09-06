@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { TriangleAlertIcon } from "lucide-react";
 
-import type { Category } from "./AdminDashboard";
+import type { Category } from "./workspace";
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

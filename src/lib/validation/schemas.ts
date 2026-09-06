@@ -62,6 +62,18 @@ export const listEntriesQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
 });
 
+export const listPuzzlesQuerySchema = z.object({
+  languageCode: LANGUAGE_CODE.optional(),
+  q: z.string().trim().max(120).optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+
+export const renamePuzzleSchema = z.object({
+  id: z.uuid(),
+  title: z.string().trim().min(1).max(120),
+});
+
 export const importSchema = z.object({
   languageCode: LANGUAGE_CODE,
   format: z.enum(["json", "csv"]).default("json"),

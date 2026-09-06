@@ -13,7 +13,7 @@ export async function loginAsAdmin(page: Page) {
   await page.locator("#email").fill(E2E_ADMIN_EMAIL);
   await page.locator("#password").fill(E2E_ADMIN_PASSWORD);
   await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForURL("**/admin/dashboard");
+  await page.waitForURL(/\/admin\/dashboard/);
 }
 
 export async function loginAsClient(page: Page) {

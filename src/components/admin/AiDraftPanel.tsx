@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { LoaderCircleIcon, SparklesIcon, WandSparklesIcon } from "lucide-react";
 
-import type { Category } from "./AdminDashboard";
+import type { Category } from "./workspace";
 import { DraftList, type Draft } from "./DraftList";
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";

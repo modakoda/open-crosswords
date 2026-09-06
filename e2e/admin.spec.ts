@@ -125,6 +125,27 @@ test.describe("admin dashboard", () => {
     await expect(page.getByRole("row").filter({ hasText: clue })).toBeVisible();
   });
 
+  test("imports a large JSON file in batches", async ({ page }) => {
+    const stamp = Date.now();
+    const rows = Array.from({ length: 600 }, (_, i) => ({
+      clue: `E2E batch clue ${stamp} number ${i}`,
+      answer: `Batched${i}`,
+    }));
+
+    await page.getByRole("link", { name: "Bulk import" }).click();
+    await page.getByLabel("Choose a JSON or CSV file").setInputFiles({
+      name: "big.json",
+      mimeType: "application/json",
+      buffer: Buffer.from(JSON.stringify(rows)),
+    });
+
+    // 600 rows exceeds the 500-row chunk cap, so this goes out as two requests.
+    await page.getByRole("button", { name: "Import" }).click();
+    await expect(
+      page.getByText(/Inserted 600, skipped 0 duplicate\(s\), 0 error\(s\)\./),
+    ).toBeVisible({ timeout: 60_000 });
+  });
+
   test("pages through the entry listing", async ({ page }) => {
     await page.getByRole("combobox", { name: "Rows per page" }).click();
     await page.getByRole("option", { name: "10 / page" }).click();

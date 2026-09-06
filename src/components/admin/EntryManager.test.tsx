@@ -71,18 +71,20 @@ describe("EntryManager language filter", () => {
     expect(list.mock.calls[1][0].languageCode).toBeUndefined();
   });
 
-  it("shows each row's own language once the listing spans languages", async () => {
+  it("shows each row's own language, even while scoped to one language", async () => {
     const user = userEvent.setup();
     renderManager();
     await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
-    expect(screen.queryByRole("columnheader", { name: "Lang" })).not.toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Lang" })).toBeInTheDocument();
+    expect(
+      within(screen.getByText("Capital of France").closest("tr")!).getByText("en"),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
     await user.click(screen.getByRole("option", { name: "All languages" }));
 
-    await waitFor(() =>
-      expect(screen.getByRole("columnheader", { name: "Lang" })).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    expect(screen.getByRole("columnheader", { name: "Lang" })).toBeInTheDocument();
     const row = screen.getByText("Prancūzijos sostinė").closest("tr")!;
     expect(within(row).getByText("lt")).toBeInTheDocument();
   });

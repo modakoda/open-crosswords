@@ -40,3 +40,6 @@ tsconfig.tsbuildinfo
 
 # mise local overrides
 .mise.local.toml
+
+# Tilt per-developer settings (may hold a real --admin-password)
+tilt_config.json

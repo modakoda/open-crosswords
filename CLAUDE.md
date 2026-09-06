@@ -42,7 +42,8 @@ or solve them online via a shareable link. Open source, single Next.js app.
   `word` for the solve UI's word/cursor geometry shared by `CrosswordGrid`
   and `SolveView`),
   `puzzles/` (generate + persist + fetch + per-user listing, split into
-  `types.ts`/`queries.ts`), `entries.ts` / `import.ts` (question-library CRUD
+  `types.ts`/`queries.ts`, with the admin-only library-wide listing, rename
+  and delete in `admin.ts`), `entries.ts` / `import.ts` (question-library CRUD
   and bulk import), `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
   (per-user solve progress, read/write always scoped to the caller's own id),
   `print-layout.ts` (paper geometry: it sizes each print sheet's cells, clue
@@ -107,8 +108,11 @@ or solve them online via a shareable link. Open source, single Next.js app.
   There is deliberately no `role` column on `user` — admin-ness stays
   out-of-band via the allow-list so there's only one source of truth for it.
   The question library stays a single shared resource managed by admins
-  (every `admin.*` oRPC procedure is admin-gated). Generated puzzles are
-  **public** and addressed by an unguessable word-and-number slug (e.g.
+  (every `admin.*` oRPC procedure is admin-gated, including `admin.puzzles.*`
+  — the only listing that spans every client's puzzles and surfaces their
+  owner's email, so it must never be reached from anywhere else).
+  Generated puzzles are **public** and addressed by an unguessable
+  word-and-number slug (e.g.
   `amber-quiet-otter-canyon-48392174`), and optionally owned by
   the signed-in client who generated them (`puzzles.userId`, nullable —
   anonymous generation stays unowned). Per-user solve progress

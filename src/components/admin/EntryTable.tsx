@@ -57,12 +57,10 @@ const DIFF_TONE = [
 export function EntryTable({
   rows,
   q,
-  showLanguage,
   onChanged,
 }: {
   rows: Entry[];
   q: string;
-  showLanguage: boolean;
   onChanged: () => void;
 }) {
   const [pendingDelete, setPendingDelete] = useState<Entry | null>(null);
@@ -85,7 +83,7 @@ export function EntryTable({
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
-              {showLanguage && <TableHead>Lang</TableHead>}
+              <TableHead>Lang</TableHead>
               <TableHead>Clue</TableHead>
               <TableHead>Answer</TableHead>
               <TableHead>Category</TableHead>
@@ -98,20 +96,18 @@ export function EntryTable({
           <TableBody>
             {rows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={showLanguage ? 8 : 7} className="py-10 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={8} className="py-10 text-center text-sm text-muted-foreground">
                   No entries {q ? "match your search" : "yet"}.
                 </TableCell>
               </TableRow>
             )}
             {rows.map((e) => (
               <TableRow key={e.id} data-disabled={!e.enabled}>
-                {showLanguage && (
-                  <TableCell>
-                    <Badge variant="outline" className="font-mono text-xs uppercase">
-                      {e.languageCode}
-                    </Badge>
-                  </TableCell>
-                )}
+                <TableCell>
+                  <Badge variant="outline" className="font-mono text-xs uppercase">
+                    {e.languageCode}
+                  </Badge>
+                </TableCell>
                 <TableCell className="max-w-sm whitespace-normal">{e.clue}</TableCell>
                 <TableCell className="font-mono text-xs">{e.answerNormalized}</TableCell>
                 <TableCell className="text-muted-foreground">{e.categoryName ?? "—"}</TableCell>

@@ -3,14 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 import { PlusIcon, SearchIcon, TriangleAlertIcon } from "lucide-react";
 
-import type { Category, Language } from "./AdminDashboard";
+import type { Category, Language } from "./workspace";
 import { EntryFormDialog } from "./EntryFormDialog";
 import { EntryTable, type Entry } from "./EntryTable";
 import {
   DEFAULT_PAGE_SIZE,
-  EntryPagination,
+  TablePagination,
   lastPage,
-} from "./EntryPagination";
+} from "./TablePagination";
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -133,9 +133,9 @@ export function EntryManager({
         </Alert>
       )}
 
-      <EntryTable rows={rows} q={q} showLanguage={filter === ALL} onChanged={load} />
+      <EntryTable rows={rows} q={q} onChanged={load} />
 
-      <EntryPagination
+      <TablePagination
         page={page}
         pageSize={pageSize}
         total={total}
