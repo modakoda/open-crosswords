@@ -74,12 +74,15 @@ or solve them online via a shareable link. Open source, single Next.js app.
   grant admin access. Sign-up/sign-in are rate-limited via better-auth's own
   `rateLimit` config in `auth.ts` (separate from this app's own
   `src/lib/rate-limit.ts`, used for `puzzles.generate`/`ai-draft`) — keyed to
-  the client IP better-auth reads from the platform headers listed in
-  `auth.ts`, with counters in Postgres (`rate_limit`) rather than per-process
-  memory. Sign-in additionally carries a per-account exponential backoff
-  (`src/lib/auth-throttle.ts`, `sign_in_attempt`), wired in as better-auth
-  `hooks.before`/`hooks.after`; it counts failures for any attempted email,
-  registered or not, so it can't be used to probe which accounts exist.
+  the caller's address from `src/lib/client-ip.ts` (one configured header, or
+  `x-forwarded-for` when `AUTH_TRUSTED_PROXIES` is set), with counters in
+  Postgres (`rate_limit`) rather than per-process memory. Sign-in additionally
+  carries an exponential backoff (`src/lib/auth-throttle.ts`,
+  `sign_in_attempt`) on two counters: per account-and-caller (tight) and per
+  account from anywhere (loose, so only a distributed run reaches it). It is
+  wired in as better-auth `hooks.before`/`hooks.after` — the before hook counts
+  the attempt and refuses it when locked, the after hook releases the caller's
+  counter on a verified successful sign-in.
 - **Authorization model**: two independent identities layered on one
   better-auth session — "admin" (a signed-in user whose verified email is in
   `ADMIN_EMAILS`, checked by `getAdmin`/`requireAdmin` in
@@ -159,10 +162,23 @@ external input, or the AI/import paths must meet these before it's done:
   running multiple instances); sign-up/sign-in are rate limited separately via
   better-auth's own `rateLimit` config in `src/lib/auth.ts`, whose counters do
   live in Postgres so they hold across instances. Password guessing is bounded
-  on two axes and both must stay: per IP by that config, and per account by the
-  backoff in `src/lib/auth-throttle.ts`. Keep the account-side lock generic
-  (recorded for unregistered emails too, capped in duration, never permanent),
-  or it becomes either an enumeration oracle or a way to lock a victim out.
+  on two axes and both must stay: per address by that config, and per account
+  by the backoff in `src/lib/auth-throttle.ts`. Three properties of that
+  backoff are load-bearing — an attempt must be counted and judged in one
+  locked step, and the row has to be created before it is locked (`for update`
+  on a row that doesn't exist yet locks nothing, and a parallel burst then all
+  passes the same empty check), attempts must be
+  counted for unregistered emails too (otherwise the lock answers "does this
+  account exist"), and only a *verified* successful sign-in may clear a counter
+  (better-call's body-validation error is a different class from better-auth's,
+  so "not an error" is not "success" — treating it as one hands an attacker a
+  reset between guesses).
+- **Client address**: anything keyed to "the caller" reads
+  `src/lib/client-ip.ts`, which trusts exactly one header. Never widen that to
+  a list of candidates: a header the app is willing to read is one a caller can
+  send whenever the platform in front doesn't overwrite it, which lets them
+  rotate it to escape a limit or pin it to a victim's address to burn that
+  victim's bucket.
 - **Dependencies**: don't add a package that duplicates a capability already
   covered by better-auth / Drizzle / Zod; check for known-vulnerable versions.
 - **Transport & headers**: HTTPS-only in production; never disable TLS

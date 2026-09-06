@@ -33,7 +33,9 @@ const WORDS = [
 ];
 
 function ctx(ip = "10.0.0.1") {
-  return { context: { headers: new Headers({ "x-forwarded-for": ip }) } };
+  // The header the app trusts for a client address (src/lib/client-ip.ts);
+  // anything else resolves to the same shared bucket for every caller.
+  return { context: { headers: new Headers({ "x-vercel-forwarded-for": ip }) } };
 }
 
 async function seed() {

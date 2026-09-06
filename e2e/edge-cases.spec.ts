@@ -9,12 +9,13 @@ test("an invalid puzzle slug 404s", async ({ page }) => {
 });
 
 test("puzzle generation is rate-limited after repeated rapid requests", async ({ page }) => {
-  // The rate-limit bucket is keyed by client IP (src/lib/rate-limit.ts). A real
-  // browser request carries no X-Forwarded-For, so every other test in this
-  // suite shares one implicit "local" bucket — deliberately exhausting it here
-  // would 429 every later generate call too. Give this burst its own fake IP
-  // so it only ever exhausts its own, isolated bucket.
-  const headers = { "x-forwarded-for": "203.0.113.5" };
+  // The rate-limit bucket is keyed by the one address header the deployment
+  // trusts (src/lib/client-ip.ts, AUTH_IP_HEADER). A real browser request
+  // carries none, so every other test in this suite shares one implicit
+  // "local" bucket — deliberately exhausting it here would 429 every later
+  // generate call too. Send that header so this burst only exhausts its own,
+  // isolated bucket.
+  const headers = { "x-vercel-forwarded-for": "203.0.113.5" };
   const statuses: number[] = [];
   for (let i = 0; i < 22; i++) {
     const res = await page.request.post("/rpc/puzzles/generate", {

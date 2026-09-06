@@ -5,29 +5,35 @@ import { signInAttempt } from "@/db/schema";
 import { env } from "@/lib/env";
 
 /**
- * Sign-in backoff keyed to the account, layered on better-auth's IP-keyed rate
- * limit (see ./auth.ts). That limit caps one address at 10 attempts a minute
- * but puts no ceiling on what a distributed attacker can spend against a single
- * account, so attempts are counted per identifier here too.
+ * Sign-in backoff keyed to the account, layered on better-auth's address-keyed
+ * rate limit (see ./auth.ts). That limit caps one address at 10 attempts a
+ * minute but puts no ceiling on what a distributed attacker can spend against a
+ * single account, so attempts are counted per identifier here too.
  *
- * Two counters, both consumed on every attempt:
+ * Two counters, both consulted on every attempt:
  * - PER_CLIENT: this account from this address. Tight, and the one that stops
- *   ordinary guessing. Bounded per address, so an attacker can only lock
- *   themselves out, not a victim.
+ *   ordinary guessing. Bounded per address, so an attacker locks themselves
+ *   out, not the account's owner. Skipped when no address can be trusted —
+ *   lumping every anonymous caller into one bucket would hand anyone a
+ *   six-request lockout of any account they can name.
  * - PER_ACCOUNT: this account from anywhere. Loose enough that no real person
- *   reaches it, so it only bites on a distributed attack. It is a denial-of-
+ *   reaches it, so it only bites on a distributed run. It is a denial-of-
  *   service lever by nature — anyone who knows an email can spend attempts
  *   against it — which is why the threshold is high and the lock is short.
  *
  * Other deliberate properties:
  * - Attempts are counted for every email, whether or not an account exists, so
  *   the lock can't be used to probe which addresses are registered.
- * - An attempt is counted and judged in one statement, so a burst of parallel
- *   attempts can't all read the same pre-increment count and pass together.
- * - An attempt refused by the lock is not counted, so hammering a locked
- *   account doesn't extend the lock.
- * - Only the PER_CLIENT counter is cleared on success, so a stranger can't
- *   learn from a probe whether the owner has signed in lately.
+ * - Both counters are read, judged and incremented inside one transaction
+ *   holding a row lock on each. The rows are created first, because a lock on
+ *   a row that does not exist yet locks nothing and lets a parallel burst all
+ *   pass the same check.
+ * - An attempt refused by either counter increments neither, so hammering a
+ *   locked account can't push its backoff higher, and an attacker driving the
+ *   account-wide lock can't run up the owner's own counter through it.
+ * - A successful sign-in clears that caller's counter and gives one attempt
+ *   back to the account-wide one, so ordinary sign-ins never accumulate toward
+ *   a lockout while an attacker's failures still do.
  */
 
 interface Policy {
@@ -73,96 +79,118 @@ export function lockSeconds(count: number, policy: Policy): number {
   return Math.min(policy.base * 2 ** (count - policy.free), policy.max);
 }
 
-/** Seconds still to wait given the counter's state before this attempt. */
+/** One counter to consult for an attempt. */
+interface Counter {
+  key: string;
+  policy: Policy;
+}
+
+/** Seconds still to wait given a counter's state before this attempt. */
 function remainingLock(
-  prior: { failedCount: number; lastFailedAt: Date } | undefined,
+  row: { failedCount: number; lastFailedAt: Date },
   policy: Policy,
   now: Date,
 ): number {
-  if (!prior) return 0;
-  const sinceMs = now.getTime() - prior.lastFailedAt.getTime();
+  // Never negative: a request that waited on the row lock can hold a `now` from
+  // before the attempt that just committed, and a negative age would read as
+  // time owed on a lock that was never earned.
+  const sinceMs = Math.max(now.getTime() - row.lastFailedAt.getTime(), 0);
   if (sinceMs >= DECAY_SECONDS * 1000) return 0;
-  const remainingMs = lockSeconds(prior.failedCount, policy) * 1000 - sinceMs;
+  const remainingMs = lockSeconds(row.failedCount, policy) * 1000 - sinceMs;
   return remainingMs > 0 ? Math.ceil(remainingMs / 1000) : 0;
 }
 
 /**
- * Count one attempt against a counter and report how long it must wait. The
- * read takes a row lock the write then uses, so a burst of parallel attempts is
- * serialized instead of every one of them judging the same pre-increment count.
- * An attempt that arrives locked is refused without being counted, so hammering
- * a locked counter cannot push its backoff any higher.
+ * Judge an attempt against every counter and count it against all of them if it
+ * is allowed, in one transaction. Each row is materialized before it is locked:
+ * `for update` on a row that does not exist yet takes no lock at all, which
+ * would let a burst of parallel first attempts read the same empty state and
+ * pass together. Rows are locked in key order so two attempts touching the same
+ * pair can't deadlock.
  */
-async function consume(
-  key: string,
-  policy: Policy,
-  now: Date,
-): Promise<number> {
+async function consume(counters: Counter[], now: Date): Promise<number> {
   // Bound as ISO text with an explicit cast: inside a raw `sql` fragment a
   // value skips the column's driver mapping, and postgres.js serializes a Date
   // with `toString()`, which Postgres cannot parse.
   const decayCutoff = new Date(
     now.getTime() - DECAY_SECONDS * 1000,
   ).toISOString();
+  const ordered = [...counters].sort((a, b) => a.key.localeCompare(b.key));
 
   return db.transaction(async (tx) => {
-    const [prior] = await tx
-      .select()
-      .from(signInAttempt)
-      .where(eq(signInAttempt.identifier, key))
-      .for("update");
-
-    const retryAfter = remainingLock(prior, policy, now);
+    let retryAfter = 0;
+    for (const counter of ordered) {
+      await tx
+        .insert(signInAttempt)
+        .values({ identifier: counter.key, failedCount: 0, lastFailedAt: now })
+        .onConflictDoNothing();
+      const [row] = await tx
+        .select()
+        .from(signInAttempt)
+        .where(eq(signInAttempt.identifier, counter.key))
+        .for("update");
+      if (row) {
+        retryAfter = Math.max(retryAfter, remainingLock(row, counter.policy, now));
+      }
+    }
     if (retryAfter > 0) return retryAfter;
 
-    await tx
-      .insert(signInAttempt)
-      .values({ identifier: key, failedCount: 1, lastFailedAt: now })
-      .onConflictDoUpdate({
-        target: signInAttempt.identifier,
-        set: {
+    for (const counter of ordered) {
+      await tx
+        .update(signInAttempt)
+        .set({
           failedCount: sql`case when ${signInAttempt.lastFailedAt} < ${decayCutoff}::timestamp then 1 else ${signInAttempt.failedCount} + 1 end`,
           lastFailedAt: now,
-        },
-      });
+        })
+        .where(eq(signInAttempt.identifier, counter.key));
+    }
     return 0;
   });
 }
 
 /**
- * Count one sign-in attempt on both counters and report the seconds the caller
- * must wait, or 0 when the attempt may proceed. `ip` is null when no address
- * can be trusted, which puts those callers in one shared bucket rather than
- * letting an unattributable attempt escape the per-client counter.
+ * Count one sign-in attempt and report the seconds the caller must wait, or 0
+ * when the attempt may proceed. A null `ip` means no address could be trusted,
+ * which leaves only the account-wide counter — one shared per-account bucket
+ * for anonymous callers would be a lockout anyone could trigger.
  */
 export async function consumeSignInAttempt(
   email: string,
   ip: string | null,
   now: Date = new Date(),
 ): Promise<number> {
-  const perClient = await consume(
-    attemptKey(`client:${ip ?? "unknown"}`, email),
-    PER_CLIENT,
-    now,
-  );
-  const perAccount = await consume(attemptKey("account", email), PER_ACCOUNT, now);
+  const counters: Counter[] = [
+    { key: attemptKey("account", email), policy: PER_ACCOUNT },
+  ];
+  if (ip !== null) {
+    counters.push({ key: attemptKey(`client:${ip}`, email), policy: PER_CLIENT });
+  }
 
+  const retryAfter = await consume(counters, now);
   if (Math.random() < PRUNE_PROBABILITY) await pruneDecayedAttempts(now);
-  return Math.max(perClient, perAccount);
+  return retryAfter;
 }
 
 /**
- * Clear this caller's backoff after a verified successful sign-in. The
- * account-wide counter is deliberately left to decay on its own: clearing it
- * would tell anyone probing the account that its owner had just signed in.
+ * Release this caller's counter after a verified successful sign-in and hand
+ * one attempt back to the account-wide counter. The account-wide counter is
+ * never cleared outright: doing that would let a stranger's probe reveal that
+ * the owner had just signed in, and letting it only ever grow would lock out an
+ * account that many people legitimately sign into.
  */
 export async function clearSignInAttempts(
   email: string,
   ip: string | null,
 ): Promise<void> {
+  if (ip !== null) {
+    await db
+      .delete(signInAttempt)
+      .where(eq(signInAttempt.identifier, attemptKey(`client:${ip}`, email)));
+  }
   await db
-    .delete(signInAttempt)
-    .where(eq(signInAttempt.identifier, attemptKey(`client:${ip ?? "unknown"}`, email)));
+    .update(signInAttempt)
+    .set({ failedCount: sql`greatest(${signInAttempt.failedCount} - 1, 0)` })
+    .where(eq(signInAttempt.identifier, attemptKey("account", email)));
 }
 
 /** Delete rows whose run of attempts has decayed and no longer means anything. */

@@ -65,17 +65,19 @@ describe("sign-in throttling", () => {
     expect((await signIn(PASSWORD)).status).toBe(429);
   });
 
-  it("cannot be reset by a request that fails body validation", async () => {
+  it("is neither reset nor advanced by a request that fails body validation", async () => {
     await signUp();
 
     for (let i = 0; i < PER_CLIENT.free - 1; i++) {
       expect((await signIn("wrong-password-here")).status).toBe(401);
     }
-    // better-call throws its own error class for a bad body, which is not the
-    // error class better-auth throws — treating "no error I recognize" as a
-    // successful sign-in here would clear the counter and hand an attacker
-    // unlimited guesses.
+    // A body that can't reach password verification is not a sign-in attempt:
+    // counting it would let an attacker spend an account's budget for free,
+    // and treating it as a success would clear the backoff between guesses.
+    // better-call throws its own error class here, which is not the class
+    // better-auth throws, so "no error I recognize" is not success.
     expect((await malformedSignIn()).status).toBe(400);
+    expect((await signIn("wrong-password-here")).status).toBe(401);
     expect((await signIn("wrong-password-here")).status).toBe(429);
   });
 

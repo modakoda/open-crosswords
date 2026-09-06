@@ -14,13 +14,17 @@ import { env } from "@/lib/env";
  *
  * Default is the platform header (Vercel overwrites it); set AUTH_IP_HEADER for
  * another platform (`cf-connecting-ip`, `x-real-ip`), or AUTH_TRUSTED_PROXIES
- * to read `x-forwarded-for` walked from the right past the named proxies.
+ * to read `x-forwarded-for` walked from the right past the named proxies. An
+ * empty AUTH_IP_HEADER trusts nothing, which is the honest setting for an
+ * origin exposed directly: no header there is worth believing.
  */
+function headerToTrust(): string[] {
+  if (env.AUTH_TRUSTED_PROXIES.length > 0) return ["x-forwarded-for"];
+  return env.AUTH_IP_HEADER.length > 0 ? [env.AUTH_IP_HEADER] : [];
+}
+
 export const ipAddressConfig = {
-  ipAddressHeaders:
-    env.AUTH_TRUSTED_PROXIES.length > 0
-      ? ["x-forwarded-for"]
-      : [env.AUTH_IP_HEADER],
+  ipAddressHeaders: headerToTrust(),
   trustedProxies: env.AUTH_TRUSTED_PROXIES,
 };
 

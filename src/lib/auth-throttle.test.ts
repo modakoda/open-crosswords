@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 
 vi.mock("@/db", async () => {
   const { makeTestDb } = await import("@/test/db");
@@ -78,6 +78,37 @@ describe("consumeSignInAttempt", () => {
     }
   });
 
+  it("does not spend the account-wide budget on refused attempts", async () => {
+    await attempt(PER_CLIENT.free + 20);
+    const [account] = await db
+      .select()
+      .from(signInAttempt)
+      .where(eq(signInAttempt.identifier, attemptKey("account", EMAIL)));
+    expect(account?.failedCount).toBe(PER_CLIENT.free);
+  });
+
+  it("does not spend the caller's budget while the account-wide lock is on", async () => {
+    for (let i = 0; i < PER_ACCOUNT.free; i++) {
+      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, T0);
+    }
+    // The owner, whose own counter is untouched, is refused by the account
+    // lock — and must not be charged for it, or an attacker's flood would run
+    // the owner's counter up too.
+    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBeGreaterThan(0);
+    const [client] = await db
+      .select()
+      .from(signInAttempt)
+      .where(eq(signInAttempt.identifier, attemptKey(`client:${IP}`, EMAIL)));
+    expect(client?.failedCount).toBe(0);
+  });
+
+  it("counts an unattributable caller against the account only", async () => {
+    await attempt(PER_CLIENT.free + 1, null);
+    // No shared per-account bucket for anonymous callers: six requests from
+    // nowhere must not lock an account everyone else can still reach.
+    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBe(0);
+  });
+
   it("locks one address without locking the account elsewhere", async () => {
     await attempt(PER_CLIENT.free + 1);
     expect(await consumeSignInAttempt(EMAIL, "198.51.100.7", T0)).toBe(0);
@@ -108,11 +139,6 @@ describe("consumeSignInAttempt", () => {
     );
   });
 
-  it("counts unknown-address attempts in one shared bucket", async () => {
-    await attempt(PER_CLIENT.free, null);
-    expect(await consumeSignInAttempt(EMAIL, null, T0)).toBe(PER_CLIENT.base);
-  });
-
   it("locks an unregistered email just like a registered one", async () => {
     const waits = [];
     for (let i = 0; i < PER_CLIENT.free + 1; i++) {
@@ -126,6 +152,24 @@ describe("consumeSignInAttempt", () => {
     expect(await consumeSignInAttempt(EMAIL, IP, at(DECAY_SECONDS + 1))).toBe(0);
   });
 
+  it("does not lock a caller whose clock trails a just-committed attempt", async () => {
+    // A request that waited on the row lock can carry a `now` from before the
+    // attempt that beat it to the row; that must not read as time owed.
+    await consumeSignInAttempt(EMAIL, IP, at(5));
+    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBe(0);
+  });
+
+  it("counts a first burst of parallel attempts, not just one of them", async () => {
+    await Promise.all(
+      Array.from({ length: 8 }, () => consumeSignInAttempt(EMAIL, IP, T0)),
+    );
+    const [client] = await db
+      .select()
+      .from(signInAttempt)
+      .where(eq(signInAttempt.identifier, attemptKey(`client:${IP}`, EMAIL)));
+    expect(client?.failedCount).toBe(PER_CLIENT.free);
+  });
+
   it("stores keyed digests, never the address itself", async () => {
     await attempt(1);
     const rows = await db.select().from(signInAttempt);
@@ -137,16 +181,34 @@ describe("consumeSignInAttempt", () => {
 });
 
 describe("clearSignInAttempts", () => {
-  it("releases this caller and leaves the account-wide counter alone", async () => {
+  it("releases this caller's counter", async () => {
     await attempt(PER_CLIENT.free + 1);
     await clearSignInAttempts(EMAIL, IP);
-
     expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBe(0);
-    const rows = await db.select().from(signInAttempt);
-    const account = rows.find(
-      (r) => r.identifier === attemptKey("account", EMAIL),
-    );
-    expect(account?.failedCount).toBeGreaterThan(1);
+  });
+
+  it("gives the account-wide counter one attempt back, rather than clearing it", async () => {
+    await attempt(3);
+    await clearSignInAttempts(EMAIL, IP);
+
+    const [account] = await db
+      .select()
+      .from(signInAttempt)
+      .where(eq(signInAttempt.identifier, attemptKey("account", EMAIL)));
+    // Down by one, not wiped: an attacker's failures still accumulate, and a
+    // probe can't read "the owner just signed in" off a reset counter.
+    expect(account?.failedCount).toBe(2);
+  });
+
+  it("never drives the account-wide counter below zero", async () => {
+    await attempt(1);
+    for (let i = 0; i < 3; i++) await clearSignInAttempts(EMAIL, IP);
+
+    const [account] = await db
+      .select()
+      .from(signInAttempt)
+      .where(eq(signInAttempt.identifier, attemptKey("account", EMAIL)));
+    expect(account?.failedCount).toBe(0);
   });
 });
 

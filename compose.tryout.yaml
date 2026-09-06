@@ -62,6 +62,12 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-tryout-only-please-change-me-32-bytes}
       BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
       ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      # This stack publishes the app directly, with no proxy in front to
+      # overwrite forwarded-for headers, so no header can be trusted to name the
+      # caller: believing one would let anyone rotate it to escape the sign-in
+      # rate limit. Empty means "trust none" — every caller shares one bucket.
+      # Behind a real proxy, set this to the header that proxy sets.
+      AUTH_IP_HEADER: ${AUTH_IP_HEADER:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
     depends_on:
       migrate:

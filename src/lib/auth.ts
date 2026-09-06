@@ -13,11 +13,21 @@ import { env } from "@/lib/env";
 
 const SIGN_IN_PATH = "/sign-in/email";
 
-/** The email being attempted, when the request body carries a usable one. */
+/** Longest address RFC 5321 allows; anything longer is not a sign-in attempt. */
+const MAX_EMAIL_LENGTH = 320;
+
+/**
+ * The email of a genuine credential attempt, or null when the body isn't one.
+ * A request that couldn't reach password verification anyway — no password, a
+ * non-string field, an address no account could have — is not counted, so it
+ * can't be used as a cheap way to spend an account's attempt budget.
+ */
 function attemptedEmail(body: unknown): string | null {
   if (!body || typeof body !== "object") return null;
-  const email = (body as { email?: unknown }).email;
-  return typeof email === "string" && email.length > 0 ? email : null;
+  const { email, password } = body as { email?: unknown; password?: unknown };
+  if (typeof password !== "string" || password.length === 0) return null;
+  if (typeof email !== "string") return null;
+  return email.length > 0 && email.length <= MAX_EMAIL_LENGTH ? email : null;
 }
 
 /**
@@ -120,7 +130,10 @@ export const auth = betterAuth({
         // The sign-in itself succeeded and the session already exists; a
         // failure to release the counter must not turn that into a 500. Worst
         // case the caller waits out a backoff they no longer deserve.
-        ctx.context.logger.error("Failed to clear sign-in attempts", error);
+        ctx.context.logger.error(
+          "Failed to clear sign-in attempts",
+          error instanceof Error ? error.message : error,
+        );
       }
     }),
   },

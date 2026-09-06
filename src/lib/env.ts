@@ -22,12 +22,14 @@ const schema = z.object({
   // The one header the hosting platform sets to the real client address, used
   // to key sign-in rate limiting. Exactly one, never a list: any header this
   // app is willing to read is one an attacker can send when the platform
-  // doesn't overwrite it (see src/lib/client-ip.ts).
+  // doesn't overwrite it (see src/lib/client-ip.ts). Set it to "" when the app
+  // is exposed directly, with nothing in front to overwrite anything — then no
+  // header is believed at all and every caller shares one bucket, which is
+  // slow for everyone but forges nothing.
   AUTH_IP_HEADER: z
     .string()
     .default("x-vercel-forwarded-for")
-    .transform((raw) => raw.trim().toLowerCase())
-    .refine((h) => h.length > 0, "AUTH_IP_HEADER must not be empty"),
+    .transform((raw) => raw.trim().toLowerCase()),
   // Addresses or CIDR ranges of the reverse proxies in front of this app, if
   // any. Only set this when the app is reachable *only* through those proxies:
   // it makes `x-forwarded-for` the source instead, walked from the right past
@@ -57,7 +59,16 @@ const schema = z.object({
     .default("development"),
 });
 
-const parsed = schema.safeParse(process.env);
+const parsed = schema
+  .refine(
+    (v) => !(v.AUTH_TRUSTED_PROXIES.length > 0 && process.env.AUTH_IP_HEADER),
+    {
+      error:
+        "Set AUTH_IP_HEADER or AUTH_TRUSTED_PROXIES, not both — with trusted proxies the address is read from x-forwarded-for and AUTH_IP_HEADER would be silently ignored",
+      path: ["AUTH_IP_HEADER"],
+    },
+  )
+  .safeParse(process.env);
 
 if (!parsed.success) {
   const issues = parsed.error.issues
