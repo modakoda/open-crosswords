@@ -59,12 +59,51 @@ const schema = z.object({
     .default("development"),
 });
 
+// The checks below turn on whether AUTH_IP_HEADER was *stated*, which the
+// parsed value can no longer answer: `.default()` makes an unset variable
+// indistinguishable from one set to the default. So they read the raw
+// environment. The two questions are deliberately different — "" is a
+// deliberate statement (trust no header) but names no header.
+const authIpHeaderStated = process.env.AUTH_IP_HEADER !== undefined;
+// Trimmed, so "  " reads as the empty statement it becomes after parsing
+// rather than as naming a header.
+const authIpHeaderNamesOne = (process.env.AUTH_IP_HEADER ?? "").trim().length > 0;
+const onVercel = process.env.VERCEL !== undefined;
+
+// `next build` imports server modules to collect route metadata, and does it
+// with NODE_ENV already "production". A build answers no requests, so it has no
+// caller to identify and nothing to decide about headers — only a running
+// server does. Without this, `npm run build` and the Dockerfile's build stage
+// would both have to be handed a placeholder for a value they never read.
+// NEXT_RUNTIME is set in a serving process and not while collecting build
+// metadata, so requiring its absence keeps a stray NEXT_PHASE in a deployed
+// environment from switching the guard off on a server that does take requests.
+const isProductionBuild =
+  process.env.NEXT_PHASE === "phase-production-build" &&
+  process.env.NEXT_RUNTIME === undefined;
+
 const parsed = schema
+  .refine((v) => !(v.AUTH_TRUSTED_PROXIES.length > 0 && authIpHeaderNamesOne), {
+    error:
+      "Set AUTH_IP_HEADER or AUTH_TRUSTED_PROXIES, not both — with trusted proxies the address is read from x-forwarded-for and AUTH_IP_HEADER would be silently ignored",
+    path: ["AUTH_IP_HEADER"],
+  })
+  // The default names Vercel's header. Anywhere else, nothing overwrites it,
+  // so a caller could send it and rotate the value to escape every rate limit
+  // keyed on the caller. Rather than fail open on a deployment that never
+  // thought about it, refuse to boot until it is stated: the header the proxy
+  // in front actually sets, its address in AUTH_TRUSTED_PROXIES, or "" to
+  // trust none.
   .refine(
-    (v) => !(v.AUTH_TRUSTED_PROXIES.length > 0 && process.env.AUTH_IP_HEADER),
+    (v) =>
+      v.NODE_ENV !== "production" ||
+      isProductionBuild ||
+      onVercel ||
+      authIpHeaderStated ||
+      v.AUTH_TRUSTED_PROXIES.length > 0,
     {
       error:
-        "Set AUTH_IP_HEADER or AUTH_TRUSTED_PROXIES, not both — with trusted proxies the address is read from x-forwarded-for and AUTH_IP_HEADER would be silently ignored",
+        'AUTH_IP_HEADER must be set in production outside Vercel: name the header your proxy sets (e.g. "cf-connecting-ip", "x-real-ip"), set AUTH_TRUSTED_PROXIES instead, or set it to "" to trust no header',
       path: ["AUTH_IP_HEADER"],
     },
   )

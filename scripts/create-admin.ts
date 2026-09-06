@@ -7,9 +7,10 @@ import { db } from "../src/db";
 import * as schema from "../src/db/schema";
 
 /**
- * Create (or update the password of) an admin account. Public sign-up is
- * disabled in the app, so this is the only way to provision a login. The
- * account still only reaches /admin if its email is in ADMIN_EMAILS.
+ * Create (or update the password of) an admin account. Public sign-up at
+ * /public/sign-up only ever makes a plain client account, so this is the only
+ * way to provision one that can reach /admin — and even then, only if its
+ * email is in ADMIN_EMAILS.
  */
 async function main() {
   const secret = process.env.BETTER_AUTH_SECRET;

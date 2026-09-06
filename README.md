@@ -47,7 +47,7 @@ See the comments in [compose.tryout.yaml](./compose.tryout.yaml) for details
 (and for setting your own `BETTER_AUTH_SECRET` before exposing it beyond
 localhost). For actual development, use the setup below instead.
 
-## Quick start
+## Run locally
 
 Requires Node.js 20.9+ (what Next.js 16 needs) and a Postgres database (local
 Docker or [Neon](https://neon.tech)). CI and [`.mise.toml`](./.mise.toml) both
@@ -110,7 +110,7 @@ Sign in at `/admin/login`.
 | `BETTER_AUTH_SECRET` | yes | 32-byte random string (`openssl rand -base64 32`) |
 | `BETTER_AUTH_URL` | no | Public base URL, no trailing slash (default `http://localhost:3000`) |
 | `ADMIN_EMAILS` | no | Comma-separated emails allowed into `/admin/dashboard` (default: none — set this or nobody can sign in) |
-| `AUTH_IP_HEADER` | no | The one header the platform sets to the client address, used to key rate limiting (default `x-vercel-forwarded-for`; `cf-connecting-ip` on Cloudflare, `x-real-ip` behind most proxies, empty when the app is exposed directly). The origin must be reachable only through whatever sets it, or a caller can forge it |
+| `AUTH_IP_HEADER` | no | The one header the platform sets to the client address, used to key rate limiting (default `x-vercel-forwarded-for`; `cf-connecting-ip` on Cloudflare, `x-real-ip` behind most proxies). The origin must be reachable only through whatever sets it, or a caller can forge it. Empty trusts no header, which puts every visitor in one bucket and lets ten sign-in requests a minute from anyone hold everyone out |
 | `AUTH_TRUSTED_PROXIES` | no | Comma-separated IPs/CIDRs of the proxies in front of the app, when they set none of the headers above — `x-forwarded-for` is then read and walked past these hops |
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
 | `AI_MODEL` | no | Model id for AI drafting (default `claude-sonnet-5`) |
@@ -119,6 +119,113 @@ These are parsed and validated with Zod in [`src/lib/env.ts`](./src/lib/env.ts)
 the first time server code imports them, so a missing or malformed value fails
 the boot (or the build) with a message naming the variable rather than surfacing
 later as a runtime error.
+
+## Deploy
+
+Any host that runs Node.js 20.9+ and can reach a Postgres will serve this app.
+Three things hold wherever you put it:
+
+- **Migrations never run themselves.** Apply them with `npm run db:migrate`
+  against the production `DATABASE_URL` on every deploy that adds one.
+- **The environment is validated at build time too.** `next build` imports
+  server modules, which import [`src/lib/env.ts`](./src/lib/env.ts), so
+  `DATABASE_URL` and `BETTER_AUTH_SECRET` must be present for the build and not
+  only at runtime. They only have to be well-formed, not real — the
+  [Dockerfile](./Dockerfile) builds with placeholders and takes the real values
+  at container start. Settings that only a running server can act on, such as
+  `AUTH_IP_HEADER`, are not demanded during a build.
+- **`AUTH_IP_HEADER` must name the header your proxy actually sets.** It is how
+  sign-in rate limiting identifies a caller, and the default names Vercel's
+  header, so a production boot anywhere else refuses to start until you state
+  it. Naming a header nothing overwrites lets a caller forge their own address
+  and rotate past every limit.
+
+### Vercel
+
+1. **Provision a Postgres.** Neon through the Vercel Marketplace is the
+   shortest path, but any Postgres works. Use the **pooled** connection string.
+2. **Import the repository.** Vercel detects Next.js and the default build,
+   install and output settings are all correct. Do not switch any route to the
+   Edge runtime — the Drizzle client talks to Postgres over TCP and needs
+   Node.js.
+3. **Set the environment variables** under *Settings → Environment Variables*,
+   for Production and for Preview if you want preview deployments to work:
+
+   | Variable | Value |
+   | --- | --- |
+   | `DATABASE_URL` | the pooled Postgres connection string |
+   | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` |
+   | `BETTER_AUTH_URL` | `https://your-project.vercel.app`, no trailing slash |
+   | `ADMIN_EMAILS` | the email you will sign in to `/admin` with |
+   | `ANTHROPIC_API_KEY` | optional, enables the AI drafting panel |
+
+   Leave `AUTH_IP_HEADER` unset. Its default is `x-vercel-forwarded-for`, which
+   Vercel overwrites on every request, so a caller cannot forge it.
+4. **Apply the migrations.** Vercel will not do it for you. Either run them
+   from your machine once per schema change:
+
+   ```bash
+   DATABASE_URL="<production pooled url>" npm run db:migrate
+   ```
+
+   or fold them into the build by setting the build command to
+   `npm run db:migrate && npm run build`. The build command is more convenient,
+   but only do it when previews use their own database — otherwise a preview
+   build migrates production.
+5. **Create the admin login** against the same database. The scripts read
+   `.env`, and any variable already exported wins over it:
+
+   ```bash
+   DATABASE_URL="<production pooled url>" \
+   BETTER_AUTH_SECRET="<production secret>" \
+     npm run create-admin -- you@example.com "Your Name" "a-long-password"
+   ```
+
+   That email must also be in `ADMIN_EMAILS` before it can reach `/admin`.
+
+### Coolify
+
+Coolify runs the app from the committed [Dockerfile](./Dockerfile), which
+already serves on port 3000 and carries a `HEALTHCHECK`. Nothing needs a
+persistent volume; all state lives in Postgres.
+
+1. **Add a Postgres database** to your project and copy its *internal*
+   connection string, so app-to-database traffic never leaves Coolify's
+   network.
+2. **Add the application.** Either point it at this Git repository with the
+   build pack set to *Dockerfile*, or skip building entirely and use the
+   published image `ghcr.io/modakoda/open-crosswords:latest`. Set the exposed
+   port to `3000` and attach your domain.
+3. **Set the environment variables:**
+
+   | Variable | Value |
+   | --- | --- |
+   | `DATABASE_URL` | the database's internal connection string |
+   | `BETTER_AUTH_SECRET` | `openssl rand -base64 32` |
+   | `BETTER_AUTH_URL` | the public `https://` domain you attached, no trailing slash |
+   | `AUTH_IP_HEADER` | `x-real-ip` for Coolify's default Traefik proxy |
+   | `ADMIN_EMAILS` | the email you will sign in to `/admin` with |
+   | `ANTHROPIC_API_KEY` | optional, enables the AI drafting panel |
+
+   `AUTH_IP_HEADER` is the one worth checking rather than trusting: confirm
+   what your proxy actually sets before relying on it. Traefik sets both
+   `x-real-ip` and `x-forwarded-for`; Caddy sets only `x-forwarded-for`, in
+   which case leave `AUTH_IP_HEADER` empty and put the proxy's address in
+   `AUTH_TRUSTED_PROXIES` instead. Setting neither refuses to boot, which is
+   deliberate — see the note above.
+4. **Run the migrations on each deploy.** Set the application's pre-deployment
+   command to `npm run db:migrate`. It runs from the same image, so it needs no
+   extra configuration.
+5. **Create the admin login** from Coolify's terminal for the running
+   container, then add that email to `ADMIN_EMAILS` and redeploy:
+
+   ```bash
+   npm run create-admin -- you@example.com "Your Name" "a-long-password"
+   ```
+
+The library starts empty either way. Load the bundled English starter set with
+`npm run seed` in the same terminal, or import your own from
+`/admin/dashboard` → *Bulk import*.
 
 ## Adding questions
 
@@ -155,8 +262,9 @@ reproducible. See [AGENTS.md](./AGENTS.md) for detail.
 
 Next.js App Router · React 19 · oRPC (typed API layer) · Drizzle ORM +
 Postgres · better-auth · Zod · Tailwind CSS v4 + shadcn/ui (light/dark theme)
-· Vitest (with PGlite for DB tests) · Playwright (e2e). Deploys to Vercel or
-any Node host; `docker compose` covers local dependencies.
+· Vitest (with PGlite for DB tests) · Playwright (e2e). Deploys to Vercel,
+Coolify or any Node host (see [Deploy](#deploy)); `docker compose` covers
+local dependencies.
 
 ## Development
 

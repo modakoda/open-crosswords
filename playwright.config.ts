@@ -36,6 +36,11 @@ export default defineConfig({
       BETTER_AUTH_URL: E2E_BASE_URL,
       ADMIN_EMAILS: E2E_ADMIN_EMAIL,
       NODE_ENV: "production",
+      // NODE_ENV=production arms the boot guard in src/lib/env.ts, so the
+      // address header has to be stated. Naming one also lets the rate-limit
+      // spec put its burst in a bucket of its own instead of exhausting the
+      // one every other spec generates through.
+      AUTH_IP_HEADER: "x-vercel-forwarded-for",
     },
   },
 });

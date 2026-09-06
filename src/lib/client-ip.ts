@@ -16,7 +16,10 @@ import { env } from "@/lib/env";
  * another platform (`cf-connecting-ip`, `x-real-ip`), or AUTH_TRUSTED_PROXIES
  * to read `x-forwarded-for` walked from the right past the named proxies. An
  * empty AUTH_IP_HEADER trusts nothing, which is the honest setting for an
- * origin exposed directly: no header there is worth believing.
+ * origin exposed directly: no header there is worth believing. Know what that
+ * costs — with no address to key on, every visitor shares one bucket, so ten
+ * sign-in requests a minute from anyone denies sign-in to everyone until the
+ * window rolls. Prefer putting a proxy in front and naming its header.
  */
 function headerToTrust(): string[] {
   if (env.AUTH_TRUSTED_PROXIES.length > 0) return ["x-forwarded-for"];

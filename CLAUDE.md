@@ -82,7 +82,9 @@ or solve them online via a shareable link. Open source, single Next.js app.
   account from anywhere (loose, so only a distributed run reaches it). It is
   wired in as better-auth `hooks.before`/`hooks.after` — the before hook counts
   the attempt and refuses it when locked, the after hook releases the caller's
-  counter on a verified successful sign-in.
+  counter on a verified successful sign-in and issues the signed known-device
+  cookie (`src/lib/known-device.ts`) that exempts that browser from the
+  account-wide lock.
 - **Authorization model**: two independent identities layered on one
   better-auth session — "admin" (a signed-in user whose verified email is in
   `ADMIN_EMAILS`, checked by `getAdmin`/`requireAdmin` in
@@ -139,10 +141,12 @@ external input, or the AI/import paths must meet these before it's done:
 - **Input validation**: validate every external input (procedure inputs,
   form fields, env vars, CSV/JSON import text, AI output) with Zod via
   `.input()` on the procedure (oRPC rejects on failure automatically), and
-  reject rather than coerce on failure. The RPC route
-  (`src/app/rpc/[[...rest]]/route.ts`) also checks `Content-Length` up front
-  as a soft global body-size cap; per-field Zod `.max()` limits remain the
-  hard limit either way. Import is capped (rows and payload size); the AI
+  reject rather than coerce on failure. Both catch-all routes
+  (`src/app/rpc/[[...rest]]/route.ts`, `src/app/api/auth/[...all]/route.ts`)
+  also check `Content-Length` up front through `exceedsBodyLimit`
+  (`src/lib/body-limit.ts`), each with its own ceiling — a soft cap only, since
+  a chunked request carries no such header, so per-field Zod `.max()` limits
+  remain the hard limit either way. Import is capped (rows and payload size); the AI
   endpoint is admin-only, rate-limited, and disabled when `ANTHROPIC_API_KEY`
   is unset.
 - **Output handling**: rely on React's default escaping — never
@@ -165,14 +169,25 @@ external input, or the AI/import paths must meet these before it's done:
   on two axes and both must stay: per address by that config, and per account
   by the backoff in `src/lib/auth-throttle.ts`. Three properties of that
   backoff are load-bearing — an attempt must be counted and judged in one
-  locked step, and the row has to be created before it is locked (`for update`
-  on a row that doesn't exist yet locks nothing, and a parallel burst then all
-  passes the same empty check), attempts must be
+  statement (the conditional `onConflictDoUpdate`, whose update is skipped
+  while the counter is locked; a separate check would let a parallel burst all
+  pass it, and a held-open transaction would queue every sign-in for one
+  account on one row lock), attempts must be
   counted for unregistered emails too (otherwise the lock answers "does this
   account exist"), and only a *verified* successful sign-in may clear a counter
   (better-call's body-validation error is a different class from better-auth's,
   so "not an error" is not "success" — treating it as one hands an attacker a
-  reset between guesses).
+  reset between guesses). The account-wide half of the backoff is a lockout
+  lever by construction, so the known-device exemption is part of it, not a
+  convenience: without it, anyone who knows an address can hold its owner out.
+  That exemption carries two invariants of its own, both in
+  `skipsAccountCounter` so they cannot drift apart: it applies only when the
+  caller also has a trustworthy address (it trades the account-wide counter for
+  the per-address one, and with neither the attempt is counted by nothing —
+  note `AUTH_IP_HEADER=""` makes every caller addressless), and
+  `clearSignInAttempts` must skip the release on exactly the attempts that
+  skipped the increment (releasing what was never counted lets an account
+  signed into regularly hold its counter at zero).
 - **Client address**: anything keyed to "the caller" reads
   `src/lib/client-ip.ts`, which trusts exactly one header. Never widen that to
   a list of candidates: a header the app is willing to read is one a caller can

@@ -28,7 +28,7 @@ const at = (seconds: number) => new Date(T0.getTime() + seconds * 1000);
 async function attempt(times: number, ip: string | null = IP, now = T0) {
   const waits: number[] = [];
   for (let i = 0; i < times; i++) {
-    waits.push(await consumeSignInAttempt(EMAIL, ip, now));
+    waits.push(await consumeSignInAttempt(EMAIL, ip, { now }));
   }
   return waits;
 }
@@ -49,22 +49,22 @@ describe("consumeSignInAttempt", () => {
   it("refuses the locked attempt without counting it", async () => {
     await attempt(PER_CLIENT.free + 3);
     // The lock is still the first one earned, not one doubled three times.
-    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBe(PER_CLIENT.base);
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: T0 })).toBe(PER_CLIENT.base);
   });
 
   it("does not extend the lock when a locked-out caller keeps trying", async () => {
     await attempt(PER_CLIENT.free + 1);
-    expect(await consumeSignInAttempt(EMAIL, IP, at(30))).toBe(
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: at(30) })).toBe(
       PER_CLIENT.base - 30,
     );
-    expect(await consumeSignInAttempt(EMAIL, IP, at(PER_CLIENT.base))).toBe(0);
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: at(PER_CLIENT.base) })).toBe(0);
   });
 
   it("gives the caller an attempt once the lock expires, then doubles it", async () => {
     await attempt(PER_CLIENT.free + 1);
     // Waiting the backoff out earns one attempt, not another refusal.
-    expect(await consumeSignInAttempt(EMAIL, IP, at(PER_CLIENT.base))).toBe(0);
-    expect(await consumeSignInAttempt(EMAIL, IP, at(PER_CLIENT.base))).toBe(
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: at(PER_CLIENT.base) })).toBe(0);
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: at(PER_CLIENT.base) })).toBe(
       PER_CLIENT.base * 2,
     );
   });
@@ -72,7 +72,7 @@ describe("consumeSignInAttempt", () => {
   it("caps the backoff so a run of failures never locks an address out for good", async () => {
     let clock = 0;
     for (let i = 0; i < PER_CLIENT.free + 12; i++) {
-      const wait = await consumeSignInAttempt(EMAIL, IP, at(clock));
+      const wait = await consumeSignInAttempt(EMAIL, IP, { now: at(clock) });
       expect(wait).toBeLessThanOrEqual(PER_CLIENT.max);
       clock += wait;
     }
@@ -89,12 +89,12 @@ describe("consumeSignInAttempt", () => {
 
   it("does not spend the caller's budget while the account-wide lock is on", async () => {
     for (let i = 0; i < PER_ACCOUNT.free; i++) {
-      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, T0);
+      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, { now: T0 });
     }
     // The owner, whose own counter is untouched, is refused by the account
     // lock — and must not be charged for it, or an attacker's flood would run
     // the owner's counter up too.
-    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBeGreaterThan(0);
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: T0 })).toBeGreaterThan(0);
     const [client] = await db
       .select()
       .from(signInAttempt)
@@ -106,19 +106,41 @@ describe("consumeSignInAttempt", () => {
     await attempt(PER_CLIENT.free + 1, null);
     // No shared per-account bucket for anonymous callers: six requests from
     // nowhere must not lock an account everyone else can still reach.
-    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBe(0);
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: T0 })).toBe(0);
   });
 
   it("locks one address without locking the account elsewhere", async () => {
     await attempt(PER_CLIENT.free + 1);
-    expect(await consumeSignInAttempt(EMAIL, "198.51.100.7", T0)).toBe(0);
+    expect(await consumeSignInAttempt(EMAIL, "198.51.100.7", { now: T0 })).toBe(0);
+  });
+
+  it("lets a browser that has signed in before through the account-wide lock", async () => {
+    for (let i = 0; i < PER_ACCOUNT.free; i++) {
+      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, { now: T0 });
+    }
+    // A stranger is refused, so a distributed run is still bounded...
+    expect(await consumeSignInAttempt(EMAIL, "203.0.113.99", { now: T0 })).toBeGreaterThan(0);
+    // ...while the owner's own browser still gets its per-address attempts,
+    // which is what stops the ceiling from being a lockout anyone can trigger.
+    expect(
+      await consumeSignInAttempt(EMAIL, IP, { now: T0, knownDevice: true }),
+    ).toBe(0);
+  });
+
+  it("still holds a known device to its per-address backoff", async () => {
+    const opts = { now: T0, knownDevice: true };
+    for (let i = 0; i < PER_CLIENT.free; i++) {
+      expect(await consumeSignInAttempt(EMAIL, IP, opts)).toBe(0);
+    }
+    // A stolen cookie must not buy extra guesses.
+    expect(await consumeSignInAttempt(EMAIL, IP, opts)).toBe(PER_CLIENT.base);
   });
 
   it("locks the account everywhere once a distributed run crosses the ceiling", async () => {
     for (let i = 0; i < PER_ACCOUNT.free; i++) {
-      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, T0);
+      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, { now: T0 });
     }
-    expect(await consumeSignInAttempt(EMAIL, "203.0.113.99", T0)).toBe(
+    expect(await consumeSignInAttempt(EMAIL, "203.0.113.99", { now: T0 })).toBe(
       PER_ACCOUNT.base,
     );
   });
@@ -126,7 +148,7 @@ describe("consumeSignInAttempt", () => {
   it("counts every attempt when they arrive together", async () => {
     const waits = await Promise.all(
       Array.from({ length: PER_CLIENT.free + 1 }, () =>
-        consumeSignInAttempt(EMAIL, IP, T0),
+        consumeSignInAttempt(EMAIL, IP, { now: T0 }),
       ),
     );
     expect(waits.filter((w) => w > 0)).toHaveLength(1);
@@ -134,7 +156,7 @@ describe("consumeSignInAttempt", () => {
 
   it("shares one counter across case and whitespace variants of an email", async () => {
     await attempt(PER_CLIENT.free);
-    expect(await consumeSignInAttempt("  VICTIM@Example.com ", IP, T0)).toBe(
+    expect(await consumeSignInAttempt("  VICTIM@Example.com ", IP, { now: T0 })).toBe(
       PER_CLIENT.base,
     );
   });
@@ -142,32 +164,56 @@ describe("consumeSignInAttempt", () => {
   it("locks an unregistered email just like a registered one", async () => {
     const waits = [];
     for (let i = 0; i < PER_CLIENT.free + 1; i++) {
-      waits.push(await consumeSignInAttempt("no-such@example.com", IP, T0));
+      waits.push(await consumeSignInAttempt("no-such@example.com", IP, { now: T0 }));
     }
     expect(waits.at(-1)).toBe(PER_CLIENT.base);
   });
 
   it("starts a fresh run once an old one has decayed", async () => {
     await attempt(PER_CLIENT.free + 1);
-    expect(await consumeSignInAttempt(EMAIL, IP, at(DECAY_SECONDS + 1))).toBe(0);
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: at(DECAY_SECONDS + 1) })).toBe(0);
   });
 
   it("does not lock a caller whose clock trails a just-committed attempt", async () => {
     // A request that waited on the row lock can carry a `now` from before the
     // attempt that beat it to the row; that must not read as time owed.
-    await consumeSignInAttempt(EMAIL, IP, at(5));
-    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBe(0);
+    await consumeSignInAttempt(EMAIL, IP, { now: at(5) });
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: T0 })).toBe(0);
   });
 
   it("counts a first burst of parallel attempts, not just one of them", async () => {
     await Promise.all(
-      Array.from({ length: 8 }, () => consumeSignInAttempt(EMAIL, IP, T0)),
+      Array.from({ length: 8 }, () => consumeSignInAttempt(EMAIL, IP, { now: T0 })),
     );
     const [client] = await db
       .select()
       .from(signInAttempt)
       .where(eq(signInAttempt.identifier, attemptKey(`client:${IP}`, EMAIL)));
     expect(client?.failedCount).toBe(PER_CLIENT.free);
+  });
+
+  it("still counts a known device that has no trustworthy address", async () => {
+    // The exemption trades the account-wide counter for the per-address one.
+    // With no address there is no per-address counter, so honouring it anyway
+    // would leave the attempt counted by nothing at all.
+    const waits = [];
+    for (let i = 0; i < PER_ACCOUNT.free + 1; i++) {
+      waits.push(
+        await consumeSignInAttempt(EMAIL, null, { knownDevice: true, now: T0 }),
+      );
+    }
+    expect(waits.at(-1)).toBe(PER_ACCOUNT.base);
+  });
+
+  it("exempts a known device that does have an address", async () => {
+    for (let i = 0; i < PER_ACCOUNT.free; i++) {
+      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, { now: T0 });
+    }
+    // The account-wide lock is on, but this browser has signed in before and
+    // is still bounded by its own address, so it gets through.
+    expect(
+      await consumeSignInAttempt(EMAIL, IP, { knownDevice: true, now: T0 }),
+    ).toBe(0);
   });
 
   it("stores keyed digests, never the address itself", async () => {
@@ -184,7 +230,7 @@ describe("clearSignInAttempts", () => {
   it("releases this caller's counter", async () => {
     await attempt(PER_CLIENT.free + 1);
     await clearSignInAttempts(EMAIL, IP);
-    expect(await consumeSignInAttempt(EMAIL, IP, T0)).toBe(0);
+    expect(await consumeSignInAttempt(EMAIL, IP, { now: T0 })).toBe(0);
   });
 
   it("gives the account-wide counter one attempt back, rather than clearing it", async () => {
@@ -198,6 +244,25 @@ describe("clearSignInAttempts", () => {
     // Down by one, not wiped: an attacker's failures still accumulate, and a
     // probe can't read "the owner just signed in" off a reset counter.
     expect(account?.failedCount).toBe(2);
+  });
+
+  it("gives nothing back for an attempt the account never counted", async () => {
+    for (let i = 0; i < 10; i++) {
+      await consumeSignInAttempt(EMAIL, `198.51.100.${i}`, { now: T0 });
+    }
+    // A known device sits out the account-wide counter, so its successes must
+    // not drain it — otherwise an account signed into regularly holds that
+    // counter at zero and loses the only bound on a distributed run.
+    for (let i = 0; i < 3; i++) {
+      await consumeSignInAttempt(EMAIL, IP, { knownDevice: true, now: T0 });
+      await clearSignInAttempts(EMAIL, IP, { knownDevice: true });
+    }
+
+    const [account] = await db
+      .select()
+      .from(signInAttempt)
+      .where(eq(signInAttempt.identifier, attemptKey("account", EMAIL)));
+    expect(account?.failedCount).toBe(10);
   });
 
   it("never drives the account-wide counter below zero", async () => {
@@ -214,8 +279,8 @@ describe("clearSignInAttempts", () => {
 
 describe("pruneDecayedAttempts", () => {
   it("clears decayed rows and keeps live ones", async () => {
-    await consumeSignInAttempt("old@example.com", IP, T0);
-    await consumeSignInAttempt(EMAIL, IP, at(DECAY_SECONDS));
+    await consumeSignInAttempt("old@example.com", IP, { now: T0 });
+    await consumeSignInAttempt(EMAIL, IP, { now: at(DECAY_SECONDS) });
 
     await pruneDecayedAttempts(at(DECAY_SECONDS + 1));
 

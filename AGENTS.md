@@ -57,9 +57,9 @@ src/lib/crossword/        engine: normalize, select, generate, number, rng,
                           word (solve-UI word/cursor geometry)
 src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
                           rate-limit, client-ip (the one trusted address
-                          header), auth-throttle (per-account sign-in backoff),
-                          solve-state, slug, puzzle-slug (public word+number
-                          slugs) + slug-words, ai/
+                          header), auth-throttle (per-account sign-in backoff)
+                          + known-device, solve-state, slug, puzzle-slug
+                          (public word+number slugs) + slug-words, ai/
 src/lib/env.ts            Zod-validated server env (throws on bad config)
 src/lib/auth.ts           better-auth instance; auth-guard.ts holds the
                           requireAdmin / requireUser gates

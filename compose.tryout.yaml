@@ -65,7 +65,10 @@ services:
       # This stack publishes the app directly, with no proxy in front to
       # overwrite forwarded-for headers, so no header can be trusted to name the
       # caller: believing one would let anyone rotate it to escape the sign-in
-      # rate limit. Empty means "trust none" — every caller shares one bucket.
+      # rate limit. Empty means "trust none": every caller then shares one
+      # bucket, so ten sign-in requests a minute from anyone hold everyone else
+      # out until the window rolls. Fine for a local try-out, not for a
+      # deployment anyone else uses — put a proxy in front and name its header.
       # Behind a real proxy, set this to the header that proxy sets.
       AUTH_IP_HEADER: ${AUTH_IP_HEADER:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}

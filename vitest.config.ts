@@ -19,6 +19,9 @@ export default defineConfig({
       BETTER_AUTH_SECRET: "test-secret-0123456789abcdef0123456789",
       BETTER_AUTH_URL: "http://localhost:3000",
       ADMIN_EMAILS: "admin@example.com",
+      // Pinned so a value in the surrounding environment (CI sets one at
+      // workflow scope) can't change what `clientKey` trusts under test.
+      AUTH_IP_HEADER: "x-vercel-forwarded-for",
       AI_MODEL: "claude-sonnet-5",
       NODE_ENV: "test",
     },
