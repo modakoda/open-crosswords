@@ -6,10 +6,14 @@ import { PlusIcon, SearchIcon, TriangleAlertIcon } from "lucide-react";
 import type { Category, Language } from "./AdminDashboard";
 import { EntryFormDialog } from "./EntryFormDialog";
 import { EntryTable, type Entry } from "./EntryTable";
+import {
+  DEFAULT_PAGE_SIZE,
+  EntryPagination,
+  lastPage,
+} from "./EntryPagination";
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
@@ -40,6 +44,8 @@ export function EntryManager({
   const [addOpen, setAddOpen] = useState(false);
   const [filter, setFilter] = useState(language);
   const [lastLanguage, setLastLanguage] = useState(language);
+  const [page, setPage] = useState(0);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   // The working language governs what gets created; the filter starts there but
   // can be widened to the whole library. Realigning it during render (rather
@@ -47,21 +53,28 @@ export function EntryManager({
   if (lastLanguage !== language) {
     setLastLanguage(language);
     setFilter(language);
+    setPage(0);
   }
 
   const load = useCallback(() => {
     orpc.admin.entries
       .list({
         languageCode: filter === ALL ? undefined : filter,
-        limit: 100,
+        limit: pageSize,
+        offset: page * pageSize,
         q: q || undefined,
       })
       .then((d) => {
         setRows(d.rows ?? []);
         setTotal(d.total ?? 0);
+        // Deleting the last row of the last page leaves the offset past the
+        // end; step back so the listing never strands the admin on a blank
+        // page they have to page out of themselves.
+        const last = lastPage(d.total ?? 0, pageSize);
+        if (page > last) setPage(last);
       })
       .catch(() => setMsg("Failed to load entries"));
-  }, [filter, q]);
+  }, [filter, q, page, pageSize]);
 
   useEffect(load, [load]);
 
@@ -74,10 +87,19 @@ export function EntryManager({
             className="pl-8"
             placeholder="Search clue or answer…"
             value={q}
-            onChange={(e) => setQ(e.target.value)}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setPage(0);
+            }}
           />
         </div>
-        <Select value={filter} onValueChange={setFilter}>
+        <Select
+          value={filter}
+          onValueChange={(v) => {
+            setFilter(v);
+            setPage(0);
+          }}
+        >
           <SelectTrigger className="w-44" aria-label="Filter by language">
             <SelectValue />
           </SelectTrigger>
@@ -90,10 +112,6 @@ export function EntryManager({
             ))}
           </SelectContent>
         </Select>
-        <Badge variant="secondary" className="tabular-nums">
-          {total} entries
-        </Badge>
-
         <Button className="ml-auto" onClick={() => setAddOpen(true)}>
           <PlusIcon />
           New entry
@@ -116,6 +134,17 @@ export function EntryManager({
       )}
 
       <EntryTable rows={rows} q={q} showLanguage={filter === ALL} onChanged={load} />
+
+      <EntryPagination
+        page={page}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={setPage}
+        onPageSizeChange={(size) => {
+          setPageSize(size);
+          setPage(0);
+        }}
+      />
     </div>
   );
 }

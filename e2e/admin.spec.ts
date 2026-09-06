@@ -56,6 +56,24 @@ test.describe("admin dashboard", () => {
     await expect(page.getByRole("row").filter({ hasText: clue })).toBeVisible();
   });
 
+  test("pages through the entry listing", async ({ page }) => {
+    await page.getByRole("combobox", { name: "Rows per page" }).click();
+    await page.getByRole("option", { name: "10 / page" }).click();
+
+    const status = page.getByRole("status");
+    await expect(status).toHaveText(/^Showing 1–10 of \d+$/);
+    // Header row plus exactly one full page of entries.
+    await expect(page.getByRole("row")).toHaveCount(11);
+    await expect(page.getByRole("button", { name: "Previous page" })).toBeDisabled();
+
+    const firstClue = await page.getByRole("row").nth(1).innerText();
+    await page.getByRole("button", { name: "Next page" }).click();
+
+    await expect(status).toHaveText(/^Showing 11–\d+ of \d+$/);
+    await expect(page.getByRole("row").nth(1)).not.toHaveText(firstClue);
+    await expect(page.getByRole("button", { name: "Previous page" })).toBeEnabled();
+  });
+
   test("shows AI drafting as disabled when no API key is configured", async ({ page }) => {
     await page.getByRole("tab", { name: "AI draft" }).click();
     await expect(page.getByText("AI drafting is disabled")).toBeVisible();
