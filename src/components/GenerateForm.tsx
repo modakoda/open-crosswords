@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { LoaderCircleIcon, SparklesIcon, TriangleAlertIcon } from "lucide-react";
@@ -44,6 +44,10 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   // answers, since only it can say which languages exist.
   const [languages, setLanguages] = useState<Language[] | null>(null);
   const [language, setLanguage] = useState("");
+  // Set once the visitor picks a content language themselves; from then on the
+  // site's UI language stops steering it, so switching the chrome to Lithuanian
+  // never overrides a deliberate "build me an English puzzle".
+  const pickedByVisitor = useRef(false);
   // The list and the language it belongs to are one piece of state, so
   // "still loading" is derived during render instead of being set from inside
   // the effect (which would cascade renders).
@@ -68,21 +72,34 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   useEffect(() => {
     orpc.languages
       .list()
-      .then((d) => {
-        setLanguages(d.languages);
-        // The site's language wins when the library has it; otherwise the
-        // visitor still gets a working form in whatever it does have.
-        const preferred =
-          d.languages.find((l) => l.code === initialLocale) ?? d.languages[0];
-        if (preferred) setLanguage(preferred.code);
-      })
+      .then((d) => setLanguages(d.languages))
       .catch(() => {
         setLanguages([]);
         setError(getMessages(initialLocale).generateForm.loadError);
       });
-    // Runs once on mount — the site locale is fixed for the component's lifetime.
+    // Runs once on mount — the library's language list doesn't depend on the
+    // site locale, so a locale switch must not refetch it.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Follows the site's UI language. `initialLocale` is a server-rendered prop,
+  // so switching languages in the header (`setLocale` + `router.refresh()`)
+  // re-renders this component with a new value rather than remounting it —
+  // without this the form would keep the language it resolved on first load
+  // until a full page reload.
+  useEffect(() => {
+    if (!languages?.length || pickedByVisitor.current) return;
+    // The site's language wins when the library has it; otherwise the visitor
+    // still gets a working form in whatever it does have.
+    const preferred =
+      languages.find((l) => l.code === initialLocale) ?? languages[0];
+    setLanguage((current) =>
+      current === preferred.code ? current : preferred.code,
+    );
+    // Category ids belong to one language, so a list picked in the old one
+    // would filter the new library down to nothing.
+    setSelected((current) => (current.size ? new Set() : current));
+  }, [languages, initialLocale]);
 
   useEffect(() => {
     if (!language) return;
@@ -100,6 +117,7 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   }, [language]);
 
   function changeLanguage(code: string) {
+    pickedByVisitor.current = true;
     setLanguage(code);
     // Category ids belong to one language, so a stale selection would filter
     // the new library down to nothing.
