@@ -66,6 +66,7 @@ export const ADMIN_VIEWS = [
   "entries",
   "puzzles",
   "languages",
+  "users",
   "import",
   "ai",
 ] as const;

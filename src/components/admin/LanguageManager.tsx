@@ -15,16 +15,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
  * The languages view: the library's content languages and what each one holds.
  * Adding one lives here rather than in the dashboard chrome — it is a rare,
  * library-shaping action, and the counts beside each row are what tell an
- * admin whether a code is real or a typo. There is deliberately no delete:
- * dropping a language cascades to its categories and entries.
+ * admin whether a code is real or a typo. Removing one is offered only while
+ * those counts leave nothing to lose; the dashboard's working language is not
+ * this screen's business, so nothing here switches it.
  */
 export function LanguageManager({
-  language,
-  onLanguageChange,
   onLanguagesChanged,
 }: {
-  language: string;
-  onLanguageChange: (code: string) => void;
   onLanguagesChanged: () => void;
 }) {
   const [rows, setRows] = useState<LanguageRow[]>([]);
@@ -73,9 +70,6 @@ export function LanguageManager({
     setNewName("");
     try {
       refresh();
-      // Switching to what was just added is the point of adding it — every
-      // other view is scoped to the working language.
-      onLanguageChange(code);
     } catch {
       setMsg(`Added ${code}, but the screen could not be refreshed. Reload it.`);
     }
@@ -128,12 +122,7 @@ export function LanguageManager({
         </Alert>
       )}
 
-      <LanguageTable
-        rows={rows}
-        language={language}
-        onLanguageChange={onLanguageChange}
-        onChanged={refresh}
-      />
+      <LanguageTable rows={rows} onChanged={refresh} onError={setMsg} />
     </div>
   );
 }

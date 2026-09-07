@@ -1,0 +1,59 @@
+import { test, expect } from "./fixtures";
+import { ADMIN_STORAGE_STATE } from "./global-setup";
+import { E2E_ADMIN_EMAIL, E2E_CLIENT_EMAIL, E2E_CLIENT2_EMAIL } from "./constants";
+
+test.use({ storageState: ADMIN_STORAGE_STATE });
+
+const USERS = "/admin/dashboard/users";
+
+/**
+ * The users view. Nothing here deletes an account or revokes a session: the
+ * seed's accounts are shared by every other spec in the run, and both actions
+ * are covered against a real database in
+ * `src/lib/orpc/routers/admin-users.test.ts`. What this proves is the part
+ * only the browser can — that the screen lists real accounts, tells an admin
+ * apart from a client, and refuses to offer either destructive action against
+ * an administrator.
+ */
+test.describe("admin users view", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(USERS);
+  });
+
+  const rowFor = (page: import("@playwright/test").Page, email: string) =>
+    page.getByRole("row").filter({ hasText: email });
+
+  test("lists accounts and marks who is an administrator", async ({ page }) => {
+    await expect(rowFor(page, E2E_CLIENT_EMAIL)).toBeVisible();
+    await expect(rowFor(page, E2E_ADMIN_EMAIL).getByText("Admin")).toBeVisible();
+    await expect(rowFor(page, E2E_CLIENT_EMAIL).getByText("Client")).toBeVisible();
+  });
+
+  test("searches by email", async ({ page }) => {
+    await page.getByPlaceholder("Search name or email…").fill(E2E_CLIENT2_EMAIL);
+    await expect(rowFor(page, E2E_CLIENT2_EMAIL)).toBeVisible();
+    await expect(rowFor(page, E2E_CLIENT_EMAIL)).toHaveCount(0);
+  });
+
+  test("offers no destructive action against an admin account", async ({ page }) => {
+    await rowFor(page, E2E_ADMIN_EMAIL)
+      .getByRole("button", { name: "Row actions" })
+      .click();
+    // Radix menu items are divs, so unavailability reads as `aria-disabled`.
+    await expect(
+      page.getByRole("menuitem", { name: "Delete account" }),
+    ).toHaveAttribute("aria-disabled", "true");
+    await expect(
+      page.getByRole("menuitem", { name: "Sign out everywhere" }),
+    ).toHaveAttribute("aria-disabled", "true");
+  });
+
+  test("offers deletion for a client account", async ({ page }) => {
+    await rowFor(page, E2E_CLIENT_EMAIL)
+      .getByRole("button", { name: "Row actions" })
+      .click();
+    await expect(
+      page.getByRole("menuitem", { name: "Delete account" }),
+    ).not.toHaveAttribute("aria-disabled", "true");
+  });
+});

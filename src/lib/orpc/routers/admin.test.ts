@@ -21,14 +21,16 @@ vi.mock("@/lib/auth-guard", async () => {
 });
 
 const { db } = await import("@/db");
-const { entries, languages } = await import("@/db/schema");
+const { categories, entries, languages, puzzles } = await import("@/db/schema");
 const { adminRouter } = await import("./admin");
 
 const ctx = () => ({ context: { headers: new Headers() } });
 
 beforeEach(async () => {
   adminState.allow = true;
-  await db.execute(sql`truncate ${entries}, ${languages} restart identity cascade`);
+  await db.execute(
+    sql`truncate ${entries}, ${puzzles}, ${languages} restart identity cascade`,
+  );
 });
 
 describe("admin.entries.create", () => {
@@ -480,6 +482,79 @@ describe("admin.languages.list", () => {
     const lt = list.find((l) => l.code === "lt");
     expect(en).toMatchObject({ entryCount: 1, categoryCount: 1, puzzleCount: 0 });
     expect(lt).toMatchObject({ entryCount: 0, categoryCount: 0, puzzleCount: 0 });
+  });
+});
+
+describe("admin.languages.delete", () => {
+  it("rejects a non-admin", async () => {
+    adminState.allow = false;
+    await expect(
+      call(adminRouter.languages.delete, { code: "lt" }, ctx()),
+    ).rejects.toThrow();
+  });
+
+  it("removes an empty language, taking its categories with it", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    await call(adminRouter.languages.create, { code: "en", name: "English" }, ctx());
+    await call(adminRouter.categories.create, { languageCode: "lt", name: "Gamta" }, ctx());
+
+    const { languages: list } = await call(
+      adminRouter.languages.delete,
+      { code: "lt" },
+      ctx(),
+    );
+    expect(list.map((l) => l.code)).toEqual(["en"]);
+    expect(await db.select().from(categories)).toHaveLength(0);
+  });
+
+  it("refuses while entries are still filed under it", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    await call(
+      adminRouter.entries.create,
+      { languageCode: "lt", clue: "Plaukioja vandenyje", answer: "zuvis" },
+      ctx(),
+    );
+
+    await expect(
+      call(adminRouter.languages.delete, { code: "lt" }, ctx()),
+    ).rejects.toThrow(/entries or puzzles/i);
+    // The refusal has to leave the entry where it was — `entries` cascades, so
+    // a delete that slipped through would take it with the language.
+    expect(await db.select().from(entries)).toHaveLength(1);
+    expect(await db.select().from(languages)).toHaveLength(1);
+  });
+
+  it("refuses while puzzles still name it", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    await db.insert(puzzles).values({
+      slug: "amber-quiet-otter-canyon-48392174",
+      title: "Test",
+      languageCode: "lt",
+      paperSize: "a4",
+      orientation: "portrait",
+      width: 5,
+      height: 5,
+      seed: "s",
+      placements: [],
+      grid: [],
+    });
+
+    await expect(
+      call(adminRouter.languages.delete, { code: "lt" }, ctx()),
+    ).rejects.toThrow(/entries or puzzles/i);
+    expect(await db.select().from(languages)).toHaveLength(1);
+  });
+
+  it("404s rather than reporting a language it never had as in use", async () => {
+    await expect(
+      call(adminRouter.languages.delete, { code: "lt" }, ctx()),
+    ).rejects.toThrow(/not found/i);
+  });
+
+  it("rejects a code that isn't one", async () => {
+    await expect(
+      call(adminRouter.languages.delete, { code: "klingon" }, ctx()),
+    ).rejects.toThrow();
   });
 });
 

@@ -109,6 +109,12 @@ export const en = {
     empty: "You haven't generated any puzzles yet.",
     generateCta: "Generate a puzzle",
     continueSolving: "Continue solving",
+    deletePuzzle: "Delete",
+    deleteConfirmTitle: "Delete this puzzle?",
+    deleteConfirmBody:
+      "Its shared link and any saved solve progress go with it. This can't be undone.",
+    deleteFailed: "Could not delete that puzzle.",
+    cancel: "Cancel",
     signOut: "Sign out",
     loginTitle: "Sign in",
     loginDescription: "Sign in to save puzzles to your account.",

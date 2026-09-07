@@ -7,7 +7,12 @@ import { LanguageManager } from "./LanguageManager";
 vi.mock("@/lib/orpc/client", () => ({
   orpc: {
     admin: {
-      languages: { list: vi.fn(), create: vi.fn(), rename: vi.fn() },
+      languages: {
+        list: vi.fn(),
+        create: vi.fn(),
+        rename: vi.fn(),
+        delete: vi.fn(),
+      },
     },
   },
 }));
@@ -16,6 +21,7 @@ const { orpc } = await import("@/lib/orpc/client");
 const list = vi.mocked(orpc.admin.languages.list);
 const create = vi.mocked(orpc.admin.languages.create);
 const rename = vi.mocked(orpc.admin.languages.rename);
+const remove = vi.mocked(orpc.admin.languages.delete);
 
 const createdAt = new Date("2026-01-01T00:00:00Z");
 const rows = [
@@ -23,17 +29,10 @@ const rows = [
   { code: "zu", name: "ZU", createdAt, entryCount: 0, categoryCount: 0, puzzleCount: 0 },
 ];
 
-const onLanguageChange = vi.fn();
 const onLanguagesChanged = vi.fn();
 
-function renderManager(language = "en") {
-  return render(
-    <LanguageManager
-      language={language}
-      onLanguageChange={onLanguageChange}
-      onLanguagesChanged={onLanguagesChanged}
-    />,
-  );
+function renderManager() {
+  return render(<LanguageManager onLanguagesChanged={onLanguagesChanged} />);
 }
 
 describe("LanguageManager", () => {
@@ -52,7 +51,7 @@ describe("LanguageManager", () => {
     expect(zu).toHaveTextContent("0");
   });
 
-  it("adds a language and switches the working language to it", async () => {
+  it("adds a language", async () => {
     const user = userEvent.setup();
     create.mockResolvedValue({ languages: [] });
     renderManager();
@@ -66,7 +65,6 @@ describe("LanguageManager", () => {
       // Lower-cased before it leaves the form, matching LANGUAGE_CODE.
       expect(create).toHaveBeenCalledWith({ code: "zu", name: "isiZulu" }),
     );
-    expect(onLanguageChange).toHaveBeenCalledWith("zu");
     // Both the counted table here and the pickers in the chrome.
     expect(onLanguagesChanged).toHaveBeenCalled();
     expect(list).toHaveBeenCalledTimes(2);
@@ -98,7 +96,6 @@ describe("LanguageManager", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(
       /could not add that language/i,
     );
-    expect(onLanguageChange).not.toHaveBeenCalled();
   });
 
   it("does not blame the add when only the refresh afterwards fails", async () => {
@@ -140,14 +137,53 @@ describe("LanguageManager", () => {
     expect(onLanguagesChanged).toHaveBeenCalled();
   });
 
-  it("offers the working language as a switch only on the other rows", async () => {
-    const user = userEvent.setup();
-    renderManager("en");
+  it("offers removal only for a language with nothing filed under it", async () => {
+    renderManager();
     await screen.findByText("English");
 
-    const uses = screen.getAllByRole("button", { name: "Use" });
-    expect(uses).toHaveLength(1);
-    await user.click(uses[0]);
-    expect(onLanguageChange).toHaveBeenCalledWith("zu");
+    // English has entries and puzzles; ZU has neither.
+    expect(screen.queryByRole("button", { name: "Remove English" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Remove ZU" })).toBeInTheDocument();
+  });
+
+  it("removes a language once the removal is confirmed", async () => {
+    const user = userEvent.setup();
+    remove.mockResolvedValue({ languages: [] });
+    renderManager();
+    await screen.findByText("English");
+
+    await user.click(screen.getByRole("button", { name: "Remove ZU" }));
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+
+    await waitFor(() => expect(remove).toHaveBeenCalledWith({ code: "zu" }));
+    // The pickers elsewhere list the same languages, so they have to hear too.
+    expect(onLanguagesChanged).toHaveBeenCalled();
+    expect(list).toHaveBeenCalledTimes(2);
+  });
+
+  it("does not remove anything when the confirmation is cancelled", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await screen.findByText("English");
+
+    await user.click(screen.getByRole("button", { name: "Remove ZU" }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(remove).not.toHaveBeenCalled();
+  });
+
+  it("reports a refused removal and reloads, since the counts were stale", async () => {
+    const user = userEvent.setup();
+    remove.mockRejectedValue(new Error("in use"));
+    renderManager();
+    await screen.findByText("English");
+
+    await user.click(screen.getByRole("button", { name: "Remove ZU" }));
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      /could not remove zu/i,
+    );
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
   });
 });

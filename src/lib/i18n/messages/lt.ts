@@ -123,6 +123,12 @@ export const lt: typeof en = {
     empty: "Kol kas nesugeneravote nė vienos dėlionės.",
     generateCta: "Generuoti dėlionę",
     continueSolving: "Tęsti sprendimą",
+    deletePuzzle: "Ištrinti",
+    deleteConfirmTitle: "Ištrinti šią dėlionę?",
+    deleteConfirmBody:
+      "Kartu dings jos nuoroda ir išsaugota sprendimo eiga. Šio veiksmo atšaukti negalėsite.",
+    deleteFailed: "Nepavyko ištrinti dėlionės.",
+    cancel: "Atšaukti",
     signOut: "Atsijungti",
     loginTitle: "Prisijungti",
     loginDescription: "Prisijunkite, kad išsaugotumėte dėliones savo paskyroje.",

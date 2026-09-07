@@ -187,3 +187,17 @@ export async function getPuzzleBySlug(slug: string): Promise<PuzzleDTO | null> {
     createdAt: row.createdAt.toISOString(),
   };
 }
+
+/**
+ * Delete one of the caller's own puzzles, addressed by slug. The owner id is
+ * part of the WHERE clause rather than a check around it, so another user's
+ * puzzle (or an anonymous one) simply matches nothing. Solve progress goes
+ * with it via the FK cascade on `solve_states`.
+ */
+export async function deleteOwnPuzzle(userId: string, slug: string) {
+  const [row] = await db
+    .delete(puzzles)
+    .where(and(eq(puzzles.slug, slug), eq(puzzles.userId, userId)))
+    .returning({ id: puzzles.id });
+  return row ?? null;
+}

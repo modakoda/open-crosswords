@@ -7,6 +7,14 @@ import type { listUsersQuerySchema } from "@/lib/validation/schemas";
 
 type ListQuery = z.infer<typeof listUsersQuerySchema>;
 
+/**
+ * The outer `user.id`, table-qualified. Drizzle renders a column in a select
+ * list unqualified, which inside a correlated subquery silently binds to the
+ * *inner* table's `id` instead — a wrong count, or a type error if the two
+ * columns disagree. Spelling out the table is what keeps the correlation real.
+ */
+const OUTER_USER_ID = sql`${user}.${sql.identifier("id")}`;
+
 /** One row of the admin user listing. Never carries anything from `account`. */
 export interface AdminUserRow {
   id: string;
@@ -39,6 +47,11 @@ export interface AdminUserRow {
 export async function listUsers(
   q: ListQuery,
 ): Promise<{ rows: AdminUserRow[]; total: number }> {
+  // `session.expires_at` is a naive `timestamp`, so comparing it to `now()`
+  // would be read in the database server's own time zone and mis-classify
+  // every session by that offset. Binding the instant here compares the same
+  // clock the sessions were written with.
+  const now = new Date();
   const filters = [];
   if (q.q) {
     // Treat the search term literally — escape LIKE metacharacters.
@@ -55,9 +68,9 @@ export async function listUsers(
         name: user.name,
         email: user.email,
         emailVerified: user.emailVerified,
-        puzzleCount: sql<number>`(select count(*) from ${puzzles} where ${puzzles.userId} = ${user.id})::int`,
-        solveCount: sql<number>`(select count(*) from ${solveStates} where ${solveStates.userId} = ${user.id})::int`,
-        activeSessions: sql<number>`(select count(*) from ${session} where ${session.userId} = ${user.id} and ${session.expiresAt} > now())::int`,
+        puzzleCount: sql<number>`(select count(*) from ${puzzles} where ${puzzles.userId} = ${OUTER_USER_ID})::int`,
+        solveCount: sql<number>`(select count(*) from ${solveStates} where ${solveStates.userId} = ${OUTER_USER_ID})::int`,
+        activeSessions: sql<number>`(select count(*) from ${session} where ${session.userId} = ${OUTER_USER_ID} and ${session.expiresAt} > ${now})::int`,
         createdAt: user.createdAt,
       })
       .from(user)

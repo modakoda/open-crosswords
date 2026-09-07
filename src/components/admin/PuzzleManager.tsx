@@ -21,9 +21,9 @@ import {
 const ALL = "__all__";
 
 /**
- * The library-wide puzzle listing. As on the entries view, its language filter
- * *is* the dashboard's working language, so this is the only language control
- * the view needs.
+ * The library-wide puzzle listing. As on the entries view it opens across every
+ * language, and its language filter *is* the dashboard's working language, so
+ * this is the only language control the view needs.
  */
 export function PuzzleManager({
   language,
@@ -38,16 +38,17 @@ export function PuzzleManager({
   const [total, setTotal] = useState(0);
   const [q, setQ] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
-  const [spanLanguages, setSpanLanguages] = useState(false);
+  // Unfiltered by default — see `EntryManager`.
+  const [spanLanguages, setSpanLanguages] = useState(true);
   const [lastLanguage, setLastLanguage] = useState(language);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
-  // The language can also move from outside this toolbar (adding one switches
-  // to it) — realigned during render so no pass lists the language left behind.
+  // The language can also move from outside this toolbar (the shell resolves
+  // one once the library loads) — realigned during render so no pass lists the
+  // language left behind. The span stays as the admin left it.
   if (lastLanguage !== language) {
     setLastLanguage(language);
-    setSpanLanguages(false);
     setPage(0);
   }
 

@@ -27,11 +27,12 @@ import {
 const ALL = "__all__";
 
 /**
- * The entries listing. Its language filter *is* the dashboard's working
- * language — picking one moves the shell's `?lang=`, so the toolbar is the
- * only language control this view needs. "All languages" is a wider view of
- * the same listing and deliberately doesn't move it: the working language
- * still says what a new entry is created in.
+ * The entries listing. It opens across every language — the working language
+ * scopes what a *new* entry is created in, so pre-filtering the listing to it
+ * would hide most of the library for no reason. Picking a language here
+ * narrows the listing and moves the shell's `?lang=`, so the toolbar is the
+ * only language control this view needs; "All languages" is a wider view of
+ * the same listing and deliberately doesn't move it.
  */
 export function EntryManager({
   language,
@@ -52,19 +53,22 @@ export function EntryManager({
   const [msg, setMsg] = useState<string | null>(null);
   const [editing, setEditing] = useState<Entry | null>(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [spanLanguages, setSpanLanguages] = useState(false);
+  // Unfiltered by default: the working language is about creation, not about
+  // what the admin came here to look at.
+  const [spanLanguages, setSpanLanguages] = useState(true);
   const [category, setCategory] = useState(ALL);
   const [lastLanguage, setLastLanguage] = useState(language);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
-  // The language can also move from outside this toolbar (adding one switches
-  // to it), and the categories of the language just left don't exist in the new
-  // scope. Realigning during render rather than in an effect avoids a pass that
-  // lists the language already gone.
+  // The language can also move from outside this toolbar (the shell resolves
+  // one once the library loads), and the categories of the language just left
+  // don't exist in the new scope. Realigning during render rather than in an
+  // effect avoids a pass that lists the language already gone. The span stays
+  // as the admin left it — an outside change to what a new entry is created in
+  // is not a reason to re-filter the listing they are reading.
   if (lastLanguage !== language) {
     setLastLanguage(language);
-    setSpanLanguages(false);
     setCategory(ALL);
     setPage(0);
   }
