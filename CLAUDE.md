@@ -146,10 +146,14 @@ or solve them online via a shareable link. Open source, single Next.js app.
   signed-in clients; anonymous solving stays `localStorage`-only, unchanged.
   Every per-user read/write derives the acting user from the session
   (`context.user.id` in a `userProcedure`), never from client-supplied input.
-  The header's Admin link is shown only to admins — `layout.tsx` resolves
-  `getAdmin()` server-side and passes `isAdmin` to `SiteHeader`. That is
-  presentation only; the `/admin` pages and `admin.*` procedures still gate
-  themselves, so never treat the hidden link as an access control.
+  The header's account menu (`src/components/user-menu.tsx`, behind the
+  avatar) is the one place the signed-in address, the Admin entry and sign-out
+  live — no dashboard carries its own sign-out button; the header's nav holds
+  only destinations (Generate, and My puzzles once signed in). The Admin entry
+  is shown only to admins: `layout.tsx` resolves `getAdmin()` server-side and
+  passes `isAdmin` down to it. That is presentation only; the `/admin` pages
+  and `admin.*` procedures still gate themselves, so never treat the hidden
+  entry as an access control.
 - **Tests**: Vitest for unit/integration (pure logic has colocated
   `*.test.ts`; DB/procedure integration tests spin up in-process Postgres via
   PGlite (`src/test/db.ts`) and apply the real `drizzle/` migrations — see

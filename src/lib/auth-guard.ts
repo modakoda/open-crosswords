@@ -23,9 +23,20 @@ export const getAdmin = cache(async function getAdmin(): Promise<AdminUser | nul
   // Fail closed: an admin account must have a verified email. `npm run
   // create-admin` sets this on provisioning; do not weaken it by environment.
   if (!session.user.emailVerified) return null;
-  if (!env.ADMIN_EMAILS.includes(email)) return null;
+  if (!isAdminEmail(email)) return null;
   return { id: session.user.id, email };
 });
+
+/**
+ * Allow-list membership on its own — the out-of-band half of admin-ness.
+ * `getAdmin` layers a live session and a verified email on top, so this is
+ * never sufficient to authorize anything; it exists so the one place that
+ * knows what ADMIN_EMAILS means is shared with the screens that must *report*
+ * or *protect* admin accounts (see src/lib/users.ts).
+ */
+export function isAdminEmail(email: string): boolean {
+  return env.ADMIN_EMAILS.includes(email.trim().toLowerCase());
+}
 
 export class ForbiddenError extends Error {}
 

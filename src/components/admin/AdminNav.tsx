@@ -8,6 +8,7 @@ import {
   SparklesIcon,
   TableIcon,
   UploadIcon,
+  UsersIcon,
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -21,6 +22,7 @@ export const ADMIN_VIEWS: readonly {
   { segment: "entries", label: "Entries", Icon: TableIcon },
   { segment: "puzzles", label: "Puzzles", Icon: GridIcon },
   { segment: "languages", label: "Languages", Icon: LanguagesIcon },
+  { segment: "users", label: "Users", Icon: UsersIcon },
   { segment: "import", label: "Bulk import", Icon: UploadIcon },
   { segment: "ai", label: "AI draft", Icon: SparklesIcon },
 ];

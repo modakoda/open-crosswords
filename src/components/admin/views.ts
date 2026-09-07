@@ -9,6 +9,7 @@ export const ADMIN_VIEW_SEGMENTS = [
   "entries",
   "puzzles",
   "languages",
+  "users",
   "import",
   "ai",
 ] as const;

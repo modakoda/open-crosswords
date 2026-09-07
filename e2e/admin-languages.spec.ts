@@ -51,9 +51,10 @@ test.describe("admin languages view", () => {
     const renamed = "E2E Renamed Language";
     const rowFor = (name: string) => page.getByRole("row").filter({ hasText: name });
 
+    const dialog = page.getByRole("dialog", { name: "Rename language" });
     await page.getByRole("button", { name: `Rename ${E2E_ALT_LANGUAGE_NAME}` }).click();
-    await page.getByLabel("Name").fill(renamed);
-    await page.getByRole("button", { name: "Save" }).click();
+    await dialog.getByLabel("Name", { exact: true }).fill(renamed);
+    await dialog.getByRole("button", { name: "Save" }).click();
 
     await expect(rowFor(renamed)).toBeVisible();
     await expect(
@@ -72,8 +73,8 @@ test.describe("admin languages view", () => {
     // look the alt language up by name.
     await page.goto(LANGUAGES);
     await page.getByRole("button", { name: `Rename ${renamed}` }).click();
-    await page.getByLabel("Name").fill(E2E_ALT_LANGUAGE_NAME);
-    await page.getByRole("button", { name: "Save" }).click();
+    await dialog.getByLabel("Name", { exact: true }).fill(E2E_ALT_LANGUAGE_NAME);
+    await dialog.getByRole("button", { name: "Save" }).click();
     await expect(rowFor(E2E_ALT_LANGUAGE_NAME)).toBeVisible();
   });
 });

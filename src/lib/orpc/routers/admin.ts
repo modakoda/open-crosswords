@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import { adminProcedure } from "@/lib/orpc/middleware";
 import { adminPuzzlesRouter } from "./admin-puzzles";
+import { adminUsersRouter } from "./admin-users";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import {
   createEntry,
@@ -15,8 +16,10 @@ import {
   UnknownLanguageError,
 } from "@/lib/entries";
 import {
+  deleteLanguage,
   ensureCategory,
   ensureLanguage,
+  languageExists,
   listLanguages,
   listLanguagesWithCounts,
   renameLanguage,
@@ -29,6 +32,7 @@ import {
   createEntrySchema,
   createLanguageSchema,
   deleteEntriesSchema,
+  deleteLanguageSchema,
   renameLanguageSchema,
   importSchema,
   listEntriesQuerySchema,
@@ -57,6 +61,28 @@ const languagesRename = adminProcedure
   .handler(async ({ input }) => {
     const language = await renameLanguage(input.code, input.name);
     if (!language) {
+      throw new ORPCError("NOT_FOUND", { message: "Language not found" });
+    }
+    return { languages: await listLanguagesWithCounts() };
+  });
+
+/**
+ * Removing a language, which is only allowed while nothing is filed under it.
+ * The two failures are told apart deliberately: a language that is still there
+ * after the guarded delete is one the library depends on, and saying so is the
+ * whole point — an admin clearing up a typo needs to know the difference
+ * between "already gone" and "in use".
+ */
+const languagesDelete = adminProcedure
+  .input(deleteLanguageSchema)
+  .handler(async ({ input }) => {
+    const removed = await deleteLanguage(input.code);
+    if (!removed) {
+      if (await languageExists(input.code)) {
+        throw new ORPCError("CONFLICT", {
+          message: "Language still has entries or puzzles filed under it",
+        });
+      }
       throw new ORPCError("NOT_FOUND", { message: "Language not found" });
     }
     return { languages: await listLanguagesWithCounts() };
@@ -175,8 +201,14 @@ const entriesAiDraft = adminProcedure
   });
 
 export const adminRouter = {
-  languages: { list: languagesList, create: languagesCreate, rename: languagesRename },
+  languages: {
+    list: languagesList,
+    create: languagesCreate,
+    rename: languagesRename,
+    delete: languagesDelete,
+  },
   puzzles: adminPuzzlesRouter,
+  users: adminUsersRouter,
   categories: { create: categoriesCreate },
   entries: {
     list: entriesList,

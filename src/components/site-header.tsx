@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { GridIcon, MenuIcon } from "lucide-react";
+import { GridIcon, MenuIcon, UserIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import {
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { UserMenu } from "@/components/user-menu";
+import { useSession } from "@/lib/auth-client";
 import type { Locale, Messages } from "@/lib/i18n";
 
 function isActive(pathname: string, href: string) {
@@ -36,10 +37,16 @@ export function SiteHeader({
   isAdmin: boolean;
 }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  // Destinations only. Everything about the signed-in account — the address,
-  // the dashboards, sign-out — belongs to `UserMenu`.
-  const nav = [{ href: "/public", label: messages.nav.generate, icon: GridIcon }];
+  // Destinations only — the two places a signed-in visitor works. Everything
+  // about the account itself (the address, admin, sign-out) is `UserMenu`.
+  const nav = [
+    { href: "/public", label: messages.nav.generate, icon: GridIcon },
+    ...(session
+      ? [{ href: "/client/dashboard", label: messages.nav.client, icon: UserIcon }]
+      : []),
+  ];
 
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">

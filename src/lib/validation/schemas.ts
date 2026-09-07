@@ -81,6 +81,20 @@ export const listPuzzlesQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).default(0),
 });
 
+export const listUsersQuerySchema = z.object({
+  q: z.string().trim().max(120).optional(),
+  /** Undefined lists every account; true/false narrows to one side. */
+  verified: z.boolean().optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(50),
+  offset: z.coerce.number().int().min(0).default(0),
+});
+
+/**
+ * better-auth mints user ids itself (a random string, not a uuid), so this can
+ * only bound the shape — the id is looked up, never trusted.
+ */
+export const userIdSchema = z.object({ id: z.string().trim().min(1).max(255) });
+
 export const renamePuzzleSchema = z.object({
   id: z.uuid(),
   title: z.string().trim().min(1).max(120),
@@ -119,6 +133,9 @@ export const renameLanguageSchema = z.object({
   code: LANGUAGE_CODE,
   name: z.string().trim().min(1).max(80),
 });
+
+/** Deleting takes only the code — the row's identity, and all the guard needs. */
+export const deleteLanguageSchema = z.object({ code: LANGUAGE_CODE });
 
 export const createCategorySchema = z.object({
   languageCode: LANGUAGE_CODE,

@@ -19,9 +19,9 @@ import type { Messages } from "@/lib/i18n";
 
 /**
  * The account menu behind the header's avatar: everything to do with *who is
- * signed in* — the address, the per-audience dashboards and sign-out — lives
- * here rather than being spread across each dashboard's own toolbar, so there
- * is one place to look for it on every page.
+ * signed in* — the address, the admin area and sign-out — lives here rather
+ * than in each dashboard's own toolbar, so there is one place to look for it
+ * on every page. The visitor's own destinations stay in the header's nav.
  */
 export function UserMenu({
   messages,
@@ -73,12 +73,6 @@ export function UserMenu({
               {email}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/client/dashboard">
-                <UserIcon />
-                {messages.nav.client}
-              </Link>
-            </DropdownMenuItem>
             {isAdmin && (
               <DropdownMenuItem asChild>
                 <Link href="/admin/dashboard">
@@ -87,7 +81,7 @@ export function UserMenu({
                 </Link>
               </DropdownMenuItem>
             )}
-            <DropdownMenuSeparator />
+            {isAdmin && <DropdownMenuSeparator />}
             <DropdownMenuItem onSelect={handleSignOut}>
               <LogOutIcon />
               {messages.signOut}

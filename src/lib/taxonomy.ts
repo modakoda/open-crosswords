@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, notExists, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, entries, languages, puzzles } from "@/db/schema";
 import { slugify } from "@/lib/slug";
@@ -60,6 +60,31 @@ export async function renameLanguage(code: string, name: string) {
     .update(languages)
     .set({ name })
     .where(eq(languages.code, code))
+    .returning();
+  return row;
+}
+
+/**
+ * Drops a language, but only while nothing depends on it. The guard is part of
+ * the same statement as the delete — a separate "is it empty?" check would let
+ * an entry land between the two, and `entries` cascades, so that entry would
+ * be swept away with the language. Returns the removed row, or `undefined`
+ * when there was nothing to remove *or* the language is still in use; the
+ * caller tells those apart with `languageExists`.
+ *
+ * Categories go with it (they cascade, and a category can't outlive the
+ * language it is scoped to); puzzles deliberately do not cascade, which is why
+ * they are one of the two things that block the delete.
+ */
+export async function deleteLanguage(code: string) {
+  const unused = (table: typeof entries | typeof puzzles) =>
+    notExists(
+      db.select({ one: sql`1` }).from(table).where(eq(table.languageCode, code)),
+    );
+
+  const [row] = await db
+    .delete(languages)
+    .where(and(eq(languages.code, code), unused(entries), unused(puzzles)))
     .returning();
   return row;
 }

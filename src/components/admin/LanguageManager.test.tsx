@@ -17,9 +17,10 @@ const list = vi.mocked(orpc.admin.languages.list);
 const create = vi.mocked(orpc.admin.languages.create);
 const rename = vi.mocked(orpc.admin.languages.rename);
 
+const createdAt = new Date("2026-01-01T00:00:00Z");
 const rows = [
-  { code: "en", name: "English", entryCount: 12, categoryCount: 3, puzzleCount: 2 },
-  { code: "zu", name: "ZU", entryCount: 0, categoryCount: 0, puzzleCount: 0 },
+  { code: "en", name: "English", createdAt, entryCount: 12, categoryCount: 3, puzzleCount: 2 },
+  { code: "zu", name: "ZU", createdAt, entryCount: 0, categoryCount: 0, puzzleCount: 0 },
 ];
 
 const onLanguageChange = vi.fn();
