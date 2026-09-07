@@ -21,12 +21,26 @@ export const E2E_SIGNUP_PASSWORD = "e2e-signup-password-123";
  */
 export const E2E_UNPROVISIONED_ADMIN_EMAIL = "e2e-unprovisioned-admin@example.com";
 
-export const E2E_PORT = 3100;
+/**
+ * The port the suite builds and serves on. Overridable so a run can sidestep a
+ * dev server already holding the default — the two would otherwise share a
+ * port but not an environment (`playwright.config.ts` sets its own
+ * `ADMIN_EMAILS`), and Playwright would silently reuse the wrong one.
+ */
+const port = Number(process.env.E2E_PORT);
+export const E2E_PORT = Number.isInteger(port) && port > 0 ? port : 3100;
 export const E2E_BASE_URL = `http://localhost:${E2E_PORT}`;
 
 /** Dedicated content-library language, isolated from any real seeded data. */
 export const E2E_LANGUAGE_CODE = "zz";
 export const E2E_LANGUAGE_NAME = "E2E Test Language";
+
+/**
+ * A second isolated language, so a spec can move an entry between languages
+ * without ever pushing an e2e row into the real `en` library.
+ */
+export const E2E_ALT_LANGUAGE_CODE = "zy";
+export const E2E_ALT_LANGUAGE_NAME = "E2E Alt Language";
 
 /**
  * The public generate form has no language picker — it always builds from the

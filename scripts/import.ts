@@ -2,7 +2,7 @@ import "./load-env";
 import { readFileSync } from "node:fs";
 import { resolve, extname } from "node:path";
 import { parseImportText, importEntries } from "../src/lib/import";
-import { ensureLanguage } from "../src/lib/entries";
+import { ensureLanguage } from "../src/lib/taxonomy";
 
 /**
  * Import a CSV or JSON file into one language.

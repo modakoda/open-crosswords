@@ -45,6 +45,9 @@ export type CreateEntryInput = z.infer<typeof createEntrySchema>;
 
 export const updateEntrySchema = z
   .object({
+    // Moving an entry between languages is allowed; its category can't follow,
+    // since categories are scoped to one language (see `updateEntry`).
+    languageCode: LANGUAGE_CODE,
     categoryId: z.uuid().nullish(),
     clue,
     answer,

@@ -60,10 +60,12 @@ const DIFF_TONE = [
 export function EntryTable({
   rows,
   q,
+  onEdit,
   onChanged,
 }: {
   rows: Entry[];
   q: string;
+  onEdit: (entry: Entry) => void;
   onChanged: () => void;
 }) {
   const [pendingDelete, setPendingDelete] = useState<Entry | null>(null);
@@ -165,6 +167,7 @@ export function EntryTable({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => onEdit(e)}>Edit</DropdownMenuItem>
                       <DropdownMenuItem onClick={() => toggle(e)}>
                         {e.enabled ? "Disable" : "Enable"}
                       </DropdownMenuItem>

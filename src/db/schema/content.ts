@@ -36,7 +36,10 @@ export const categories = pgTable(
 
 /**
  * A single clue/answer pair — the raw material a crossword is generated from.
- * `answerNormalized` is the uppercase A-Z form actually placed in the grid.
+ * `answerNormalized` is the uppercase letter-only form actually placed in the
+ * grid — accents are folded to their base letter except in languages whose
+ * alphabet counts them as distinct letters (see `normalizeAnswer`), so a
+ * Lithuanian answer keeps its `Ž` while a French one loses its `É`.
  */
 export const entries = pgTable(
   "entries",

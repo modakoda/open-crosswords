@@ -13,8 +13,17 @@ import { getAdmin } from "@/lib/auth-guard";
 import { getMessages } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n/request";
 
-const geistSans = Geist({ subsets: ["latin"], variable: "--font-geist-sans" });
-const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
+// `latin-ext` carries Latin Extended-A — ą č ę ė į š ų ū ž and the rest of the
+// accented letters content languages put in the grid. Without it those glyphs
+// fall back to a system font mid-word.
+const geistSans = Geist({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-geist-sans",
+});
+const geistMono = Geist_Mono({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-geist-mono",
+});
 
 export const metadata: Metadata = {
   title: "Open Crosswords",

@@ -12,6 +12,8 @@ import {
   E2E_CLIENT_PASSWORD,
   E2E_CLIENT2_EMAIL,
   E2E_CLIENT2_PASSWORD,
+  E2E_ALT_LANGUAGE_CODE,
+  E2E_ALT_LANGUAGE_NAME,
   E2E_LANGUAGE_CODE,
   E2E_LANGUAGE_NAME,
   E2E_SIGNUP_EMAIL,
@@ -53,8 +55,8 @@ async function seedEntries(languageCode: string) {
 }
 
 /**
- * Dedicated e2e content. The `zz` language stays fully isolated from any real
- * question-library data; the `en` set exists only because the public generate
+ * Dedicated e2e content. The `zz` and `zy` languages stay fully isolated from
+ * any real question-library data; the `en` set exists only because the public generate
  * form builds from the site locale (no picker), so a UI-driven generate needs
  * clues there. Both are marked by the "E2E capital clue" prefix and inserted
  * with `onConflictDoNothing`, so an existing `en` library is left untouched.
@@ -64,6 +66,9 @@ async function seedQuestionLibrary() {
     .insert(schema.languages)
     .values([
       { code: E2E_LANGUAGE_CODE, name: E2E_LANGUAGE_NAME },
+      // Empty of entries on purpose — it exists as a destination for the spec
+      // that moves one, so nothing e2e-made lands in the real `en` library.
+      { code: E2E_ALT_LANGUAGE_CODE, name: E2E_ALT_LANGUAGE_NAME },
       { code: E2E_UI_LANGUAGE_CODE, name: "English" },
     ])
     .onConflictDoNothing();

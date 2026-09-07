@@ -3,7 +3,7 @@ import { ORPCError } from "@orpc/server";
 import { publicProcedure } from "@/lib/orpc/middleware";
 import { getCurrentUser } from "@/lib/auth-guard";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
-import { listCategories, listLanguages } from "@/lib/entries";
+import { listCategories, listLanguages } from "@/lib/taxonomy";
 import { generatePuzzle, getPuzzleBySlug, NotEnoughEntriesError } from "@/lib/puzzles";
 import {
   LANGUAGE_CODE,

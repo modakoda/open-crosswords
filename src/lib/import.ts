@@ -1,5 +1,6 @@
 import { parseCsv } from "@/lib/csv";
-import { createEntry, ensureCategory, DuplicateEntryError, InvalidAnswerError } from "@/lib/entries";
+import { createEntry, DuplicateEntryError, InvalidAnswerError } from "@/lib/entries";
+import { ensureCategory } from "@/lib/taxonomy";
 import { importRowSchema, type ImportRow } from "@/lib/validation/schemas";
 
 export interface ImportResult {

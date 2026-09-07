@@ -41,7 +41,8 @@ export function EntryManager({
   const [total, setTotal] = useState(0);
   const [q, setQ] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
-  const [addOpen, setAddOpen] = useState(false);
+  const [editing, setEditing] = useState<Entry | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
   const [filter, setFilter] = useState(language);
   const [category, setCategory] = useState(ALL);
   // Categories of a language other than the working one, once fetched.
@@ -169,16 +170,24 @@ export function EntryManager({
             </SelectContent>
           </Select>
         )}
-        <Button className="ml-auto" onClick={() => setAddOpen(true)}>
+        <Button
+          className="ml-auto"
+          onClick={() => {
+            setEditing(null);
+            setFormOpen(true);
+          }}
+        >
           <PlusIcon />
           New entry
         </Button>
         <EntryFormDialog
-          open={addOpen}
-          onOpenChange={setAddOpen}
+          open={formOpen}
+          onOpenChange={setFormOpen}
           language={language}
+          languages={languages}
           categories={categories}
-          onCreated={load}
+          entry={editing}
+          onSaved={load}
           onCategoryCreated={onCategoriesChanged}
         />
       </div>
@@ -190,7 +199,15 @@ export function EntryManager({
         </Alert>
       )}
 
-      <EntryTable rows={rows} q={q} onChanged={load} />
+      <EntryTable
+        rows={rows}
+        q={q}
+        onEdit={(entry) => {
+          setEditing(entry);
+          setFormOpen(true);
+        }}
+        onChanged={load}
+      />
 
       <TablePagination
         page={page}

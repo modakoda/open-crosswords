@@ -25,7 +25,7 @@ A single Next.js App Router app that:
 | `npm test` | Vitest (unit + PGlite-backed integration) |
 | `npm run test:watch` | Vitest in watch mode |
 | `npm run test:coverage` | Vitest with v8 coverage |
-| `npm run test:e2e` | Playwright e2e (needs a real Postgres — auto-seeds fixed test accounts) |
+| `npm run test:e2e` | Playwright e2e (needs a real Postgres — auto-seeds fixed test accounts; `E2E_PORT=<n>` if 3100 is taken by a dev server) |
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run lint` | ESLint |
 | `npm run knip` | Find unused files, dependencies, and exports |
@@ -57,7 +57,7 @@ src/lib/validation/       schemas.ts — every Zod input schema, in one place
 src/db/schema/            Drizzle schema: auth.ts, content.ts, solve-state.ts
 src/lib/crossword/        engine: normalize, select, generate, number, rng,
                           word (solve-UI word/cursor geometry)
-src/lib/                  puzzles/ (types+queries), entries, import, csv, paper,
+src/lib/                  puzzles/ (types+queries), entries, taxonomy, import, csv, paper,
                           rate-limit, client-ip (the one trusted address
                           header), auth-throttle (per-account sign-in backoff)
                           + known-device, solve-state, slug, puzzle-slug

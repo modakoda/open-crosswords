@@ -1,6 +1,11 @@
 import { test, expect } from "./fixtures";
 import { ADMIN_STORAGE_STATE } from "./global-setup";
-import { E2E_LANGUAGE_CODE, E2E_LANGUAGE_NAME } from "./constants";
+import {
+  E2E_ALT_LANGUAGE_CODE,
+  E2E_ALT_LANGUAGE_NAME,
+  E2E_LANGUAGE_CODE,
+  E2E_LANGUAGE_NAME,
+} from "./constants";
 
 test.use({ storageState: ADMIN_STORAGE_STATE });
 
@@ -87,6 +92,79 @@ test.describe("admin dashboard", () => {
     await expect(row.getByText("Off")).toBeVisible();
 
     await row.getByRole("button", { name: "Row actions" }).click();
+    await page.getByRole("menuitem", { name: "Delete" }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
+    await expect(page.getByRole("row").filter({ hasText: clue })).toHaveCount(0);
+  });
+
+  test("edits an entry's clue, answer, difficulty and category", async ({ page }) => {
+    const clue = `E2E edit clue ${Date.now()}`;
+    const edited = `${clue} (edited)`;
+    const categoryName = `E2E cat ${Date.now()}`;
+
+    await page.getByRole("button", { name: "New entry" }).click();
+    await page.locator("#e-clue").fill(clue);
+    await page.locator("#e-answer").fill("Beforeword");
+    await page.getByRole("button", { name: "Add entry" }).click();
+    const row = page.getByRole("row").filter({ hasText: clue });
+    await expect(row).toBeVisible();
+
+    await row.getByRole("button", { name: "Row actions" }).click();
+    await page.getByRole("menuitem", { name: "Edit" }).click();
+
+    // The dialog opens on the row's own values, not a blank form.
+    await expect(page.locator("#e-clue")).toHaveValue(clue);
+    await expect(page.locator("#e-answer")).toHaveValue("Beforeword");
+
+    await page.locator("#e-clue").fill(edited);
+    await page.locator("#e-answer").fill("Afterword");
+    await page.locator("#e-cat").fill(categoryName);
+    await page.getByRole("combobox", { name: "Difficulty" }).click();
+    await page.getByRole("option", { name: "Difficulty 5" }).click();
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    const updated = page.getByRole("row").filter({ hasText: edited });
+    await expect(updated).toBeVisible();
+    await expect(updated.getByText("AFTERWORD")).toBeVisible();
+    await expect(updated.getByText(categoryName)).toBeVisible();
+    await expect(updated.getByText("5", { exact: true })).toBeVisible();
+
+    // The edit persists — it's a row change, not just local state.
+    await page.reload();
+    await expect(page.getByRole("row").filter({ hasText: edited })).toBeVisible();
+
+    const cleanup = page.getByRole("row").filter({ hasText: edited });
+    await cleanup.getByRole("button", { name: "Row actions" }).click();
+    await page.getByRole("menuitem", { name: "Delete" }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
+    await expect(page.getByRole("row").filter({ hasText: edited })).toHaveCount(0);
+  });
+
+  test("moves an entry to another language", async ({ page }) => {
+    const clue = `E2E move clue ${Date.now()}`;
+
+    await page.getByRole("button", { name: "New entry" }).click();
+    await page.locator("#e-clue").fill(clue);
+    await page.locator("#e-answer").fill("Movable");
+    await page.getByRole("button", { name: "Add entry" }).click();
+    const row = page.getByRole("row").filter({ hasText: clue });
+    await expect(row).toBeVisible();
+
+    await row.getByRole("button", { name: "Row actions" }).click();
+    await page.getByRole("menuitem", { name: "Edit" }).click();
+    await page.getByRole("combobox", { name: "Language" }).click();
+    await page
+      .getByRole("option", { name: `${E2E_ALT_LANGUAGE_NAME} (${E2E_ALT_LANGUAGE_CODE})` })
+      .click();
+    await page.getByRole("button", { name: "Save changes" }).click();
+
+    // Gone from the language it left, present in the one it moved to.
+    await expect(page.getByRole("row").filter({ hasText: clue })).toHaveCount(0);
+    await page.goto(`/admin/dashboard/entries?lang=${E2E_ALT_LANGUAGE_CODE}`);
+    const moved = page.getByRole("row").filter({ hasText: clue });
+    await expect(moved).toBeVisible();
+
+    await moved.getByRole("button", { name: "Row actions" }).click();
     await page.getByRole("menuitem", { name: "Delete" }).click();
     await page.getByRole("alertdialog").getByRole("button", { name: "Delete" }).click();
     await expect(page.getByRole("row").filter({ hasText: clue })).toHaveCount(0);

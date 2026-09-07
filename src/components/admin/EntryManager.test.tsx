@@ -6,7 +6,10 @@ import { EntryManager } from "./EntryManager";
 
 vi.mock("@/lib/orpc/client", () => ({
   orpc: {
-    admin: { entries: { list: vi.fn(), delete: vi.fn(), deleteMany: vi.fn() } },
+    admin: {
+      entries: { list: vi.fn(), delete: vi.fn(), deleteMany: vi.fn(), update: vi.fn(), create: vi.fn() },
+      categories: { create: vi.fn() },
+    },
     categories: { list: vi.fn() },
   },
 }));
@@ -21,6 +24,8 @@ const list = vi.mocked(orpc.admin.entries.list);
 const remove = vi.mocked(orpc.admin.entries.delete);
 const removeMany = vi.mocked(orpc.admin.entries.deleteMany);
 const listCategories = vi.mocked(orpc.categories.list);
+const update = vi.mocked(orpc.admin.entries.update);
+const createCategory = vi.mocked(orpc.admin.categories.create);
 
 const languages = [
   { code: "en", name: "English" },
@@ -54,8 +59,11 @@ function entry(id: string, languageCode: string, clue: string) {
     enabled: 1,
     categoryId: null,
     length: 5,
+    source: "manual",
     timesUsed: 0,
+    lastUsedAt: null,
     createdAt: new Date("2026-01-01T00:00:00Z"),
+    updatedAt: new Date("2026-01-01T00:00:00Z"),
   };
 }
 
@@ -402,5 +410,188 @@ describe("EntryManager bulk delete", () => {
 
     await waitFor(() => expect(screen.getByText("Another clue")).toBeInTheDocument());
     expect(screen.queryByText("1 selected")).not.toBeInTheDocument();
+  });
+});
+
+describe("EntryManager entry editing", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    listCategories.mockResolvedValue({ categories: [] });
+    list.mockResolvedValue({ rows, total: rows.length });
+    update.mockResolvedValue({ entry: entry("1", "en", "Capital of France") });
+  });
+
+  async function openEditor(user: ReturnType<typeof userEvent.setup>, clue: string) {
+    const row = screen.getByText(clue).closest("tr")!;
+    await user.click(within(row).getByRole("button", { name: "Row actions" }));
+    await user.click(screen.getByRole("menuitem", { name: "Edit" }));
+    return screen.findByRole("dialog");
+  }
+
+  it("opens the row's values in an edit dialog", async () => {
+    const user = userEvent.setup();
+    renderManager(enCategories);
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    const dialog = await openEditor(user, "Capital of France");
+    expect(within(dialog).getByRole("heading", { name: "Edit entry" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Clue")).toHaveValue("Capital of France");
+    expect(screen.getByLabelText("Answer")).toHaveValue("Paris");
+    expect(screen.getByLabelText("Category (optional)")).toHaveValue("Geography");
+  });
+
+  it("patches only that entry, then reloads the listing", async () => {
+    const user = userEvent.setup();
+    renderManager(enCategories);
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(1));
+
+    await openEditor(user, "Capital of France");
+    await user.clear(screen.getByLabelText("Clue"));
+    await user.type(screen.getByLabelText("Clue"), "French capital");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() =>
+      expect(update).toHaveBeenCalledWith({
+        id: "1",
+        patch: {
+          clue: "French capital",
+          answer: "Paris",
+          difficulty: 3,
+          categoryId: GEOGRAPHY,
+          languageCode: "en",
+        },
+      }),
+    );
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+  });
+
+  it("clears the category when its name is emptied", async () => {
+    const user = userEvent.setup();
+    renderManager(enCategories);
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await openEditor(user, "Capital of France");
+    await user.clear(screen.getByLabelText("Category (optional)"));
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() =>
+      expect(update).toHaveBeenCalledWith(
+        expect.objectContaining({ patch: expect.objectContaining({ categoryId: null }) }),
+      ),
+    );
+    expect(createCategory).not.toHaveBeenCalled();
+  });
+
+  it("edits a row in its own language, not the working one", async () => {
+    const user = userEvent.setup();
+    listCategories.mockResolvedValue({ categories: [category(HISTORY, "Istorija", "lt")] });
+    createCategory.mockResolvedValue({ category: category(HISTORY, "Naujas", "lt") });
+    renderManager(enCategories);
+    await waitFor(() => expect(screen.getByText("Prancūzijos sostinė")).toBeInTheDocument());
+
+    const dialog = await openEditor(user, "Prancūzijos sostinė");
+    expect(dialog).toHaveTextContent("Saved to the lt library.");
+    await waitFor(() => expect(listCategories).toHaveBeenCalledWith({ languageCode: "lt" }));
+
+    await user.clear(screen.getByLabelText("Category (optional)"));
+    await user.type(screen.getByLabelText("Category (optional)"), "Naujas");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() =>
+      expect(createCategory).toHaveBeenCalledWith({ languageCode: "lt", name: "Naujas" }),
+    );
+    expect(update.mock.calls[0][0]).toMatchObject({ id: "2" });
+  });
+
+  it("keeps the row in its own language unless the picker is changed", async () => {
+    const user = userEvent.setup();
+    renderManager(enCategories);
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await openEditor(user, "Capital of France");
+    expect(screen.getByRole("combobox", { name: "Language" })).toHaveTextContent(
+      "English (en)",
+    );
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() =>
+      expect(update).toHaveBeenCalledWith(
+        expect.objectContaining({ patch: expect.objectContaining({ languageCode: "en" }) }),
+      ),
+    );
+  });
+
+  it("moves an entry to another language, with a category made there", async () => {
+    const user = userEvent.setup();
+    listCategories.mockResolvedValue({ categories: [category(HISTORY, "Istorija", "lt")] });
+    createCategory.mockResolvedValue({ category: category(HISTORY, "Istorija", "lt") });
+    renderManager(enCategories);
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await openEditor(user, "Capital of France");
+    await user.click(screen.getByRole("combobox", { name: "Language" }));
+    await user.click(screen.getByRole("option", { name: "Lietuvių (lt)" }));
+
+    // The category list follows the language picked, not the row's old one.
+    await waitFor(() => expect(listCategories).toHaveBeenCalledWith({ languageCode: "lt" }));
+
+    await user.clear(screen.getByLabelText("Category (optional)"));
+    await user.type(screen.getByLabelText("Category (optional)"), "Istorija");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() =>
+      expect(update).toHaveBeenCalledWith({
+        id: "1",
+        patch: {
+          clue: "Capital of France",
+          answer: "Paris",
+          difficulty: 3,
+          categoryId: HISTORY,
+          languageCode: "lt",
+        },
+      }),
+    );
+    // The name already existed in the target language, so nothing was created.
+    expect(createCategory).not.toHaveBeenCalled();
+  });
+
+  it("offers no language picker when creating — that follows the working language", async () => {
+    const user = userEvent.setup();
+    renderManager(enCategories);
+    await waitFor(() => expect(list).toHaveBeenCalled());
+
+    await user.click(screen.getByRole("button", { name: "New entry" }));
+    await screen.findByRole("dialog");
+    expect(screen.queryByRole("combobox", { name: "Language" })).not.toBeInTheDocument();
+  });
+
+  it("reports a failed save and keeps the dialog open", async () => {
+    const user = userEvent.setup();
+    update.mockRejectedValue(new Error("Answer must contain 2-21 letters"));
+    renderManager(enCategories);
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await openEditor(user, "Capital of France");
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    expect(await screen.findByText("Answer must contain 2-21 letters")).toBeInTheDocument();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("starts blank again when a new entry follows an edit", async () => {
+    const user = userEvent.setup();
+    renderManager(enCategories);
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await openEditor(user, "Capital of France");
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+
+    await user.click(screen.getByRole("button", { name: "New entry" }));
+    const dialog = await screen.findByRole("dialog");
+    expect(within(dialog).getByRole("heading", { name: "New entry" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Clue")).toHaveValue("");
+    expect(screen.getByLabelText("Category (optional)")).toHaveValue("");
   });
 });

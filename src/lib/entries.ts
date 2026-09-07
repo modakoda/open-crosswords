@@ -1,8 +1,8 @@
 import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, entries, languages } from "@/db/schema";
+import { categories, entries } from "@/db/schema";
 import { normalizeAnswer, isPlaceableAnswer } from "@/lib/crossword/normalize";
-import { slugify } from "@/lib/slug";
+import { ensureLanguage, languageExists } from "@/lib/taxonomy";
 import type {
   CreateEntryInput,
   listEntriesQuerySchema,
@@ -11,41 +11,10 @@ import type { z } from "zod";
 
 export class DuplicateEntryError extends Error {}
 export class InvalidAnswerError extends Error {}
+export class CategoryLanguageError extends Error {}
+export class UnknownLanguageError extends Error {}
 
 type ListQuery = z.infer<typeof listEntriesQuerySchema>;
-
-export async function listLanguages() {
-  return db.select().from(languages).orderBy(languages.name);
-}
-
-export async function ensureLanguage(code: string, name?: string) {
-  await db
-    .insert(languages)
-    .values({ code, name: name ?? code.toUpperCase() })
-    .onConflictDoNothing();
-}
-
-export async function listCategories(languageCode: string) {
-  return db
-    .select()
-    .from(categories)
-    .where(eq(categories.languageCode, languageCode))
-    .orderBy(categories.name);
-}
-
-export async function ensureCategory(languageCode: string, name: string) {
-  const slug = slugify(name) || "general";
-  await ensureLanguage(languageCode);
-  const [row] = await db
-    .insert(categories)
-    .values({ languageCode, slug, name })
-    .onConflictDoUpdate({
-      target: [categories.languageCode, categories.slug],
-      set: { name },
-    })
-    .returning();
-  return row;
-}
 
 export async function listEntries(q: ListQuery) {
   const filters = [];
@@ -91,7 +60,7 @@ export async function listEntries(q: ListQuery) {
 }
 
 export async function createEntry(input: CreateEntryInput) {
-  const answerNormalized = normalizeAnswer(input.answer);
+  const answerNormalized = normalizeAnswer(input.answer, input.languageCode);
   if (!isPlaceableAnswer(answerNormalized)) {
     throw new InvalidAnswerError(
       "Answer must contain 2-21 letters after normalization",
@@ -107,7 +76,7 @@ export async function createEntry(input: CreateEntryInput) {
         clue: input.clue,
         answer: input.answer,
         answerNormalized,
-        length: answerNormalized.length,
+        length: Array.from(answerNormalized).length,
         difficulty: input.difficulty,
         source: input.source,
       })
@@ -132,9 +101,19 @@ function isUniqueViolation(err: unknown): boolean {
   return false;
 }
 
+/**
+ * Patches one entry. Two things make this more than a `set`:
+ *
+ * - The language can move, but a category can't follow it — categories are
+ *   scoped to one language. A move without a stated category therefore clears
+ *   it, and a stated one has to belong to the language the row ends up in.
+ * - `(languageCode, answerNormalized, clue)` is unique, so an edit can collide
+ *   with an existing row exactly like a create can.
+ */
 export async function updateEntry(
   id: string,
   patch: Partial<{
+    languageCode: string;
     categoryId: string | null;
     clue: string;
     answer: string;
@@ -142,26 +121,74 @@ export async function updateEntry(
     enabled: boolean;
   }>,
 ) {
+  const [current] = await db.select().from(entries).where(eq(entries.id, id));
+  if (!current) return null;
+
   const set: Record<string, unknown> = { updatedAt: new Date() };
-  if ("categoryId" in patch) set.categoryId = patch.categoryId ?? null;
+  const languageCode = patch.languageCode ?? current.languageCode;
+  if (patch.languageCode !== undefined) {
+    // Moving an entry means moving it into a language the library already has.
+    // Creating one is `admin.languages.create`'s job — an edit that invents a
+    // language would put it in the public picker as a side effect.
+    if (!(await languageExists(patch.languageCode))) {
+      throw new UnknownLanguageError(`No such language: ${patch.languageCode}`);
+    }
+    set.languageCode = patch.languageCode;
+  }
   if (patch.clue !== undefined) set.clue = patch.clue;
   if (patch.difficulty !== undefined) set.difficulty = patch.difficulty;
   if (patch.enabled !== undefined) set.enabled = patch.enabled ? 1 : 0;
-  if (patch.answer !== undefined) {
-    const answerNormalized = normalizeAnswer(patch.answer);
+  // The grid form depends on the language as well as the answer — an alphabet
+  // decides which accents are letters of their own (see `normalizeAnswer`) —
+  // so a move has to recompute it even when the answer itself stands.
+  if (patch.answer !== undefined || languageCode !== current.languageCode) {
+    const answer = patch.answer ?? current.answer;
+    const answerNormalized = normalizeAnswer(answer, languageCode);
     if (!isPlaceableAnswer(answerNormalized)) {
       throw new InvalidAnswerError("Answer must contain 2-21 letters");
     }
-    set.answer = patch.answer;
+    if (patch.answer !== undefined) set.answer = answer;
     set.answerNormalized = answerNormalized;
-    set.length = answerNormalized.length;
+    set.length = Array.from(answerNormalized).length;
   }
+
+  if ("categoryId" in patch) {
+    set.categoryId = patch.categoryId ?? null;
+  } else if (languageCode !== current.languageCode) {
+    // The caller said nothing about the category, and the one it has belongs
+    // to the language being left behind. Dropping it is the only coherent
+    // outcome — keeping it would file the row under a foreign language's topic.
+    set.categoryId = null;
+  }
+  if (typeof set.categoryId === "string") {
+    await assertCategoryLanguage(set.categoryId, languageCode);
+  }
+
+  try {
+    const [row] = await db
+      .update(entries)
+      .set(set)
+      .where(eq(entries.id, id))
+      .returning();
+    return row ?? null;
+  } catch (err) {
+    if (isUniqueViolation(err)) {
+      throw new DuplicateEntryError("An identical clue/answer already exists");
+    }
+    throw err;
+  }
+}
+
+async function assertCategoryLanguage(categoryId: string, languageCode: string) {
   const [row] = await db
-    .update(entries)
-    .set(set)
-    .where(eq(entries.id, id))
-    .returning();
-  return row ?? null;
+    .select({ languageCode: categories.languageCode })
+    .from(categories)
+    .where(eq(categories.id, categoryId));
+  if (!row || row.languageCode !== languageCode) {
+    throw new CategoryLanguageError(
+      `That category doesn't belong to the ${languageCode} library`,
+    );
+  }
 }
 
 export async function deleteEntry(id: string) {

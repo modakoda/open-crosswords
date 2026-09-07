@@ -7,14 +7,14 @@ import {
   createEntry,
   deleteEntries,
   deleteEntry,
-  ensureCategory,
-  ensureLanguage,
   listEntries,
-  listLanguages,
   updateEntry,
+  CategoryLanguageError,
   DuplicateEntryError,
   InvalidAnswerError,
+  UnknownLanguageError,
 } from "@/lib/entries";
+import { ensureCategory, ensureLanguage, listLanguages } from "@/lib/taxonomy";
 import { importEntries, parseImportText, ImportTooLargeError } from "@/lib/import";
 import { draftEntries, AiDisabledError } from "@/lib/ai/draft";
 import { isAiEnabled } from "@/lib/env/server";
@@ -71,7 +71,14 @@ const entriesUpdate = adminProcedure
       if (!entry) throw new ORPCError("NOT_FOUND", { message: "Entry not found" });
       return { entry };
     } catch (err) {
-      if (err instanceof InvalidAnswerError) {
+      if (err instanceof DuplicateEntryError) {
+        throw new ORPCError("CONFLICT", { message: err.message });
+      }
+      if (
+        err instanceof InvalidAnswerError ||
+        err instanceof CategoryLanguageError ||
+        err instanceof UnknownLanguageError
+      ) {
         throw new ORPCError("UNPROCESSABLE_CONTENT", { message: err.message });
       }
       throw err;

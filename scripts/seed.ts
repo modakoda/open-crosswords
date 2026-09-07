@@ -4,7 +4,7 @@ import { gunzipSync } from "node:zlib";
 import { resolve } from "node:path";
 import { importSchema } from "../src/lib/validation/schemas";
 import { parseImportText, importEntries } from "../src/lib/import";
-import { ensureLanguage } from "../src/lib/entries";
+import { ensureLanguage } from "../src/lib/taxonomy";
 
 /** Read a seed file, transparently gunzipping a `.gz`-suffixed path. */
 function readSeedFile(path: string): string {

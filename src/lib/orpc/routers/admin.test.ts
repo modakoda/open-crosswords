@@ -53,6 +53,17 @@ describe("admin.entries.create", () => {
     expect(entry.length).toBe(5);
   });
 
+  it("keeps the letters the answer's own alphabet counts as its own", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    const { entry } = await call(
+      adminRouter.entries.create,
+      { languageCode: "lt", clue: "Plaukioja vandenyje", answer: "žuvis" },
+      ctx(),
+    );
+    expect(entry.answerNormalized).toBe("ŽUVIS");
+    expect(entry.length).toBe(5);
+  });
+
   it("rejects a too-short clue", async () => {
     await expect(
       call(adminRouter.entries.create, { languageCode: "en", clue: "x", answer: "Paris" }, ctx()),
@@ -165,6 +176,140 @@ describe("admin.entries.update / delete", () => {
 
     const { deleted } = await call(adminRouter.entries.delete, { id: entry.id }, ctx());
     expect(deleted).toBe(true);
+  });
+});
+
+describe("admin.entries.update — moving between languages", () => {
+  async function seedEntry(languageCode: string, clue: string, answer = "Paris") {
+    const { entry } = await call(
+      adminRouter.entries.create,
+      { languageCode, clue, answer },
+      ctx(),
+    );
+    return entry;
+  }
+
+  it("moves an entry to a language the library already has", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    const entry = await seedEntry("en", "Capital of France");
+
+    const { entry: moved } = await call(
+      adminRouter.entries.update,
+      { id: entry.id, patch: { languageCode: "lt" } },
+      ctx(),
+    );
+
+    expect(moved.languageCode).toBe("lt");
+    const en = await call(adminRouter.entries.list, { languageCode: "en" }, ctx());
+    expect(en.total).toBe(0);
+    const lt = await call(adminRouter.entries.list, { languageCode: "lt" }, ctx());
+    expect(lt.rows[0].id).toBe(entry.id);
+  });
+
+  it("renormalizes the answer for the language it lands in", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    await call(adminRouter.languages.create, { code: "en", name: "English" }, ctx());
+    const lt = await seedEntry("lt", "Plaukioja vandenyje", "žuvis");
+    expect(lt.answerNormalized).toBe("ŽUVIS");
+
+    const { entry: moved } = await call(
+      adminRouter.entries.update,
+      { id: lt.id, patch: { languageCode: "en" } },
+      ctx(),
+    );
+
+    // English has no Ž, so the same answer folds to its base letter there.
+    expect(moved.answerNormalized).toBe("ZUVIS");
+    expect(moved.answer).toBe("žuvis");
+  });
+
+  it("drops the category on the way, since categories don't cross languages", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    const { category } = await call(
+      adminRouter.categories.create,
+      { languageCode: "en", name: "Geography" },
+      ctx(),
+    );
+    const entry = await seedEntry("en", "Capital of France");
+    await call(
+      adminRouter.entries.update,
+      { id: entry.id, patch: { categoryId: category.id } },
+      ctx(),
+    );
+
+    const { entry: moved } = await call(
+      adminRouter.entries.update,
+      { id: entry.id, patch: { languageCode: "lt" } },
+      ctx(),
+    );
+    expect(moved.categoryId).toBeNull();
+  });
+
+  it("refuses a category belonging to a different language than the entry", async () => {
+    const { category } = await call(
+      adminRouter.categories.create,
+      { languageCode: "lt", name: "Geografija" },
+      ctx(),
+    );
+    const entry = await seedEntry("en", "Capital of France");
+
+    await expect(
+      call(adminRouter.entries.update, { id: entry.id, patch: { categoryId: category.id } }, ctx()),
+    ).rejects.toThrow();
+
+    // Nothing was written — the guard runs before the update, not after.
+    const data = await call(adminRouter.entries.list, { languageCode: "en" }, ctx());
+    expect(data.rows[0].categoryId).toBeNull();
+  });
+
+  it("accepts a category created in the language being moved to", async () => {
+    const { category } = await call(
+      adminRouter.categories.create,
+      { languageCode: "lt", name: "Geografija" },
+      ctx(),
+    );
+    const entry = await seedEntry("en", "Capital of France");
+
+    const { entry: moved } = await call(
+      adminRouter.entries.update,
+      { id: entry.id, patch: { languageCode: "lt", categoryId: category.id } },
+      ctx(),
+    );
+    expect(moved.categoryId).toBe(category.id);
+  });
+
+  it("conflicts when the move collides with an existing row", async () => {
+    await seedEntry("lt", "Capital of France");
+    const entry = await seedEntry("en", "Capital of France");
+
+    await expect(
+      call(adminRouter.entries.update, { id: entry.id, patch: { languageCode: "lt" } }, ctx()),
+    ).rejects.toThrow(/already exists/);
+
+    // The duplicate is refused, not half-applied.
+    const en = await call(adminRouter.entries.list, { languageCode: "en" }, ctx());
+    expect(en.total).toBe(1);
+  });
+
+  it("rejects a language code that isn't a language code", async () => {
+    const entry = await seedEntry("en", "Capital of France");
+    await expect(
+      call(adminRouter.entries.update, { id: entry.id, patch: { languageCode: "nonsense" } }, ctx()),
+    ).rejects.toThrow();
+  });
+
+  it("refuses to invent a language on the way — that's languages.create's job", async () => {
+    const entry = await seedEntry("en", "Capital of France");
+
+    await expect(
+      call(adminRouter.entries.update, { id: entry.id, patch: { languageCode: "de" } }, ctx()),
+    ).rejects.toThrow(/No such language/);
+
+    // No stray language was left in the public picker, and the row didn't move.
+    const { languages: after } = await call(adminRouter.languages.create, { code: "en" }, ctx());
+    expect(after.map((l) => l.code)).not.toContain("de");
+    const data = await call(adminRouter.entries.list, { languageCode: "en" }, ctx());
+    expect(data.total).toBe(1);
   });
 });
 

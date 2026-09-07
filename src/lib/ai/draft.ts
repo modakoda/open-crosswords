@@ -52,5 +52,7 @@ export async function draftEntries(input: AiDraftInput): Promise<DraftedEntry[]>
       .join(" "),
   });
 
-  return output.entries.filter((e) => isPlaceableAnswer(normalizeAnswer(e.answer)));
+  return output.entries.filter((e) =>
+    isPlaceableAnswer(normalizeAnswer(e.answer, input.languageCode)),
+  );
 }

@@ -4,6 +4,8 @@ Generate random, **printable** crosswords from a multilingual database of clues
 and answers — or solve them online and share the link. One open-source Next.js
 app, easy to self-host.
 
+**Live instance:** <https://open-crosswords.apps-01.modakoda.eu/>
+
 - 🧩 **Smart selection** — each puzzle draws a fresh, topic-spread set of clues
   (favours categories you haven't just used and clues used least/least recently).
 - 🖨️ **Print-ready** — pick A4, A5, US Letter or US Legal, portrait or landscape;
@@ -249,7 +251,12 @@ The library starts empty either way. Load the bundled English starter set with
 ## Adding questions
 
 - **Admin UI** (`/admin/dashboard/entries`) — add one clue/answer at a
-  time, with an optional category and difficulty 1–5.
+  time, with an optional category and difficulty 1–5. Existing rows are edited
+  from their row menu (**Edit**), which reopens the same form on that entry —
+  in the entry's own language, whichever one the listing is scoped to. That
+  language can be changed there too, which moves the entry; its category can't
+  follow (categories belong to one language), so pick or name one in the
+  language you're moving to.
 - **Bulk import** (`/admin/dashboard/import`, or
   `npm run import -- <lang> <file>`):
   - JSON: `[{ "clue": "...", "answer": "...", "category": "...", "difficulty": 3 }]`

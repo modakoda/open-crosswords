@@ -61,8 +61,10 @@ or solve them online via a shareable link. Open source, single Next.js app.
   and `SolveView`),
   `puzzles/` (generate + persist + fetch + per-user listing, split into
   `types.ts`/`queries.ts`, with the admin-only library-wide listing, rename
-  and delete in `admin.ts`), `entries.ts` / `import.ts` (question-library CRUD
-  and bulk import), `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
+  and delete in `admin.ts`), `entries.ts` / `taxonomy.ts` / `import.ts`
+  (question-library CRUD, the languages and language-scoped categories it
+  files rows under, and bulk import — an entry can be moved between languages,
+  but a category can't follow it), `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
   (per-user solve progress, read/write always scoped to the caller's own id),
   `print-layout.ts` (paper geometry: it sizes each print sheet's cells, clue
   font and clue columns so the puzzle occupies exactly one page and the answer
@@ -150,8 +152,12 @@ or solve them online via a shareable link. Open source, single Next.js app.
   e2e (`e2e/**`, `playwright.config.ts`) — runs against a real Postgres
   (PGlite can't back a separately-spawned `next start` process), seeded by
   `npm run pretest:e2e` (`e2e/seed.ts`, idempotent, scoped to fixed
-  `e2e-*@example.com` accounts and a dedicated `zz` content language so it
-  never touches real admin-managed data). `npm run test:e2e` runs both.
+  `e2e-*@example.com` accounts and two dedicated content languages, `zz` and
+  the empty `zy` a spec moves an entry into, so it never touches real
+  admin-managed data); `E2E_PORT=<n>` moves the whole run off the default
+  3100 when a dev server already holds it — Playwright would otherwise reuse
+  that server, which runs with a different `ADMIN_EMAILS` and fails every
+  sign-in. `npm run test:e2e` runs both.
 
 ## Security requirements
 
