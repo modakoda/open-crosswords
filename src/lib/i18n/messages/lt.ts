@@ -23,7 +23,7 @@ export const lt: typeof en = {
     title: "Generuoti kryžiažodį",
     subtitle:
       "Pasirinkite (nebūtinai) temas. Kiekviena dėlionė sudaroma iš šviežiai " +
-      "parinktų, temomis paskirstytų svetainės kalbos užuominų, pritaikyta " +
+      "parinktų, temomis paskirstytų pasirinktos kalbos užuominų, pritaikyta " +
       "spausdinti ant pasirinkto popieriaus dydžio — arba spręskite internetu " +
       "ir dalinkitės nuoroda.",
     featurePrintable: "Spausdinimui paruošti PDF",
@@ -33,6 +33,8 @@ export const lt: typeof en = {
   generateForm: {
     formTitle: "Dėlionės nustatymai",
     formDescription: "Pasirinkite temas ir generuokite.",
+    language: "Užuominų kalba",
+    languageHint: "Pradedama nuo svetainės kalbos, kuria naršote.",
     categories: "Kategorijos",
     categoriesHint: "Palikite tuščią, kad būtų naudojamos visos temos.",
     clear: "Išvalyti",

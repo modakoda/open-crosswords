@@ -24,19 +24,28 @@ vi.mock("@/lib/orpc/client", () => ({
 const { orpc } = await import("@/lib/orpc/client");
 
 describe("GenerateForm", () => {
-  it("uses the site locale as the content language, with no picker", async () => {
+  it("offers a picker that starts on the site locale", async () => {
     render(<GenerateForm initialLocale="lt" />);
     await waitFor(() =>
       expect(orpc.categories.list).toHaveBeenCalledWith({ languageCode: "lt" }),
     );
-    expect(screen.queryByRole("combobox")).toBeNull();
-    expect(screen.queryByText("Lietuvių")).toBeNull();
-    expect(screen.queryByText("English")).toBeNull();
+    expect(screen.getByRole("combobox")).toBeTruthy();
+    expect(screen.getByText("Lietuvių")).toBeTruthy();
   });
 
-  it("explains when the site locale has no clue library yet", async () => {
+  it("falls back to the first language the library has", async () => {
     vi.mocked(orpc.languages.list).mockResolvedValueOnce({
       languages: [{ code: "en", name: "English" }],
+    } as never);
+    render(<GenerateForm initialLocale="lt" />);
+    await waitFor(() =>
+      expect(orpc.categories.list).toHaveBeenCalledWith({ languageCode: "en" }),
+    );
+  });
+
+  it("explains when the library has no languages at all", async () => {
+    vi.mocked(orpc.languages.list).mockResolvedValueOnce({
+      languages: [],
     } as never);
     render(<GenerateForm initialLocale="lt" />);
     expect(

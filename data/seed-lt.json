@@ -12789,6 +12789,4818 @@
       "answer": "Klinikiniai tyrimai",
       "category": "Farmacija (sunku)",
       "difficulty": 3
+    },
+    {
+      "clue": "Didžiausias Europos pusiasalis šiaurėje",
+      "answer": "Skandinavija",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Valstybė, kurios sostinė – Lisabona",
+      "answer": "Portugalija",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Valstybė, kurios sostinė – Otava",
+      "answer": "Kanada",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Škotijos sostinė",
+      "answer": "Edinburgas",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Suomijos sostinė",
+      "answer": "Helsinkis",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Švedijos sostinė",
+      "answer": "Stokholmas",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Baltarusijos sostinė",
+      "answer": "Minskas",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ilgiausia Europos upė",
+      "answer": "Volga",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Upė, tekanti per Vieną, Budapeštą ir Belgradą",
+      "answer": "Dunojus",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Upė, tekanti per Kelną ir Bazelį",
+      "answer": "Reinas",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dirbtinis vandens kelias tarp Viduržemio ir Raudonosios jūrų",
+      "answer": "Sueco kanalas",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Jūra tarp Italijos ir Balkanų",
+      "answer": "Adrijos jūra",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Jūra be krantų Atlante",
+      "answer": "Sargaso jūra",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Uola išraižytas miestas Jordanijoje",
+      "answer": "Petra",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Nulinės platumos linija",
+      "answer": "Pusiaujas",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Nulinis dienovidinis eina per šį Londono rajoną",
+      "answer": "Grinvičas",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Didžiausias tropinis miškas Pietų Amerikoje",
+      "answer": "Amazonija",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Salynas Atlante, priklausantis Portugalijai",
+      "answer": "Azorai",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Didžiausias Viduržemio jūros pusiasalis",
+      "answer": "Apeninai",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Valstybė Pietų Amerikoje, garsi tango",
+      "answer": "Argentina",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kalnų valstybė Himalajuose tarp Indijos ir Tibeto",
+      "answer": "Nepalas",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelė katė su juodomis juostomis",
+      "answer": "Tigras",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Drugelio lerva",
+      "answer": "Vikšras",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Didelis neskraidantis Afrikos paukštis",
+      "answer": "Strutis",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didžiausias gyvas roplys",
+      "answer": "Krokodilas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dygliuotas dykumų augalas",
+      "answer": "Kaktusas",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lėtai slenkanti ledo upė kalnuose",
+      "answer": "Ledynas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vabzdys, iš kurio gaunamas šilkas",
+      "answer": "Šilkverpis",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Vilkų būrys turi vadą, o patys vilkai gyvena šitaip",
+      "answer": "Gauja",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Požeminė kiškio ar triušio landa",
+      "answer": "Ola",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Rudas miško žvėris, mėgstantis medų",
+      "answer": "Lokys",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Stambus laukinis Lietuvos girių jautis",
+      "answer": "Stumbras",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mažas graužikas, laikantis riešutus skruostuose",
+      "answer": "Žiurkėnas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medžiuose gyvenantis raudonas graužikas su puria uodega",
+      "answer": "Voverė",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Voro austas tinklas",
+      "answer": "Voratinklis",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Grybas, augantis po beržais",
+      "answer": "Baravykas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Nuodingas raudonas grybas su baltais taškais",
+      "answer": "Musmirė",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Pakelės augalas, deginantis odą prisilietus",
+      "answer": "Dilgėlė",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Baltas pavasario miško žiedas su svaigiu kvapu",
+      "answer": "Pakalnutė",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaismedis, žydintis baltais žiedais gegužę",
+      "answer": "Obelis",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Krūmas su raudonomis uogomis, augantis pelkėse",
+      "answer": "Spanguolė",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvos miestas, garsus naftos perdirbimo gamykla",
+      "answer": "Mažeikiai",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Savivaldybė Kuršių nerijoje, jungianti Nidą ir Juodkrantę",
+      "answer": "Neringa",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Aukščiausia Lietuvos vieta",
+      "answer": "Aukštojas",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Pilis ant salos Galvės ežere",
+      "answer": "Trakai",
+      "category": "Lietuva",
+      "difficulty": 1
+    },
+    {
+      "clue": "Piliakalnis, minimas kaip pirmoji Lietuvos sostinė",
+      "answer": "Kernavė",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sostinės senamiestį juosianti gatvė, vedanti į Aušros vartus",
+      "answer": "Didžioji",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Lietuvos krepšinio legenda, „Sacramento“ snaiperis",
+      "answer": "Marčiulionis",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvos disko metikas, olimpinis čempionas",
+      "answer": "Alekna",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvos plaukikė, olimpinė čempionė Londone",
+      "answer": "Meilutytė",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ant iešmo keptas tradicinis lietuvių pyragas su spygliais",
+      "answer": "Šakotis",
+      "category": "Lietuva",
+      "difficulty": 1
+    },
+    {
+      "clue": "Tarkuotų bulvių kepsniai, valgomi su grietine",
+      "answer": "Bulviniai blynai",
+      "category": "Lietuva",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rūkyta lietuviška varškės ar sūrio rūšis",
+      "answer": "Džiugas",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvos nacionalinis teatras rodo šį šokį su klumpėmis",
+      "answer": "Klumpakojis",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Lietuvos pirmoji moteris prezidentė",
+      "answer": "Grybauskaitė",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "1988 m. įkurtas Lietuvos persitvarkymo judėjimas",
+      "answer": "Sąjūdis",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvos aukščiausias pastatas Vilniuje",
+      "answer": "Televizijos bokštas",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Nacionalinis parkas Kuršių nerijoje su Parnidžio kopa",
+      "answer": "Nida",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Monumentalūs Egipto kapai prie Gizos",
+      "answer": "Piramidės",
+      "category": "Istorija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Imperija, valdyta iš Konstantinopolio",
+      "answer": "Bizantija",
+      "category": "Istorija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Miestas, paimtas medinio arklio gudrybe",
+      "answer": "Troja",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mongolų valdovo titulas, pridėtas prie Čingiso vardo",
+      "answer": "Chanas",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Pirmosios kelionės aplink pasaulį vadovas",
+      "answer": "Magelanas",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Chartija, pasirašyta Anglijoje 1215 m.",
+      "answer": "Magna Carta",
+      "category": "Istorija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Makedonijos karalius, vadintas Didžiuoju",
+      "answer": "Aleksandras",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Epidemija, nusiaubusi Europą XIV amžiuje",
+      "answer": "Maras",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dinastija, atstačiusi Didžiąją kinų sieną",
+      "answer": "Mingas",
+      "category": "Istorija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Andų imperija su sostine Kuske",
+      "answer": "Inkai",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mesoamerikos tauta, garsi kalendoriumi",
+      "answer": "Majai",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Šaltojo karo skiriamoji riba – geležinė ...",
+      "answer": "Uždanga",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Havajų uostas, užpultas 1941 metais",
+      "answer": "Perl Harboras",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Spaudos mašiną išradęs vokietis",
+      "answer": "Gutenbergas",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prekybos trasa, jungusi Kiniją su Viduržemio jūra",
+      "answer": "Šilko kelias",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Radinys, padėjęs iššifruoti Egipto hieroglifus",
+      "answer": "Rozetės akmuo",
+      "category": "Istorija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Prancūzijos karalių rūmai prie Paryžiaus",
+      "answer": "Versalis",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Reformacijos pradininkas, prikalęs tezes Vitenberge",
+      "answer": "Liuteris",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kova tarp Šiaurės ir Pietų JAV valstijų 1861-1865 m.",
+      "answer": "Pilietinis karas",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Romos imperijos palikimas, kuriuo iki XVIII a. rašė Europos mokslininkai",
+      "answer": "Lotynų kalba",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas, sunaikintas atominės bombos 1945 m. rugpjūčio 6 d.",
+      "answer": "Hirosima",
+      "category": "Istorija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Inertinės dujos, švytinčios reklamose",
+      "answer": "Neonas",
+      "category": "Mokslas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Jėga, priešinga slydimui",
+      "answer": "Trintis",
+      "category": "Mokslas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Planetos kelias aplink žvaigždę",
+      "answer": "Orbita",
+      "category": "Mokslas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Japonų patiekalas iš ryžių ir žuvies",
+      "answer": "Sušis",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Meksikietiškas kukurūzų miltų paplotėlis",
+      "answer": "Tortilija",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaisius, iš kurio spaudžiamas vynas",
+      "answer": "Vynuogė",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Aštrus svogūninis augalas, esą baidantis vampyrus",
+      "answer": "Česnakas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Gumbas, iš kurio kepamos gruzdintos juostelės",
+      "answer": "Bulvė",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Aitri raudona pipiro rūšis",
+      "answer": "Čili",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Aštrus indiškas patiekalas su padažu",
+      "answer": "Karis",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Plonas prancūziškas blynas su įdaru",
+      "answer": "Krepas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ispaniškas ryžių patiekalas su jūros gėrybėmis",
+      "answer": "Paelija",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Itališkas ryžių patiekalas, maišomas su sultiniu",
+      "answer": "Rizotas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Artimųjų Rytų avinžirnių užtepėlė",
+      "answer": "Humusas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Graikiškas jogurto ir agurkų padažas",
+      "answer": "Dzadzikis",
+      "category": "Maistas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Saldus tirštas skystis iš kanadiško medžio sulos",
+      "answer": "Klevų sirupas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Grūdas, salyklinamas alui",
+      "answer": "Miežiai",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sėkla, iš kurios malama tahini",
+      "answer": "Sezamas",
+      "category": "Maistas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kepinys iš tešlos, kepamas kepalais",
+      "answer": "Duona",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Riebalinis skystis, spaudžiamas iš Viduržemio jūros medžio vaisių",
+      "answer": "Alyvuogių aliejus",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prieskonis, malamas iš juodų grūdelių",
+      "answer": "Pipirai",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Tirštas padažas iš kiaušinių trynių ir aliejaus",
+      "answer": "Majonezas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Iš pieno plaktas gėrimas su vaisiais",
+      "answer": "Kokteilis",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kiaušinių patiekalas, keptas plokščiai",
+      "answer": "Omletas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sriuba iš burokėlių, populiari Rytų Europoje",
+      "answer": "Barščiai",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kepinys su sodo vaisiais ir trupiniais",
+      "answer": "Obuolių pyragas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pirmasis dienos valgis",
+      "answer": "Pusryčiai",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vidurdienio valgis",
+      "answer": "Pietūs",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vakarinis valgis",
+      "answer": "Vakarienė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Baldas su atlošu ir keturiomis kojomis",
+      "answer": "Kėdė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ilgakotis įrankis grindims valyti",
+      "answer": "Šluota",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Monetos ir banknotai",
+      "answer": "Grynieji",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelė kelių transporto priemonė su daug sėdimų vietų",
+      "answer": "Autobusas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Diena po pirmadienio",
+      "answer": "Antradienis",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Šeštadienis ir sekmadienis kartu",
+      "answer": "Savaitgalis",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mėnesių skaičius metuose",
+      "answer": "Dvylika",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ką darome naktį lovoje",
+      "answer": "Miegas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Krepšys, nešamas ant pečių",
+      "answer": "Kuprinė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Į jį pažvelgus matomas savo atvaizdas",
+      "answer": "Veidrodis",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Buitinis prietaisas maistui užšaldyti",
+      "answer": "Šaldiklis",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Plokščias indas maistui",
+      "answer": "Lėkštė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Popieriaus lapų rinkinys su tekstu",
+      "answer": "Knyga",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rašiklis su rašalu",
+      "answer": "Tušinukas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prietaisas, skambinantis ir rodantis žinutes kišenėje",
+      "answer": "Telefonas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ant sienos kabantis laiko matuoklis",
+      "answer": "Sieninis laikrodis",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Anglų kilmės žaidimas su vartais ir kėliniais",
+      "answer": "Kriketas",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Amerikietiškas žaidimas su lazda ir kamuoliuku",
+      "answer": "Beisbolas",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sportas su lazdomis ir aštuoniolika duobučių",
+      "answer": "Golfas",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Komandinis žaidimas ant ledo su disku ir lazdomis",
+      "answer": "Ledo ritulys",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kovos sportas ringe su pirštinėmis",
+      "answer": "Boksas",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Korėjiečių kovos menas su spyriais",
+      "answer": "Tekvondas",
+      "category": "Sportas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Lenktynės dviem ratais, garsios „Tour de France“",
+      "answer": "Dviračių sportas",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Plaukimo stilius, pavadintas vabzdžio vardu",
+      "answer": "Peteliškė",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Varžybos iš plaukimo, dviračių ir bėgimo",
+      "answer": "Triatlonas",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Varžybos, pažymėtos penkiais susikibusiais žiedais",
+      "answer": "Olimpinės žaidynės",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pasaulio futbolo valdymo organizacija",
+      "answer": "FIFA",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Teniso taškų skaičius partijos pradžioje",
+      "answer": "Nulis",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Teniso terminas, kai abiejų po 40",
+      "answer": "Lygiosios",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sportas ant žirgų su kūjeliais",
+      "answer": "Polas",
+      "category": "Sportas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Sportas, kai lipama uolomis",
+      "answer": "Laipiojimas",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žiemos sportas nuo kalno šlaito",
+      "answer": "Slidinėjimas",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lenta su ratukais",
+      "answer": "Riedlentė",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Bėgimo, šuolių ir metimų rungtys kartu",
+      "answer": "Lengvoji atletika",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Komandinis sportas baseine su kamuoliu",
+      "answer": "Vandensvydis",
+      "category": "Sportas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Sportas, kai šaudoma į taikinį iš lanko",
+      "answer": "Lankininkystė",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Regbio pelnas, vertas penkių taškų",
+      "answer": "Bandymas",
+      "category": "Sportas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Sportas, kai keliama štanga",
+      "answer": "Sunkioji atletika",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sportas, kai iriamasi valtimi su irklais",
+      "answer": "Irklavimas",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Arena, kurioje komanda žaidžia namų rungtynes",
+      "answer": "Stadionas",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rėmas su tinklu, kurį gina komandos paskutinis žaidėjas",
+      "answer": "Vartai",
+      "category": "Sportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Bausmės smūgis futbole nuo vienuolikos metrų",
+      "answer": "Baudinys",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ženklas, rodomas futbolininkui šalinant iš aikštės",
+      "answer": "Raudona kortelė",
+      "category": "Sportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Munko paveikslas – „...“",
+      "answer": "Klyksmas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Varinis pučiamasis su stumdomu vamzdžiu",
+      "answer": "Trombonas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelis styginis instrumentas, grojamas sėdint",
+      "answer": "Violončelė",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Burtininkų mokykla iš garsios knygų serijos",
+      "answer": "Hogvartsas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Detektyvas iš Beikerio gatvės 221B",
+      "answer": "Holmsas",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rodeno skulptūra, vaizduojanti susimąsčiusį vyrą",
+      "answer": "Mąstytojas",
+      "category": "Menas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Italijos miestas, kuriame veikia „La Scala“",
+      "answer": "Milanas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Japonų popieriaus lankstymo menas",
+      "answer": "Origamis",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Japonų komiksų stilius",
+      "answer": "Manga",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Animacijos studija, sukūrusi „Žaislų istoriją“",
+      "answer": "Pixar",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kubietiškos kilmės lotynų šokis",
+      "answer": "Salsa",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dailaus rašto menas",
+      "answer": "Kaligrafija",
+      "category": "Menas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Stovas, laikantis dailininko drobę",
+      "answer": "Molbertas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelis muzikantų kolektyvas su dirigentu",
+      "answer": "Orkestras",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Solinė daina operoje",
+      "answer": "Arija",
+      "category": "Menas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Audeklas, ant kurio tapoma",
+      "answer": "Drobė",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Scenoje vaidinamas kūrinys",
+      "answer": "Spektaklis",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Bronzinė ar akmeninė žmogaus figūra aikštėje",
+      "answer": "Statula",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Piešinys anglimi ar pieštuku",
+      "answer": "Eskizas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Paveikslas, vaizduojantis žmogaus veidą",
+      "answer": "Portretas",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Paveikslas, vaizduojantis gamtovaizdį",
+      "answer": "Peizažas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Paveikslas su vaisiais ir indais ant stalo",
+      "answer": "Natiurmortas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vienodai skambantys, bet skirtingai rašomi žodžiai",
+      "answer": "Homofonas",
+      "category": "Kalba",
+      "difficulty": 3
+    },
+    {
+      "clue": "Posakis, kurio reikšmė nepažodinė",
+      "answer": "Frazeologizmas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaizdingas gretinimas su žodeliu „kaip“",
+      "answer": "Palyginimas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Perkeltinės reikšmės vaizdingas posakis",
+      "answer": "Metafora",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Tų pačių garsų kartojimas žodžių pradžioje",
+      "answer": "Aliteracija",
+      "category": "Kalba",
+      "difficulty": 3
+    },
+    {
+      "clue": "Sąmoningas perdėjimas",
+      "answer": "Hiperbolė",
+      "category": "Kalba",
+      "difficulty": 3
+    },
+    {
+      "clue": "Žodis, vienodai skaitomas iš abiejų pusių",
+      "answer": "Palindromas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Senovės Atėnų gyventojų šneka, kuria rašė Homeras",
+      "answer": "Graikų kalba",
+      "category": "Kalba",
+      "difficulty": 1
+    },
+    {
+      "clue": "Brazilijos valstybinė šneka, atkeliavusi iš Europos",
+      "answer": "Portugalų kalba",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Iškilių taškelių sistema akliesiems skaityti",
+      "answer": "Brailio raštas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Taškų ir brūkšnių telegrafo kodas",
+      "answer": "Morzės abėcėlė",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Nosinė, varnelė ar brūkšnys virš raidės",
+      "answer": "Diakritinis ženklas",
+      "category": "Kalba",
+      "difficulty": 3
+    },
+    {
+      "clue": "Žodis, sudarytas iš pirmųjų raidžių",
+      "answer": "Akronimas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Taisyklės, tvarkančios sakinio sandarą",
+      "answer": "Gramatika",
+      "category": "Kalba",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vietinė kalbos atmaina",
+      "answer": "Tarmė",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Berlyno ir Vienos gyventojų gimtoji šneka",
+      "answer": "Vokiečių kalba",
+      "category": "Kalba",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kalbos dalis, žyminti veiksmo aplinkybę",
+      "answer": "Prieveiksmis",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvių kalbos raidžių skaičius",
+      "answer": "Trisdešimt dvi",
+      "category": "Kalba",
+      "difficulty": 3
+    },
+    {
+      "clue": "Bendrovė, sukūrusi „Windows“",
+      "answer": "Microsoft",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Maža taikomoji programa išmaniajame telefone",
+      "answer": "Programėlė",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Užkarda, filtruojanti tinklo srautą",
+      "answer": "Ugniasienė",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Slaptas žodis prisijungiant",
+      "answer": "Slaptažodis",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Programavimo kalba, pavadinta gyvatės vardu",
+      "answer": "Python",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Programavimo kalba, pavadinta kavos vardu",
+      "answer": "Java",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Naršyklėje veikianti programavimo kalba",
+      "answer": "JavaScript",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Versijų kontrolės įrankis, sukurtas Linuso Torvaldso",
+      "answer": "Git",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Svetainė, sauganti milijonus kodo saugyklų",
+      "answer": "GitHub",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Programuojama judanti mašina",
+      "answer": "Robotas",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mašininis ... – dirbtinio intelekto sritis",
+      "answer": "Mokymasis",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Įrenginys su klavišais tekstui rinkti",
+      "answer": "Klaviatūra",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vaizduoklis, valdomas pirštu",
+      "answer": "Jutiklinis ekranas",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Laiškų siuntimo tinkle sistema",
+      "answer": "Elektroninis paštas",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Programa svetainėms naršyti",
+      "answer": "Naršyklė",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mažas silicio gabalėlis su grandynais",
+      "answer": "Mikroschema",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Programa, susirašinėjanti su žmogumi",
+      "answer": "Pokalbių robotas",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Centrinis kompiuterio skaičiavimo mazgas",
+      "answer": "Procesorius",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Duomenų dublikatas, saugomas praradimo atveju",
+      "answer": "Atsarginė kopija",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Palydovinė navigacijos sistema automobilyje",
+      "answer": "GPS",
+      "category": "Technologijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Trimatis spausdintuvas kuria daiktus šiuo būdu",
+      "answer": "Sluoksniais",
+      "category": "Technologijos",
+      "difficulty": 3
+    },
+    {
+      "clue": "Skaitmeninė vieta, iš kurios diegiamos telefono programos",
+      "answer": "Programėlių parduotuvė",
+      "category": "Technologijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Akmuo, įskrendantis į atmosferą ir sudegantis",
+      "answer": "Meteoras",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Uolienų sritis tarp Marso ir Jupiterio",
+      "answer": "Asteroidų juosta",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Dangaus kūnas virš šiaurės ašigalio, rodantis kryptį",
+      "answer": "Šiaurinė žvaigždė",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mėnulio fazė, kai jo nematyti",
+      "answer": "Jaunatis",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mėnulio fazė, kai matomas visas skritulys",
+      "answer": "Pilnatis",
+      "category": "Astronomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Reiškinys, kai Mėnulis uždengia dienos šviesulį",
+      "answer": "Saulės užtemimas",
+      "category": "Astronomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Planetos palydovas, didžiausias Saulės sistemoje",
+      "answer": "Ganimedas",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Marso palydovas, pavadintas baimės vardu",
+      "answer": "Fobas",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Debesis dujų ir dulkių, kuriame gimsta žvaigždės",
+      "answer": "Ūkas",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Galaktika, artimiausia Paukščių Takui",
+      "answer": "Andromeda",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žvaigždyno vardas, reiškiantis medžiotoją su diržu",
+      "answer": "Orionas",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Saulės sistemos planetų skaičius",
+      "answer": "Aštuonios",
+      "category": "Astronomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Karštas Saulės paviršiaus sluoksnis, matomas akiai",
+      "answer": "Fotosfera",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Tamsi vėsesnė sritis mūsų žvaigždės paviršiuje",
+      "answer": "Saulės dėmė",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Šviesų reiškinys poliariniame danguje",
+      "answer": "Šiaurės pašvaistė",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sąnarys tarp šlaunies ir blauzdos",
+      "answer": "Kelis",
+      "category": "Anatomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sąnarys tarp žasto ir dilbio",
+      "answer": "Alkūnė",
+      "category": "Anatomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Raumuo, lenkiantis ranką ties alkūne",
+      "answer": "Bicepsas",
+      "category": "Anatomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Slankstelių stulpas, laikantis kūną",
+      "answer": "Stuburas",
+      "category": "Anatomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kraujagyslė, nešanti kraują nuo širdies",
+      "answer": "Arterija",
+      "category": "Anatomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kraujagyslė, grąžinanti kraują į širdį",
+      "answer": "Vena",
+      "category": "Anatomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dantų danga, kiečiausias kūno audinys",
+      "answer": "Emalis",
+      "category": "Anatomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Pirštų galuose augantys rageliai",
+      "answer": "Nagai",
+      "category": "Anatomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Takas, jungiantis akį su smegenimis",
+      "answer": "Regos nervas",
+      "category": "Anatomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Šviesai jautri akies dalis",
+      "answer": "Tinklainė",
+      "category": "Anatomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Organizmo gynyba nuo ligų sukėlėjų",
+      "answer": "Imuninė sistema",
+      "category": "Anatomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Britų grupė iš Liverpulio, sukūrusi „Yesterday“",
+      "answer": "The Beatles",
+      "category": "Muzika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Karaliumi vadintas roko atlikėjas Elvis ...",
+      "answer": "Preslis",
+      "category": "Muzika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kūrinys solistui su orkestru",
+      "answer": "Koncertas",
+      "category": "Muzika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Muzikos rašto ženklai penklinėje",
+      "answer": "Natos",
+      "category": "Muzika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Penkios linijos, ant kurių rašomos natos",
+      "answer": "Penklinė",
+      "category": "Muzika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Muzikos tempas, reiškiantis lėtai",
+      "answer": "Lento",
+      "category": "Muzika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Muzikos tempas, reiškiantis greitai",
+      "answer": "Alegro",
+      "category": "Muzika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Grupė iš keturių muzikantų",
+      "answer": "Kvartetas",
+      "category": "Muzika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Grupė iš trijų muzikantų",
+      "answer": "Trio",
+      "category": "Muzika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Aukščiausias moteriškas balsas",
+      "answer": "Sopranas",
+      "category": "Muzika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žemiausias vyriškas balsas",
+      "answer": "Bosas",
+      "category": "Muzika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Reguliarus muzikos dūžių pasikartojimas",
+      "answer": "Ritmas",
+      "category": "Muzika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Nuolat kartojama dainos dalis",
+      "answer": "Priedainis",
+      "category": "Muzika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Elektroninės šokių muzikos renginys",
+      "answer": "Diskoteka",
+      "category": "Muzika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Instrumentas su klavišais ir plaktukėliais",
+      "answer": "Fortepijonas",
+      "category": "Muzika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pučiamasis instrumentas su liežuvėliu, mėgstamas džiaze",
+      "answer": "Saksofonas",
+      "category": "Muzika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Atkarpa nuo apskritimo centro iki krašto",
+      "answer": "Spindulys",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Atkarpa per apskritimo centrą",
+      "answer": "Skersmuo",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sveikasis dydis, dalijamas tik iš savęs ir vieneto",
+      "answer": "Pirminis skaičius",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sveikasis dydis, dalijamas iš dviejų be liekanos",
+      "answer": "Lyginis skaičius",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Veiksmas, žymimas minuso ženklu",
+      "answer": "Atimtis",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Veiksmas, žymimas ženklu x",
+      "answer": "Daugyba",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Matematikos šaka su x ir y",
+      "answer": "Algebra",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sveikasis dydis, mažesnis už nulį",
+      "answer": "Neigiamas skaičius",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Trupmenos viršutinė dalis",
+      "answer": "Skaitiklis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Trupmenos apatinė dalis",
+      "answer": "Vardiklis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skaičiaus atstumas nuo nulio",
+      "answer": "Modulis",
+      "category": "Matematika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Skaičių eilė, kurioje kiekvienas – dviejų ankstesnių suma",
+      "answer": "Fibonačio seka",
+      "category": "Matematika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Mendelejevo sudaryta cheminių elementų sistema",
+      "answer": "Periodinė lentelė",
+      "category": "Chemija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Dujos, sukeliančios šiltnamio efektą, CO2",
+      "answer": "Anglies dioksidas",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medžiaga, kurios pH mažesnis už 7",
+      "answer": "Rūgštis",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Valgomosios druskos cheminis pavadinimas",
+      "answer": "Natrio chloridas",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medžiagos virtimas iš kietos į skystą",
+      "answer": "Lydymasis",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medžiagos virtimas iš dujų į skystį",
+      "answer": "Kondensacija",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skystis, kuriame kas nors ištirpinama",
+      "answer": "Tirpiklis",
+      "category": "Chemija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Skaidymas elektros srove",
+      "answer": "Elektrolizė",
+      "category": "Chemija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Gydytojas, gydantis akis",
+      "answer": "Oftalmologas",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Gydytojas, gydantis širdį",
+      "answer": "Kardiologas",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaistas, naikinantis bakterijas",
+      "answer": "Antibiotikas",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prietaisas, kuriuo klausomasi plaučių ir širdies",
+      "answer": "Stetoskopas",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Nuo lūžusios rankos uždedamas kietas apvalkalas",
+      "answer": "Gipsas",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Medžiaga, kurią organizmas gamina paveiktas saulės",
+      "answer": "Vitaminas D",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medžiaga, kurios gausu citrinose ir erškėtuogėse",
+      "answer": "Vitaminas C",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ligonius prižiūrinti medicinos darbuotoja",
+      "answer": "Slaugytoja",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kraujo perpylimas iš vieno žmogaus kitam",
+      "answer": "Transfuzija",
+      "category": "Medicina",
+      "difficulty": 3
+    },
+    {
+      "clue": "Organizmo reakcija į žiedadulkes",
+      "answer": "Alergija",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, taisantis vandentiekį",
+      "answer": "Santechnikas",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, tvarkantis įmonės sąskaitas",
+      "answer": "Buhalteris",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, prekiaujantis vaistais vaistinėje",
+      "answer": "Vaistininkas",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, plaukiojantis laivu",
+      "answer": "Jūreivis",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, dirbantis su medžiu",
+      "answer": "Stalius",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Moteriškas drabužis nuo juosmens žemyn",
+      "answer": "Sijonas",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Megztas šiltas viršutinis drabužis",
+      "answer": "Megztinis",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kojinės, siekiančios kelius ir aukščiau",
+      "answer": "Pėdkelnės",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Pirštinės su vienu skyriumi nykščiui",
+      "answer": "Kumštinės",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Odinė juosta, laikanti kelnes",
+      "answer": "Diržas",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Guminė avalynė lietui",
+      "answer": "Guminiai batai",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Drabužis, saugantis nuo lietaus",
+      "answer": "Lietpaltis",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vasarinis viršutinis drabužis be rankovių",
+      "answer": "Marškinėliai",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Drabužis, dėvimas po viršutiniais",
+      "answer": "Apatiniai",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaisius su kauliuku, sunokęs vasarą, minkštas ir pūkuotas",
+      "answer": "Persikas",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vaisius, panašus į obuolį, bet siauresnis viršuje",
+      "answer": "Kriaušė",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Tamsiai mėlynas kauliukinis sodo vaisius",
+      "answer": "Slyva",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Egzotinis vaisius su kietu apvalkalu ir žaliais lapais viršuje",
+      "answer": "Ananasas",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rudas gauruotas vaisius su žalia minkštimo dalimi",
+      "answer": "Kivis",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Oranžinė daržovė, auginama Helovinui",
+      "answer": "Moliūgas",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Tamsiai raudona šakniavaisė daržovė sriubai",
+      "answer": "Burokėlis",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Balta daržovė su žiedynais, verdama garuose",
+      "answer": "Žiedinis kopūstas",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žalias ankštinis augalas su apvaliais grūdeliais",
+      "answer": "Žirnis",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Daržovė su plunksniniais lapais, giminiška svogūnui",
+      "answer": "Poras",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 2
+    },
+    {
+      "clue": "Aitri šaknis, tarkuojama prie mėsos",
+      "answer": "Krienas",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaisius, iš kurio spaudžiamas aliejus, augantis prie Viduržemio jūros",
+      "answer": "Alyvuogė",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaisius, brandinamas palmėse dykumose",
+      "answer": "Datulė",
+      "category": "Vaisiai ir daržovės",
+      "difficulty": 2
+    },
+    {
+      "clue": "Juodas paukštis, garsėjantis gudrumu",
+      "answer": "Varnas",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mažas rudas paukštis, čirškiantis kieme",
+      "answer": "Žvirblis",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Paukštis, kalantis medžių kamienus",
+      "answer": "Genys",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Plėšrus paukštis, sklandantis aukštai virš laukų",
+      "answer": "Vanagas",
+      "category": "Paukščiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Paukštis, giedantis pavasarį aukštai virš lauko",
+      "answer": "Vieversys",
+      "category": "Paukščiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Paukštis, kukuojantis miške ir dedantis kiaušinius į svetimus lizdus",
+      "answer": "Gegutė",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Naminis vandens paukštis, gagenantis kieme",
+      "answer": "Žąsis",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Didelis paukštis su spalvinga išskleidžiama uodega",
+      "answer": "Povas",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Paukštis, grįžtantis pavasarį ir lipdantis lizdą iš purvo",
+      "answer": "Kregždė",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Raudonkrūtis žiemos paukštis Lietuvos soduose",
+      "answer": "Liepsnelė",
+      "category": "Paukščiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Mėlynai geltonas mažas paukštelis prie lesyklos",
+      "answer": "Zylė",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Jūrų žinduolis su iltimis Arktyje",
+      "answer": "Vėplys",
+      "category": "Jūrų gyvūnai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Riebi šiaurinių jūrų žuvis, rūkoma ir sūdoma",
+      "answer": "Silkė",
+      "category": "Jūrų gyvūnai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rausvos mėsos žuvis, neršianti upėse",
+      "answer": "Lašiša",
+      "category": "Jūrų gyvūnai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mažytė vertikaliai plaukianti žuvis su susukta uodega",
+      "answer": "Jūrų arkliukas",
+      "category": "Jūrų gyvūnai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vandens transporto priemonė su burėmis",
+      "answer": "Burlaivis",
+      "category": "Transportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vandens transporto priemonė, plaukianti po vandeniu",
+      "answer": "Povandeninis laivas",
+      "category": "Transportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Automobilis, vežiojantis keleivius už mokestį",
+      "answer": "Taksi",
+      "category": "Transportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Bėginė miesto transporto priemonė su laidais",
+      "answer": "Tramvajus",
+      "category": "Transportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Įrenginys, keliantis žmones tarp pastato aukštų",
+      "answer": "Liftas",
+      "category": "Transportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kėlimo įrenginys statybose su strėle",
+      "answer": "Kranas",
+      "category": "Transportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Transporto priemonė su vikšrais, naudojama žemės ūkyje",
+      "answer": "Traktorius",
+      "category": "Transportas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Skraidyklė su dujų gaubtu ir krepšiu keleiviams",
+      "answer": "Oro balionas",
+      "category": "Transportas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skandinavų karžygių pomirtinė salė",
+      "answer": "Valhala",
+      "category": "Mitologija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Graikų herojus, nugalėjęs Minotaurą",
+      "answer": "Tesėjas",
+      "category": "Mitologija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Sparnuotas arklys graikų mituose",
+      "answer": "Pegasas",
+      "category": "Mitologija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvių mitologijos žemės deivė",
+      "answer": "Žemyna",
+      "category": "Mitologija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvių mitologijos miško ir medžioklės dievas",
+      "answer": "Medeina",
+      "category": "Mitologija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Slavų mitologijos ragana, gyvenanti trobelėje ant vištos kojos",
+      "answer": "Baba Jaga",
+      "category": "Mitologija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Būtybė, virstanti vilku per pilnatį",
+      "answer": "Vilkolakis",
+      "category": "Mitologija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kraują siurbianti naktinė būtybė",
+      "answer": "Vampyras",
+      "category": "Mitologija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kūrinys, skirtas vaidinti scenoje",
+      "answer": "Drama",
+      "category": "Literatūra",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pagrindinis kūrinio veikėjas",
+      "answer": "Protagonistas",
+      "category": "Literatūra",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kūrinio priešininkas, kliudantis herojui",
+      "answer": "Antagonistas",
+      "category": "Literatūra",
+      "difficulty": 3
+    },
+    {
+      "clue": "Prancūzų rašytojas, parašęs „Mažąjį princą“",
+      "answer": "Egziuperi",
+      "category": "Literatūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Anglų rašytojas, parašęs „Oliverį Tvistą“",
+      "answer": "Dikensas",
+      "category": "Literatūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prancūzų rašytojas, aprašęs kelionę aplink pasaulį per 80 dienų",
+      "answer": "Žiulis Vernas",
+      "category": "Literatūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Poema, pasakojanti apie herojaus žygius",
+      "answer": "Epas",
+      "category": "Literatūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Keturių eilučių posmas",
+      "answer": "Ketureilis",
+      "category": "Literatūra",
+      "difficulty": 3
+    },
+    {
+      "clue": "Keturiolikos eilučių eilėraštis",
+      "answer": "Sonetas",
+      "category": "Literatūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Eilučių sąskambis eilėraščio gale",
+      "answer": "Rimas",
+      "category": "Literatūra",
+      "difficulty": 1
+    },
+    {
+      "clue": "Trumpas šmaikštus posakis su pamokymu",
+      "answer": "Aforizmas",
+      "category": "Literatūra",
+      "difficulty": 3
+    },
+    {
+      "clue": "Klausimas su paslėptu atsakymu",
+      "answer": "Mįslė",
+      "category": "Literatūra",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lietuvių poetas, Nobelio premijos laureatas, gimęs Lietuvoje",
+      "answer": "Milošas",
+      "category": "Literatūra",
+      "difficulty": 3
+    },
+    {
+      "clue": "Žmogus, vaidinantis filme",
+      "answer": "Aktorius",
+      "category": "Kinas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Juosta be įgarsinto dialogo, populiari XX a. pradžioje",
+      "answer": "Nebylusis filmas",
+      "category": "Kinas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Indijos kino pramonės pavadinimas",
+      "answer": "Bolivudas",
+      "category": "Kinas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sagos apie šviesos kardus ir Džedajus pavadinimas",
+      "answer": "Žvaigždžių karai",
+      "category": "Kinas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Filmas, tęsiantis ankstesnio istoriją",
+      "answer": "Tęsinys",
+      "category": "Kinas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Filmo dalis, filmuojama vienu kartu",
+      "answer": "Kadras",
+      "category": "Kinas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Juosta, kuriamas žiūrovui gąsdinti",
+      "answer": "Siaubo filmas",
+      "category": "Kinas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Filmas apie ateitį ir technologijas",
+      "answer": "Mokslinė fantastika",
+      "category": "Kinas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Filme skambanti muzika",
+      "answer": "Garso takelis",
+      "category": "Kinas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vieta, kurioje žiūrimi filmai dideliame ekrane",
+      "answer": "Kino teatras",
+      "category": "Kinas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Titrai, verčiantys užsienietišką kalbą",
+      "answer": "Subtitrai",
+      "category": "Kinas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Aktoriaus dublis pavojingose scenose",
+      "answer": "Kaskadininkas",
+      "category": "Kinas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Tiesioginis piliečių balsavimas dėl klausimo",
+      "answer": "Referendumas",
+      "category": "Politika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Politinių bendraminčių organizacija",
+      "answer": "Partija",
+      "category": "Politika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Šalies teritorijos riba",
+      "answer": "Siena",
+      "category": "Politika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Įstaiga, sauganti pinigus ir teikianti paskolas",
+      "answer": "Bankas",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pinigų suma, skolinama su palūkanomis",
+      "answer": "Paskola",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mokestis už naudojimąsi paskola",
+      "answer": "Palūkanos",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prekių pasiūla ir ... rinkoje",
+      "answer": "Paklausa",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vieta, kurioje prekiaujama akcijomis",
+      "answer": "Birža",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Įmonės dalies vertybinis popierius",
+      "answer": "Akcija",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Pinigų likutis, atidėtas ateičiai",
+      "answer": "Santaupos",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ekonomikos nuosmukio laikotarpis",
+      "answer": "Recesija",
+      "category": "Ekonomika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Valstybės pajamų ir išlaidų planas",
+      "answer": "Biudžetas",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prekyba tarp valstybių per sieną",
+      "answer": "Eksportas",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prekių įvežimas iš užsienio",
+      "answer": "Importas",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Pastatas, kuriame meldžiasi žydai",
+      "answer": "Sinagoga",
+      "category": "Religija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kunigų gyvenimo vieta prie bažnyčios",
+      "answer": "Klebonija",
+      "category": "Religija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Vienuolių gyvenamoji vieta",
+      "answer": "Vienuolynas",
+      "category": "Religija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Krikščionių sakramentas su vandeniu",
+      "answer": "Krikštas",
+      "category": "Religija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Indijos religija su karma ir reinkarnacija",
+      "answer": "Induizmas",
+      "category": "Religija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Malda, kurios pradžia „Tėve mūsų“",
+      "answer": "Tėve mūsų",
+      "category": "Religija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dešimt Dievo įsakymų gavo šis pranašas ant Sinajaus",
+      "answer": "Mozė",
+      "category": "Religija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vertikali pastato atrama",
+      "answer": "Kolona",
+      "category": "Architektūra",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pastato dalis po žeme",
+      "answer": "Rūsys",
+      "category": "Architektūra",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pastato priekinė puse su langais",
+      "answer": "Fasadas",
+      "category": "Architektūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Pusapvalė anga sienoje ar tilte",
+      "answer": "Arka",
+      "category": "Architektūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Bokštas su šviesa, rodantis kelią laivams",
+      "answer": "Švyturys",
+      "category": "Architektūra",
+      "difficulty": 1
+    },
+    {
+      "clue": "Temperatūros skalė, kurios nulis – vandens užšalimas",
+      "answer": "Celsijus",
+      "category": "Matavimo vienetai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Energijos vienetas maisto etiketėse",
+      "answer": "Kalorija",
+      "category": "Matavimo vienetai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dažnio vienetas",
+      "answer": "Hercas",
+      "category": "Matavimo vienetai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Slėgio vienetas, pavadintas prancūzo vardu",
+      "answer": "Paskalis",
+      "category": "Matavimo vienetai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Jūrinis atstumo vienetas",
+      "answer": "Jūrmylė",
+      "category": "Matavimo vienetai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kompiuterio atminties vienetas, lygus 1024 megabaitams",
+      "answer": "Gigabaitas",
+      "category": "Matavimo vienetai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Violetinė kvarco atmaina",
+      "answer": "Ametistas",
+      "category": "Brangakmeniai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Melsvai žalias akmuo, mėgstamas indėnų papuošaluose",
+      "answer": "Turkis",
+      "category": "Brangakmeniai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Jungtinės Karalystės valiuta",
+      "answer": "Svaras",
+      "category": "Valiutos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lenkijos valiuta",
+      "answer": "Zlotas",
+      "category": "Valiutos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Švedijos ir Norvegijos valiuta",
+      "answer": "Krona",
+      "category": "Valiutos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sausio 1-osios šventė su fejerverkais",
+      "answer": "Naujieji metai",
+      "category": "Šventės",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vėlinės minimos šį mėnesį",
+      "answer": "Lapkritis",
+      "category": "Šventės",
+      "difficulty": 2
+    },
+    {
+      "clue": "Santuokos metinės, švenčiamos po 25 metų",
+      "answer": "Sidabrinės vestuvės",
+      "category": "Šventės",
+      "difficulty": 3
+    },
+    {
+      "clue": "Rugsėjo 1-oji mokykloje",
+      "answer": "Mokslo metų pradžia",
+      "category": "Šventės",
+      "difficulty": 2
+    },
+    {
+      "clue": "Šviesos blyksnis per audrą",
+      "answer": "Žaibas",
+      "category": "Oras",
+      "difficulty": 1
+    },
+    {
+      "clue": "Garsas, girdimas po žaibo",
+      "answer": "Griaustinis",
+      "category": "Oras",
+      "difficulty": 1
+    },
+    {
+      "clue": "Judantis oro srautas",
+      "answer": "Vėjas",
+      "category": "Oras",
+      "difficulty": 1
+    },
+    {
+      "clue": "Debesų nebuvimas danguje",
+      "answer": "Giedra",
+      "category": "Oras",
+      "difficulty": 2
+    },
+    {
+      "clue": "Juodai baltas duobkasys, kasantis olas miške",
+      "answer": "Barsukas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vandenyje nardantis plėšrus žvėrelis brangiu kailiu",
+      "answer": "Ūdra",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miško žvėrelis, medžiojantis voveres medžiuose",
+      "answer": "Kiaunė",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Mažas plėšrus žvėrelis, skleidžiantis aitrų kvapą",
+      "answer": "Šeškas",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Didžiausia Lietuvos laukinė katė su kuokštais ant ausų",
+      "answer": "Lūšis",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miško gyvūnas su šakotais ragais, giminingas briedžiui",
+      "answer": "Elnias",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Grakšti miško gyvūnė, dažna Lietuvos laukuose",
+      "answer": "Stirna",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Graužikas, gyvenantis rūsiuose ir sandėliuose",
+      "answer": "Žiurkė",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Gyvūnas su kupra, keliaujantis per dykumą",
+      "answer": "Kupranugaris",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Stambus Afrikos žvėris su ragu ant snukio",
+      "answer": "Raganosis",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Stambus Afrikos gyvūnas, mėgstantis mirkti upėse",
+      "answer": "Begemotas",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Didžiausia žmogbeždžionė, gyvenanti Afrikos miškuose",
+      "answer": "Gorila",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pietų Amerikos gyvūnas, giminingas lamai",
+      "answer": "Alpaka",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ilgaplaukis jautis, gyvenantis Tibeto aukštikalnėse",
+      "answer": "Jakas",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Stambus laukinis jautis Azijos ir Afrikos pievose",
+      "answer": "Buivolas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Greita Afrikos savanų kanopinė su lenktais ragais",
+      "answer": "Antilopė",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Afrikos plėšrūnas, juokiantis naktimis",
+      "answer": "Hiena",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Australijos maiša gyvūnas, kasantis urvus",
+      "answer": "Vombatas",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Pietų Amerikos gyvūnas ilgu snukiu, ėdantis skruzdes",
+      "answer": "Skruzdėdas",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Lėtas Pietų Amerikos gyvūnas, kabantis medyje aukštyn kojomis",
+      "answer": "Tinginys",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Naminis gyvulys su šeriais, laikomas mėsai",
+      "answer": "Kiaulė",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Naminis gyvulys, duodantis vilnos",
+      "answer": "Avis",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Naminis raguotas gyvulys, duodantis pieno ir mėgstantis krūmus",
+      "answer": "Ožka",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Naminis gyvulys, duodantis pieno tvarte",
+      "answer": "Karvė",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Naminis gyvulys, kinkomas į vežimą",
+      "answer": "Arklys",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ilgaausis gyvulys, giminingas arkliui",
+      "answer": "Asilas",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ilgaausis naminis graužikas, laikomas narvelyje",
+      "answer": "Triušis",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Roplys, keičiantis odos spalvą",
+      "answer": "Chameleonas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Stambus dygliuotas driežas iš Amerikos atogrąžų",
+      "answer": "Iguana",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Varliagyvis su dėmėta oda, gyvenantis drėgnuose miškuose",
+      "answer": "Salamandra",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Nedidelis keturkojis roplys, bėgiojantis akmenimis",
+      "answer": "Driežas",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Nuodinga Lietuvos gyvatė su zigzagu ant nugaros",
+      "answer": "Angis",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelis žalias miško augalas su plunksniškais lapais be žiedų",
+      "answer": "Papartis",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žalias augalas, dengiantis miško akmenis ir kelmus",
+      "answer": "Samana",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Grybo ir dumblio sugyvenimas ant medžio žievės",
+      "answer": "Kerpė",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Trilapė pievų žolė, kurios keturlapis neša laimę",
+      "answer": "Dobilas",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Balta pievų gėlė geltonu viduriu, iš kurios buriama",
+      "answer": "Ramunė",
+      "category": "Gamta",
+      "difficulty": 1
+    },
+    {
+      "clue": "Raudona lauko gėlė, iš kurios sėklų barstoma ant bandelių",
+      "answer": "Aguona",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mėlyna gėlė, augusi rugių lauke",
+      "answer": "Rugiagėlė",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kvapni sodo gėlė, žydinti didelėmis puokštėmis gegužę",
+      "answer": "Alyva",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelis kvapnus sodo žiedas, mėgstamas vestuvėse",
+      "answer": "Bijūnas",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Egzotiška gėlė, auginama vazonuose ant palangės",
+      "answer": "Orchidėja",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Baltas kvapnus krūmo žiedas, panašus į alyvą",
+      "answer": "Jazminas",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Balta ar oranžinė didelė sodo gėlė ilgu stiebu",
+      "answer": "Lelija",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medis su lygia pilka žieve, iš kurio gaminami baldai",
+      "answer": "Uosis",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medis su lipniomis pumpurų dervomis, augantis pelkėtose vietose",
+      "answer": "Alksnis",
+      "category": "Gamta",
+      "difficulty": 3
+    },
+    {
+      "clue": "Medis, kurio lapai virpa nuo menkiausio vėjo",
+      "answer": "Drebulė",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medis su raudonomis uogų kekėmis rudenį",
+      "answer": "Šermukšnis",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Medis, vedantis blizgius rudus vaisius dygliuotoje kevalo dėžutėje",
+      "answer": "Kaštonas",
+      "category": "Gamta",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ilgakojis pilkas paukštis, klykiantis virš pelkių",
+      "answer": "Gervė",
+      "category": "Paukščiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Juodai balta ilgauodegė paukštė, mėgstanti blizgučius",
+      "answer": "Šarka",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Juodas miesto paukštis, giminingas varnai",
+      "answer": "Kuosa",
+      "category": "Paukščiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Margas miško paukštis, kaupiantis giles",
+      "answer": "Kėkštas",
+      "category": "Paukščiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Miško paukštis, mėgdžiojantis kitų paukščių balsus",
+      "answer": "Strazdas",
+      "category": "Paukščiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Paukštė, giedanti gražiausiai gegužės naktimis",
+      "answer": "Lakštingala",
+      "category": "Paukščiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Geltonas miško paukštis, švilpiantis prieš lietų",
+      "answer": "Volungė",
+      "category": "Paukščiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Mažas raudonkrūtis žiemos paukštelis prie lesyklos",
+      "answer": "Sniegena",
+      "category": "Paukščiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mažas paukštelis, dažnas Lietuvos miškuose, spalvingu snapu",
+      "answer": "Kikilis",
+      "category": "Paukščiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Bičių namelis, kuriame gyvena šeima",
+      "answer": "Avilys",
+      "category": "Vabzdžiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vaškinių šešiakampių akučių plokštė avilyje",
+      "answer": "Korys",
+      "category": "Vabzdžiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skruzdėlių statinys iš spyglių miške",
+      "answer": "Skruzdėlynas",
+      "category": "Vabzdžiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Apvalkalas, kuriame vikšras virsta drugeliu",
+      "answer": "Kokonas",
+      "category": "Vabzdžiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vabzdžio tarpsnis tarp lervos ir suaugėlio",
+      "answer": "Lėliukė",
+      "category": "Vabzdžiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kraujasiurbis parazitas, prilimpantis miške prie odos",
+      "answer": "Erkė",
+      "category": "Vabzdžiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Raudonas vabalėlis su juodais taškeliais",
+      "answer": "Boružė",
+      "category": "Vabzdžiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pievų vabzdys, čirpiantis ir toli šokantis",
+      "answer": "Žiogas",
+      "category": "Vabzdžiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Bičių šeimos patinas",
+      "answer": "Bitinas",
+      "category": "Vabzdžiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Geltonai juoda geliantis vabzdys, statantis popierinį lizdą",
+      "answer": "Vapsva",
+      "category": "Vabzdžiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Didelė gauruota laukinė bitė, dūzgianti dobiluose",
+      "answer": "Kamanė",
+      "category": "Vabzdžiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didžiausia geliančių vabzdžių rūšis Lietuvoje",
+      "answer": "Širšė",
+      "category": "Vabzdžiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mažas žalias parazitas, siurbiantis augalų sultis",
+      "answer": "Amaras",
+      "category": "Vabzdžiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Rusvas naktinis virtuvės kenkėjas, bijantis šviesos",
+      "answer": "Tarakonas",
+      "category": "Vabzdžiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Šiaurės jūrų žuvis, iš kurios kepenų spaudžiami taukai",
+      "answer": "Menkė",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Tvenkinių žuvis su stambiais žvynais, kepama Kūčioms",
+      "answer": "Karpis",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Plėšri ilga upių žuvis su aštriais dantimis",
+      "answer": "Lydeka",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dryžuota upių žuvis su dygliuotu pelekų",
+      "answer": "Ešerys",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Nedidelė tvenkinių žuvis, gimininga karpiui",
+      "answer": "Karosas",
+      "category": "Žuvys",
+      "difficulty": 3
+    },
+    {
+      "clue": "Didžiausia Lietuvos upių žuvis su ūsais",
+      "answer": "Šamas",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Margas kalnų upelių žuvis, mėgstanti šaltą vandenį",
+      "answer": "Upėtakis",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Riebi jūrų žuvis, dažnai rūkoma",
+      "answer": "Skumbrė",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Jūrų žuvis, konservuojama aliejuje skardinėse",
+      "answer": "Tunas",
+      "category": "Žuvys",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mažytė jūros žuvelė, konservuojama skardinėse su aliejumi",
+      "answer": "Sardinė",
+      "category": "Žuvys",
+      "difficulty": 2
+    },
+    {
+      "clue": "Rūgštus pieno produktas, dedamas į sriubą",
+      "answer": "Grietinė",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Iš rauginto pieno pagamintas baltas produktas sūriams",
+      "answer": "Varškė",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rauginto pieno gėrimas buteliuke",
+      "answer": "Kefyras",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Riebi pieno dalis, plakama į putėsius",
+      "answer": "Grietinėlė",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Baltas gėrimas, gaunamas iš karvės",
+      "answer": "Pienas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Skystis, likęs sumušus sviestą",
+      "answer": "Pasukos",
+      "category": "Maistas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Traškus saldus kepinys prie arbatos",
+      "answer": "Sausainis",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kepinys su langelių raštu, kepamas specialiu prietaisu",
+      "answer": "Vafliai",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Minkštas apvalus kepinys pusryčiams",
+      "answer": "Bandelė",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sausas žiedo formos kepinys su aguonomis",
+      "answer": "Riestainis",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Visas duonos gabalas, dar neatriektas",
+      "answer": "Kepalas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ilgas baltos duonos kepalėlis",
+      "answer": "Batonas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ant keptuvės kepamas plonas tešlos paplotis",
+      "answer": "Blynas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Virtas tešlos gaminys su varškės ar mėsos įdaru",
+      "answer": "Virtinis",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lietuviškas bulvių plokštainis, keptas orkaitėje",
+      "answer": "Kugelis",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lietuviškas patiekalas iš bulvių masės žarnose",
+      "answer": "Vėdarai",
+      "category": "Maistas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Prieskonis iš medžio žievės, dedamas į pyragus",
+      "answer": "Cinamonas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prieskonis iš orchidėjos ankšties, kvepiantis pyraguose",
+      "answer": "Vanilė",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Aitri šaknis, dedama į arbatą sergant",
+      "answer": "Imbieras",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žalias prieskoninis augalas, dedamas į šaltibarščius",
+      "answer": "Krapas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Garbanotas žalias prieskoninis augalas sriuboms",
+      "answer": "Petražolė",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Itališkas prieskoninis lapelis picai ir pesto padažui",
+      "answer": "Bazilikas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Spygliuotas Viduržemio jūros prieskonis mėsai",
+      "answer": "Rozmarinas",
+      "category": "Maistas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Vėsinantis žolelių arbatos ir saldainių skonis",
+      "answer": "Mėta",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prieskoninės sėklos, beriamos ant ruginės duonos",
+      "answer": "Kmynas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skystas skysčio pagrindas sriubai iš mėsos ar daržovių",
+      "answer": "Sultinys",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ilgai ant mažos ugnies virtas mėsos ir daržovių patiekalas",
+      "answer": "Troškinys",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ant keptuvės ar grotelių keptas mėsos gabalas",
+      "answer": "Kepsnys",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Suplotas maltos mėsos gaminys keptuvėje",
+      "answer": "Kotletas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ant iešmo keptos marinuotos mėsos gabalėliai",
+      "answer": "Šašlykas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Tirštas skystis, pilamas ant mėsos ar makaronų",
+      "answer": "Padažas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rūgštus mišinys, kuriame mirkoma mėsa prieš kepant",
+      "answer": "Marinatas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Saldus patiekalas valgio pabaigoje",
+      "answer": "Desertas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mažas vieno žmogaus pyragėlis su kremu",
+      "answer": "Pyragaitis",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Purus kiaušinių baltymų desertas, kepamas orkaitėje",
+      "answer": "Suflė",
+      "category": "Maistas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Tirštas saldus desertas iš pieno ir krakmolo",
+      "answer": "Pudingas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lydytas cukrus, virtęs rusvu saldžiu skysčiu",
+      "answer": "Karamelė",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Rytietiškas saldumynas iš sezamo sėklų",
+      "answer": "Chalva",
+      "category": "Maistas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Lietuviškas saldumynas su medumi ir prieskoniais",
+      "answer": "Meduolis",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Gėrimas iš virtų vaisių ir uogų su cukrumi",
+      "answer": "Kompotas",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Tirštas saldus gėrimas iš uogų ir krakmolo",
+      "answer": "Kisielius",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuviškas raugintas duonos gėrimas",
+      "answer": "Gira",
+      "category": "Maistas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Stiprus prancūziškas gėrimas, brandintas ąžuolo statinėse",
+      "answer": "Konjakas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Želė pavidalo saldumynas su vaisių skoniu",
+      "answer": "Marmeladas",
+      "category": "Maistas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Suvalkijos miestas prie Šešupės",
+      "answer": "Marijampolė",
+      "category": "Lietuva",
+      "difficulty": 1
+    },
+    {
+      "clue": "Aukštaitijos miestas, garsus alaus darykla",
+      "answer": "Utena",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žemaitijos sostine vadinamas miestas prie Masčio ežero",
+      "answer": "Telšiai",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas prie Nemuno žemupio, garsus Rambyno kalnu netoliese",
+      "answer": "Tauragė",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas prie Šventosios upės, kuriame veikė Kęstučio pilis",
+      "answer": "Ukmergė",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas, garsus cukraus fabriku ir Šventosios upe",
+      "answer": "Kėdainiai",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Jauniausias Lietuvos miestas prie Ignalinos atominės elektrinės",
+      "answer": "Visaginas",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas, garsus Puntuko akmeniu ir Šilelio poema",
+      "answer": "Anykščiai",
+      "category": "Lietuva",
+      "difficulty": 1
+    },
+    {
+      "clue": "Miestas šiaurės rytuose, apsuptas ežerų",
+      "answer": "Zarasai",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas, garsus Sartų ežeru ir žirgų lenktynėmis",
+      "answer": "Rokiškis",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Ežerų kraštas Aukštaitijoje, garsus Baltuoju ežeru",
+      "answer": "Molėtai",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas prie Žemaitijos nacionalinio parko ir Platelių ežero",
+      "answer": "Plungė",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Miestas, garsus Kryžių kalno kaimynyste ir Akmenos upe",
+      "answer": "Kretinga",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Miestas šiaurės Lietuvoje, garsus Mūšos upe",
+      "answer": "Pasvalys",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Miestas prie Nemuno, netoli Birštono kurorto",
+      "answer": "Prienai",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Piliakalnis prie Nemuno žiočių, baltų šventvietė",
+      "answer": "Rambynas",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Žemaitijos kalnas, susijęs su raganų padavimais",
+      "answer": "Šatrija",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Didžiausias Lietuvos riedulys Anykščių rajone",
+      "answer": "Puntukas",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Baltų gentis, gyvenusi dabartinėje Suvalkijoje",
+      "answer": "Jotvingiai",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Baltų gentis, gyvenusi prie Baltijos jūros vakaruose",
+      "answer": "Prūsai",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Baltų gentis, gyvenusi Baltijos pajūryje ties Palanga",
+      "answer": "Kuršiai",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Poetas, parašęs „Pavasario balsus“",
+      "answer": "Maironis",
+      "category": "Lietuva",
+      "difficulty": 1
+    },
+    {
+      "clue": "Rašytojas Juozas Tumas, pasirašinėjęs šiuo slapyvardžiu",
+      "answer": "Vaižgantas",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Rašytojas, sukūręs dramą „Skirgaila“",
+      "answer": "Krėvė",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Poetė, pasirašinėjusi Nėries slapyvardžiu",
+      "answer": "Salomėja",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Poetas, parašęs „Mažvydą“ ir „Mindaugą“",
+      "answer": "Marcinkevičius",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Rašytojas, sukūręs romaną „Balta drobulė“",
+      "answer": "Škėma",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Rašytojas ir režisierius, parašęs „Dievų mišką“",
+      "answer": "Sruoga",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vyskupas, rašęs „Palangos Juzę“ ir platinęs blaivybę",
+      "answer": "Valančius",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Istorikas, parašęs „Būdą senovės lietuvių“",
+      "answer": "Daukantas",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvos prezidentas, išrinktas 2019 metais",
+      "answer": "Nausėda",
+      "category": "Lietuva",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lietuvos didikų giminė, valdžiusi Biržus ir Dubingius",
+      "answer": "Radvila",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "LDK didikų giminė, varžiusis su Radvilomis dėl įtakos",
+      "answer": "Sapiega",
+      "category": "Lietuva",
+      "difficulty": 3
+    },
+    {
+      "clue": "Žygimanto Augusto žmona, palaidota Vilniuje",
+      "answer": "Barbora",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vieta, kur upė įteka į jūrą, išsišakodama į atšakas",
+      "answer": "Delta",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vieta, kurioje upė prasideda",
+      "answer": "Ištaka",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Upė, įtekanti į kitą upę",
+      "answer": "Intakas",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sekli vieta upėje, kurioje galima perbristi",
+      "answer": "Brasta",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Siauras gilus tarpas tarp kalnų",
+      "answer": "Tarpeklis",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žemuma tarp kalnų šlaitų",
+      "answer": "Slėnis",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Plokščia vietovė be kalvų",
+      "answer": "Lyguma",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sausumos ruožas, įsiterpęs į jūrą",
+      "answer": "Kyšulys",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Jūros dalis, įsiterpusi į sausumą",
+      "answer": "Įlanka",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žiedo formos koralų sala su lagūna viduryje",
+      "answer": "Atolas",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kalnas, spjaudantis lavą",
+      "answer": "Vulkanas",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Įduba ugnikalnio viršūnėje",
+      "answer": "Krateris",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Karštas šaltinis, periodiškai trykštantis į viršų",
+      "answer": "Geizeris",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Vieta, kur požeminis vanduo išteka į paviršių",
+      "answer": "Šaltinis",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vanduo, krintantis nuo uolos",
+      "answer": "Krioklys",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Plūduriuojantis ledo luitas jūroje",
+      "answer": "Ledkalnis",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prietaisas su rodykle, rodantis šiaurę",
+      "answer": "Kompasas",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sumažintas žemės paviršiaus vaizdas popieriuje",
+      "answer": "Žemėlapis",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žemės modelis ant ašies",
+      "answer": "Gaublys",
+      "category": "Geografija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Iškili žemės paviršiaus forma, aukštesnė už kalvą",
+      "answer": "Kalnas",
+      "category": "Geografija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vieta, kur upė išteka į jūrą",
+      "answer": "Žiotys",
+      "category": "Geografija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Minkštas baldas svetainėje keliems žmonėms",
+      "answer": "Sofa",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Minkšta kėdė su porankiais",
+      "answer": "Fotelis",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Baldas su stalčiais drabužiams",
+      "answer": "Komoda",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lenta ant sienos knygoms sudėti",
+      "answer": "Lentyna",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Audeklas, dengiantis langą",
+      "answer": "Užuolaida",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Audeklas, tiesiamas ant grindų",
+      "answer": "Kilimas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Minkštas daiktas po galva miegant",
+      "answer": "Pagalvė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Šiltas apklotas, po kuriuo miegama",
+      "answer": "Antklodė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Audeklas, tiesiamas ant čiužinio",
+      "answer": "Paklodė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Minkštas lovos pagrindas",
+      "answer": "Čiužinys",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Laiptelių rinkinys, nešiojamas ir atremiamas į sieną",
+      "answer": "Kopėčios",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Pastato dalis po stogu, virš paskutinio aukšto",
+      "answer": "Palėpė",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Aikštelė su turėklais prie buto lango",
+      "answer": "Balkonas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Atvira aikštelė prie namo poilsiui",
+      "answer": "Terasa",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Įstiklintas prieangis prie gyvenamojo namo",
+      "answer": "Veranda",
+      "category": "Kasdienybė",
+      "difficulty": 3
+    },
+    {
+      "clue": "Vamzdis, per kurį iš krosnies eina dūmai",
+      "answer": "Kaminas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mūrinis įrenginys namui šildyti ir maistui gaminti",
+      "answer": "Krosnis",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Atvira ugniavietė kambaryje su grotelėmis",
+      "answer": "Židinys",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Suskaldyti medžiai kūrenimui",
+      "answer": "Malkos",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Mažos lazdelės su sieros galvute ugniai įžiebti",
+      "answer": "Degtukai",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vaško cilindras su dagčiu",
+      "answer": "Žvakė",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Nešiojamas šviestuvas su rankena",
+      "answer": "Žibintas",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Galingas kryptinės šviesos šaltinis",
+      "answer": "Prožektorius",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Elementas, tiekiantis elektrą nuotoliniam pultui",
+      "answer": "Baterija",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Izoliuotas laidas elektrai ar duomenims perduoti",
+      "answer": "Kabelis",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Detalė, kišama į elektros lizdą",
+      "answer": "Kištukas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prietaisas drabužiams glotninti karščiu",
+      "answer": "Lygintuvas",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Indas vandeniui nešti su rankena",
+      "answer": "Kibiras",
+      "category": "Kasdienybė",
+      "difficulty": 1
+    },
+    {
+      "clue": "Skudurėlis paviršiams valyti",
+      "answer": "Šluostė",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Įrankis šiukšlėms nuo grindų surinkti",
+      "answer": "Semtuvas",
+      "category": "Kasdienybė",
+      "difficulty": 2
+    },
+    {
+      "clue": "Įrankis medžiui kirsti",
+      "answer": "Kirvis",
+      "category": "Įrankiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Įrankis su dantytu geležte medienai pjauti",
+      "answer": "Pjūklas",
+      "category": "Įrankiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Įrankis, kuriuo suimama ir laikoma detalė",
+      "answer": "Replės",
+      "category": "Įrankiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Įrankis skylėms gręžti",
+      "answer": "Grąžtas",
+      "category": "Įrankiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Smailus įrankis, mušamas plaktuku medienai raižyti",
+      "answer": "Kaltas",
+      "category": "Įrankiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Smaila metalinė lazdelė su galvute, kalama į medį",
+      "answer": "Vinis",
+      "category": "Įrankiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sriegiuota detalė, sukama atsuktuvu ar raktu",
+      "answer": "Varžtas",
+      "category": "Įrankiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sriegiuotas žiedas, užsukamas ant varžto",
+      "answer": "Veržlė",
+      "category": "Įrankiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Plonas metalinis strypelis su skylute siūlui",
+      "answer": "Adata",
+      "category": "Įrankiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ant piršto mautas gaubtelis siuvant",
+      "answer": "Antpirštis",
+      "category": "Įrankiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Suktas plonas pluoštas siuvimui",
+      "answer": "Siūlas",
+      "category": "Įrankiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Detalė, užsegama į kilpą ant drabužio",
+      "answer": "Saga",
+      "category": "Įrankiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Slankiojanti drabužio užsegimo juosta su dantukais",
+      "answer": "Užtrauktukas",
+      "category": "Įrankiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Metalinė diržo užsegimo detalė",
+      "answer": "Sagtis",
+      "category": "Įrankiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dėvima ant rankų žiemą",
+      "answer": "Pirštinė",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Dėvima ant pėdų po batais",
+      "answer": "Kojinė",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Galvos apdangalas su kraštais aplinkui",
+      "answer": "Skrybėlė",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Minkšta plokščia kepuraitė be snapelio",
+      "answer": "Beretė",
+      "category": "Drabužiai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kostiumo viršutinė dalis su atlapais",
+      "answer": "Švarkas",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lengvi moteriški marškiniai",
+      "answer": "Palaidinė",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Naminis ilgas drabužis, apsivelkamas namuose",
+      "answer": "Chalatas",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Drabužis, dėvimas miegant",
+      "answer": "Pižama",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kelnės iš stipraus mėlyno audinio",
+      "answer": "Džinsai",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Audinys, gaunamas iš avies plaukų",
+      "answer": "Vilna",
+      "category": "Drabužiai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Blizgus audinys iš vikšro verpiamo siūlo",
+      "answer": "Šilkas",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Audinys iš baltų augalo pluoštų",
+      "answer": "Medvilnė",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvoje auginamo augalo pluoštas, iš kurio audžiama drobė",
+      "answer": "Linas",
+      "category": "Drabužiai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žodžio dalis, tariama vienu atvėrimu",
+      "answer": "Skiemuo",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Du balsiai, tariami vienu skiemeniu",
+      "answer": "Dvibalsis",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Daiktavardžio kaitymo forma, atsakanti į klausimą „kas?“",
+      "answer": "Vardininkas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Linksnis, atsakantis į klausimą „ko?“",
+      "answer": "Kilmininkas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Linksnis, atsakantis į klausimą „kam?“",
+      "answer": "Naudininkas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Linksnis, atsakantis į klausimą „ką?“",
+      "answer": "Galininkas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Linksnis, atsakantis į klausimą „kur?“",
+      "answer": "Vietininkas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Linksnis, kuriuo kreipiamasi į pašnekovą",
+      "answer": "Šauksmininkas",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kaitymo forma, žyminti vieną daiktą",
+      "answer": "Vienaskaita",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kaitymo forma, žyminti daugiau nei vieną daiktą",
+      "answer": "Daugiskaita",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žodžio dalis prieš šaknį",
+      "answer": "Priešdėlis",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žodžio dalis po šaknies prieš galūnę",
+      "answer": "Priesaga",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kintamoji žodžio pabaiga",
+      "answer": "Galūnė",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Taisyklės, kaip rašomi žodžiai",
+      "answer": "Rašyba",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Taisyklės, kaip sakinyje dedami kableliai ir taškai",
+      "answer": "Skyryba",
+      "category": "Kalba",
+      "difficulty": 3
+    },
+    {
+      "clue": "Ilgas horizontalus skyrybos ženklas",
+      "answer": "Brūkšnys",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ženklai, kuriais išskiriama tiesioginė kalba",
+      "answer": "Kabutės",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lenkti ženklai, kuriais įterpiamas paaiškinimas",
+      "answer": "Skliaustai",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, valdantis traukinio lokomotyvą",
+      "answer": "Mašinistas",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, saugantis pastatą naktį",
+      "answer": "Sargas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, tvarkantis patalpas",
+      "answer": "Valytojas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, nešiojantis maistą restorane",
+      "answer": "Padavėjas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, maišantis kokteilius bare",
+      "answer": "Barmenas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, dirbantis su knygomis skaitykloje",
+      "answer": "Bibliotekininkas",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, dainuojantis scenoje",
+      "answer": "Dainininkas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, šokantis scenoje",
+      "answer": "Šokėjas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, darantis nuotraukas renginiuose",
+      "answer": "Fotografas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, kuriantis daiktų ir svetainių išvaizdą",
+      "answer": "Dizaineris",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, projektuojantis mašinas ir tiltus",
+      "answer": "Inžinierius",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, tvarkantis elektros instaliaciją",
+      "answer": "Elektrikas",
+      "category": "Profesijos",
+      "difficulty": 1
+    },
+    {
+      "clue": "Žmogus, jungiantis metalo detales lanku",
+      "answer": "Suvirintojas",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, gaminantis papuošalus iš tauriųjų metalų",
+      "answer": "Juvelyras",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, audžiantis staklėmis",
+      "answer": "Audėja",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Žmogus, dirbantis prie įmonės dokumentų ir skambučių",
+      "answer": "Sekretorė",
+      "category": "Profesijos",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kraujo spaudimas arterijose, matuojamas manžete",
+      "answer": "Kraujospūdis",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Širdies dūžių dažnis, tikrinamas prie riešo",
+      "answer": "Pulsas",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vaisto įleidimas švirkštu",
+      "answer": "Injekcija",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prietaisas, kuriuo leidžiami vaistai į raumenį",
+      "answer": "Švirkštas",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lipni juostelė žaizdai uždengti",
+      "answer": "Pleistras",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vaistas tepamas ant odos",
+      "answer": "Tepalas",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skystas vaistas, geriamas šaukštais",
+      "answer": "Mikstūra",
+      "category": "Medicina",
+      "difficulty": 3
+    },
+    {
+      "clue": "Gydytojo išvada apie ligą",
+      "answer": "Diagnozė",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ligos požymis, kurį jaučia ligonis",
+      "answer": "Simptomas",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Gydytojo raštas vaistams įsigyti",
+      "answer": "Receptas",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vieta, kurioje parduodami vaistai",
+      "answer": "Vaistinė",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ligoninės kambarys su lovomis ligoniams",
+      "answer": "Palata",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sterili ligoninės patalpa chirurgo darbui",
+      "answer": "Operacinė",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sveikimo po ligos ar traumos laikotarpis",
+      "answer": "Reabilitacija",
+      "category": "Medicina",
+      "difficulty": 2
+    },
+    {
+      "clue": "Veido apdangalas, saugantis nuo užkrato",
+      "answer": "Kaukė",
+      "category": "Medicina",
+      "difficulty": 1
+    },
+    {
+      "clue": "Keturkampis su lygiomis kraštinėmis ir įstrižais kampais",
+      "answer": "Rombas",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Keturkampis su dviem lygiagrečiomis kraštinėmis",
+      "answer": "Trapecija",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Keturkampis, kurio priešingos kraštinės lygiagrečios",
+      "answer": "Lygiagretainis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Figūra su daug kraštinių",
+      "answer": "Daugiakampis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Figūra su šešiomis kraštinėmis, kaip korio akutė",
+      "answer": "Šešiakampis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Erdvinė figūra su dviem apskritais pagrindais",
+      "answer": "Cilindras",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Matematinis reiškinys su lygybės ženklu ir nežinomuoju",
+      "answer": "Lygtis",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Reiškinys su ženklu „daugiau“ arba „mažiau“",
+      "answer": "Nelygybė",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Priklausomybė, kuri kiekvienam x priskiria vieną y",
+      "answer": "Funkcija",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skaičių pora, nurodanti tašką plokštumoje",
+      "answer": "Koordinatė",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Tiesė su skaičiais, einanti per koordinačių pradžią",
+      "answer": "Ašis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Dydis, turintis kryptį ir ilgį",
+      "answer": "Vektorius",
+      "category": "Matematika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Skaičių lentelė su eilutėmis ir stulpeliais",
+      "answer": "Matrica",
+      "category": "Matematika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Šimtoji dalis, žymima ženklu %",
+      "answer": "Procentas",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Dviejų santykių lygybė",
+      "answer": "Proporcija",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skaičių sumos ir jų kiekio dalmuo",
+      "answer": "Vidurkis",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "To paties elemento atmaina su kitokiu neutronų skaičiumi",
+      "answer": "Izotopas",
+      "category": "Chemija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kelių medžiagų sudėtis, kurių dalelės nesureagavusios",
+      "answer": "Mišinys",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Skysčių atskyrimas garinant ir kondensuojant",
+      "answer": "Distiliacija",
+      "category": "Chemija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kietųjų dalelių atskyrimas nuo skysčio",
+      "answer": "Filtravimas",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Elementas, žymimas Mg, deginamas ryškia liepsna",
+      "answer": "Magnis",
+      "category": "Chemija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Elementas, dedamas į valgomąją druską skydliaukei",
+      "answer": "Jodas",
+      "category": "Chemija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Elementas, būtinas kaulams ir degtukų galvutėms",
+      "answer": "Fosforas",
+      "category": "Chemija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Lengvas tvirtas metalas, naudojamas implantams ir lėktuvams",
+      "answer": "Titanas",
+      "category": "Chemija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Milžiniška žvaigždžių ir dujų sistema visatoje",
+      "answer": "Galaktika",
+      "category": "Astronomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Ryškiausias tolimos visatos objektas su aktyviu branduoliu",
+      "answer": "Kvazaras",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Greitai besisukanti neutroninė žvaigždė, siunčianti impulsus",
+      "answer": "Pulsaras",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Taškas tiesiai virš stebėtojo galvos",
+      "answer": "Zenitas",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Riba, kur dangus susilieja su žeme",
+      "answer": "Horizontas",
+      "category": "Astronomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Kosmonauto apranga darbui atviroje erdvėje",
+      "answer": "Skafandras",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vieta, iš kurios startuoja raketos",
+      "answer": "Kosmodromas",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Rusiškas kosmoso keliautojo pavadinimas",
+      "answer": "Kosmonautas",
+      "category": "Astronomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Amerikietiškas kosmoso keliautojo pavadinimas",
+      "answer": "Astronautas",
+      "category": "Astronomija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Automatinis aparatas, siunčiamas tirti planetų",
+      "answer": "Zondas",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Savaeigis aparatas, važinėjantis Marso paviršiumi",
+      "answer": "Marsaeigis",
+      "category": "Astronomija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Būsena, kai kūnas orbitoje nejaučia svorio",
+      "answer": "Nesvarumas",
+      "category": "Astronomija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Duomenų vienetas su vardu ir plėtiniu diske",
+      "answer": "Failas",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vieta diske, kurioje laikomi failai",
+      "answer": "Katalogas",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Puslapių rinkinys vienu interneto adresu",
+      "answer": "Svetainė",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Asmeninis internetinis dienoraštis",
+      "answer": "Tinklaraštis",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kompiuteris, aptarnaujantis kitus tinkle",
+      "answer": "Serveris",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Veiksmų seka uždaviniui spręsti",
+      "answer": "Algoritmas",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Slaptas rašymo būdas, suprantamas tik turintiems raktą",
+      "answer": "Šifras",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Failo perkėlimas iš interneto į kompiuterį",
+      "answer": "Atsisiuntimas",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Programos įrašymas į kompiuterį",
+      "answer": "Diegimas",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Programos versijos pakeitimas naujesne",
+      "answer": "Naujinimas",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prietaisas popieriaus dokumentui paversti skaitmeniniu",
+      "answer": "Skeneris",
+      "category": "Kompiuterija",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prietaisas garsui įrašyti",
+      "answer": "Mikrofonas",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Garso įrenginys, užmaunamas ant ausų",
+      "answer": "Ausinės",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prietaisas, garsinantis muziką kambaryje",
+      "answer": "Garsiakalbis",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vaizduoklis, rodantis kompiuterio vaizdą",
+      "answer": "Ekranas",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Laidas telefonui įkrauti",
+      "answer": "Įkroviklis",
+      "category": "Kompiuterija",
+      "difficulty": 1
+    },
+    {
+      "clue": "Strypas su plaukeliais dažams tepti",
+      "answer": "Teptukas",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Lentelė, ant kurios dailininkas maišo spalvas",
+      "answer": "Paletė",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Spalvota medžiaga, tepama ant drobės",
+      "answer": "Dažai",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Trijų kojų stovas fotoaparatui laikyti",
+      "answer": "Trikojis",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Fotoaparato dalis, per kurią patenka šviesa",
+      "answer": "Objektyvas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Fotoaparato lemputė, akimirksniu apšviečianti objektą",
+      "answer": "Blykstė",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Prietaisas nuotraukoms daryti",
+      "answer": "Fotoaparatas",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Popieriaus lapas su užfiksuotu vaizdu",
+      "answer": "Nuotrauka",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Knyga nuotraukoms laikyti",
+      "answer": "Albumas",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Nuotraukos ar paveikslo apvadas",
+      "answer": "Rėmelis",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vaizdas, sudėliotas iš spalvotų akmenėlių",
+      "answer": "Mozaika",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Spalvoto stiklo paveikslas bažnyčios lange",
+      "answer": "Vitražas",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Piešinių pasakojimas su burbulais tekstui",
+      "answer": "Komiksas",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Juokingas perdėtas žmogaus piešinys",
+      "answer": "Karikatūra",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelis reklaminis lapas ant sienos",
+      "answer": "Plakatas",
+      "category": "Menas",
+      "difficulty": 1
+    },
+    {
+      "clue": "Iškilus atvaizdas akmens ar metalo plokštumoje",
+      "answer": "Bareljefas",
+      "category": "Menas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Atspaudų menas nuo išraižytos plokštės",
+      "answer": "Grafika",
+      "category": "Menas",
+      "difficulty": 2
+    },
+    {
+      "clue": "Didelis styginis instrumentas, plėšomas pirštais stovint",
+      "answer": "Arfa",
+      "category": "Muzikos instrumentai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Lietuvių liaudies pučiamasis iš medžio",
+      "answer": "Birbynė",
+      "category": "Muzikos instrumentai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mušamasis su medinėmis plokštelėmis ir plaktukėliais",
+      "answer": "Ksilofonas",
+      "category": "Muzikos instrumentai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Bažnyčios bokšte skambantis mušamasis",
+      "answer": "Varpas",
+      "category": "Muzikos instrumentai",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prietaisas, mušantis vienodą tempą mokantis groti",
+      "answer": "Metronomas",
+      "category": "Muzikos instrumentai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Šakutė, duodanti etaloninį garsą derinant",
+      "answer": "Kamertonas",
+      "category": "Muzikos instrumentai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Gitaros dalis, ant kurios spaudžiamos stygos",
+      "answer": "Grifas",
+      "category": "Muzikos instrumentai",
+      "difficulty": 2
+    },
+    {
+      "clue": "Mažas mušamasis su žvangučiais aplink rėmą",
+      "answer": "Tamburinas",
+      "category": "Muzikos instrumentai",
+      "difficulty": 3
+    },
+    {
+      "clue": "Popierius, patvirtinantis pirkimą parduotuvėje",
+      "answer": "Kvitas",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Prekybos akcija, kai prekės parduodamos pigiau",
+      "answer": "Išpardavimas",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Darbuotojas prie kasos aparato",
+      "answer": "Kasininkas",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Vieta, kurioje prekiaujama iš prekystalių lauke",
+      "answer": "Turgus",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Patalpa prekėms laikyti",
+      "answer": "Sandėlis",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Sutartis, apsauganti nuo nuostolių už įmoką",
+      "answer": "Draudimas",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Paskola būstui, užtikrinta nekilnojamuoju turtu",
+      "answer": "Hipoteka",
+      "category": "Ekonomika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Įmonės pelno dalis, išmokama akcininkams",
+      "answer": "Dividendas",
+      "category": "Ekonomika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Skolos vertybinis popierius su palūkanomis",
+      "answer": "Obligacija",
+      "category": "Ekonomika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Pajamų perviršis virš išlaidų",
+      "answer": "Pelnas",
+      "category": "Ekonomika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Veiklos rezultatas, kai išlaidos viršija pajamas",
+      "answer": "Nuostolis",
+      "category": "Ekonomika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Įmonės pardavimų suma per laikotarpį",
+      "answer": "Apyvarta",
+      "category": "Ekonomika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kovo pradžioje Vilniuje vykstanti amatų šventė",
+      "answer": "Kaziuko mugė",
+      "category": "Lietuva",
+      "difficulty": 2
+    },
+    {
+      "clue": "Sąjungininkų išsilaipinimas Normandijoje 1944 m. birželį",
+      "answer": "Diena D",
+      "category": "Istorija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Teniso terminas, kai geimo rezultatas 40:40",
+      "answer": "Deusas",
+      "category": "Sportas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Naujosios Zelandijos regbininkų šokis prieš rungtynes",
+      "answer": "Haka",
+      "category": "Sportas",
+      "difficulty": 3
+    },
+    {
+      "clue": "Skiemens išryškinimas tariant žodį",
+      "answer": "Kirtis",
+      "category": "Kalba",
+      "difficulty": 2
+    },
+    {
+      "clue": "Ilgiausia stačiojo trikampio kraštinė",
+      "answer": "Įžambinė",
+      "category": "Matematika",
+      "difficulty": 3
+    },
+    {
+      "clue": "Pusračio formos prietaisas kampams matuoti",
+      "answer": "Matlankis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Kampo dydžio matavimo vienetas",
+      "answer": "Laipsnis",
+      "category": "Matematika",
+      "difficulty": 1
+    },
+    {
+      "clue": "Veiksmas, atvirkštinis kėlimui kvadratu",
+      "answer": "Kvadratinė šaknis",
+      "category": "Matematika",
+      "difficulty": 2
+    },
+    {
+      "clue": "Graikų mitų pabaisa gyvatėmis vietoj plaukų",
+      "answer": "Gorgonė",
+      "category": "Mitologija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Romėnų santuokos deivė, Jupiterio žmona",
+      "answer": "Junona",
+      "category": "Mitologija",
+      "difficulty": 3
+    },
+    {
+      "clue": "Kūrinio įvykių grandinė",
+      "answer": "Siužetas",
+      "category": "Literatūra",
+      "difficulty": 2
+    },
+    {
+      "clue": "Vokiška ant grotelių kepama dešrelė",
+      "answer": "Bratvurstas",
+      "category": "Maistas",
+      "difficulty": 3
     }
   ]
 }

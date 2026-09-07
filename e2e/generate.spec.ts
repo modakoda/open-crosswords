@@ -4,8 +4,8 @@ import { PUZZLE_URL_PATTERN } from "./constants";
 test("generates a puzzle from the public form and lands on the solve view", async ({ page }) => {
   await page.goto("/public");
 
-  // No language picker — the form builds from the site locale.
-  await expect(page.locator("#language")).toHaveCount(0);
+  // The picker is there, already assigned the site's language.
+  await expect(page.locator("#language")).toHaveText("English");
   await page.locator("#title").fill("E2E Generated Puzzle");
   await page.getByRole("button", { name: /^Generate crossword$/ }).click();
 

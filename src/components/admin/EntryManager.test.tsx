@@ -5,7 +5,10 @@ import userEvent from "@testing-library/user-event";
 import { EntryManager } from "./EntryManager";
 
 vi.mock("@/lib/orpc/client", () => ({
-  orpc: { admin: { entries: { list: vi.fn(), delete: vi.fn(), deleteMany: vi.fn() } } },
+  orpc: {
+    admin: { entries: { list: vi.fn(), delete: vi.fn(), deleteMany: vi.fn() } },
+    categories: { list: vi.fn() },
+  },
 }));
 
 vi.mock("sonner", () => ({
@@ -17,11 +20,27 @@ const { toast } = await import("sonner");
 const list = vi.mocked(orpc.admin.entries.list);
 const remove = vi.mocked(orpc.admin.entries.delete);
 const removeMany = vi.mocked(orpc.admin.entries.deleteMany);
+const listCategories = vi.mocked(orpc.categories.list);
 
 const languages = [
   { code: "en", name: "English" },
   { code: "lt", name: "Lietuvių" },
 ];
+
+const GEOGRAPHY = "11111111-1111-4111-8111-111111111111";
+const HISTORY = "22222222-2222-4222-8222-222222222222";
+
+function category(id: string, name: string, languageCode = "en") {
+  return {
+    id,
+    languageCode,
+    slug: name.toLowerCase(),
+    name,
+    createdAt: new Date("2026-01-01T00:00:00Z"),
+  };
+}
+
+const enCategories = [category(GEOGRAPHY, "Geography"), category(HISTORY, "History")];
 
 function entry(id: string, languageCode: string, clue: string) {
   return {
@@ -42,12 +61,12 @@ function entry(id: string, languageCode: string, clue: string) {
 
 const rows = [entry("1", "en", "Capital of France"), entry("2", "lt", "Prancūzijos sostinė")];
 
-function renderManager() {
+function renderManager(categories: { id: string; name: string }[] = []) {
   return render(
     <EntryManager
       language="en"
       languages={languages}
-      categories={[]}
+      categories={categories}
       onCategoriesChanged={() => {}}
     />,
   );
@@ -56,6 +75,7 @@ function renderManager() {
 describe("EntryManager language filter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    listCategories.mockResolvedValue({ categories: [] });
     list.mockResolvedValue({ rows, total: rows.length });
   });
 
@@ -108,9 +128,85 @@ describe("EntryManager language filter", () => {
   });
 });
 
+describe("EntryManager category filter", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    listCategories.mockResolvedValue({ categories: [] });
+    list.mockResolvedValue({ rows, total: rows.length });
+  });
+
+  it("lists every category until one is picked", async () => {
+    renderManager(enCategories);
+    await waitFor(() => expect(list).toHaveBeenCalled());
+    expect(list.mock.calls[0][0].categoryId).toBeUndefined();
+    expect(screen.getByRole("combobox", { name: "Filter by category" })).toBeInTheDocument();
+  });
+
+  it("offers no category filter when the language has no categories", async () => {
+    renderManager();
+    await waitFor(() => expect(list).toHaveBeenCalled());
+    expect(
+      screen.queryByRole("combobox", { name: "Filter by category" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("scopes the listing to the picked category, from the first page", async () => {
+    const user = userEvent.setup();
+    list.mockResolvedValue({ rows, total: 120 });
+    renderManager(enCategories);
+    await waitFor(() => expect(list).toHaveBeenCalled());
+    await user.click(screen.getByRole("button", { name: "Next page" }));
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+
+    await user.click(screen.getByRole("combobox", { name: "Filter by category" }));
+    await user.click(screen.getByRole("option", { name: "History" }));
+
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
+    expect(list.mock.calls[2][0]).toMatchObject({ categoryId: HISTORY, offset: 0 });
+  });
+
+  it("drops the category filter when the listing spans every language", async () => {
+    const user = userEvent.setup();
+    renderManager(enCategories);
+    await waitFor(() => expect(list).toHaveBeenCalled());
+    await user.click(screen.getByRole("combobox", { name: "Filter by category" }));
+    await user.click(screen.getByRole("option", { name: "Geography" }));
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "All languages" }));
+
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
+    expect(list.mock.calls[2][0].categoryId).toBeUndefined();
+    expect(
+      screen.queryByRole("combobox", { name: "Filter by category" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("follows the filtered language rather than the working one", async () => {
+    const user = userEvent.setup();
+    listCategories.mockResolvedValue({
+      categories: [category(HISTORY, "Istorija", "lt")],
+    });
+    renderManager(enCategories);
+    await waitFor(() => expect(list).toHaveBeenCalled());
+
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "Lietuvi\u0173 (lt)" }));
+
+    await waitFor(() =>
+      expect(listCategories).toHaveBeenCalledWith({ languageCode: "lt" }),
+    );
+    await user.click(screen.getByRole("combobox", { name: "Filter by category" }));
+    expect(screen.getByRole("option", { name: "Istorija" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Geography" })).not.toBeInTheDocument();
+  });
+});
+
 describe("EntryManager pagination", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    listCategories.mockResolvedValue({ categories: [] });
     list.mockResolvedValue({ rows, total: 120 });
   });
 
@@ -212,6 +308,7 @@ describe("EntryManager pagination", () => {
 describe("EntryManager bulk delete", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    listCategories.mockResolvedValue({ categories: [] });
     list.mockResolvedValue({ rows, total: rows.length });
     removeMany.mockResolvedValue({ deleted: 2 });
   });

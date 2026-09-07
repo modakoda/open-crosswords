@@ -16,7 +16,7 @@ export const en = {
     title: "Generate a crossword",
     subtitle:
       "Pick (optionally) some topics. Every puzzle is built from a fresh, " +
-      "topic-spread selection of clues in your site language, sized to print " +
+      "topic-spread selection of clues in the language you pick, sized to print " +
       "on your chosen paper — or solve it online and share the link.",
     featurePrintable: "Print-ready PDFs",
     featureOnline: "Solve & share online",
@@ -25,6 +25,8 @@ export const en = {
   generateForm: {
     formTitle: "Puzzle setup",
     formDescription: "Choose your topics, then generate.",
+    language: "Clue language",
+    languageHint: "Starts from the site language you're browsing in.",
     categories: "Categories",
     categoriesHint: "Leave empty to draw from every topic.",
     clear: "Clear",

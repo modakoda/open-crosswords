@@ -23,7 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-/** Sentinel for "don't filter by language" — an empty Select value is invalid. */
+/** Sentinel for "don't filter by this" — an empty Select value is invalid. */
 const ALL = "__all__";
 
 export function EntryManager({
@@ -43,6 +43,11 @@ export function EntryManager({
   const [msg, setMsg] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [filter, setFilter] = useState(language);
+  const [category, setCategory] = useState(ALL);
+  // Categories of a language other than the working one, once fetched.
+  const [fetched, setFetched] = useState<{ code: string; rows: Category[] } | null>(
+    null,
+  );
   const [lastLanguage, setLastLanguage] = useState(language);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
@@ -53,13 +58,41 @@ export function EntryManager({
   if (lastLanguage !== language) {
     setLastLanguage(language);
     setFilter(language);
+    setCategory(ALL);
     setPage(0);
   }
+
+  // Categories are scoped to one language, so the options have to follow the
+  // language being listed rather than the working one — otherwise picking a
+  // category from the wrong language quietly lists nothing. The working
+  // language's own list already comes from the workspace; any other language
+  // is fetched, and spanning every language leaves no coherent set at all.
+  useEffect(() => {
+    if (filter === ALL || filter === language) return;
+    let cancelled = false;
+    orpc.categories
+      .list({ languageCode: filter })
+      .then((d) => !cancelled && setFetched({ code: filter, rows: d.categories }))
+      .catch(() => !cancelled && setFetched({ code: filter, rows: [] }));
+    return () => {
+      cancelled = true;
+    };
+  }, [filter, language]);
+
+  const categoryOptions =
+    filter === ALL
+      ? []
+      : filter === language
+        ? categories
+        : fetched?.code === filter
+          ? fetched.rows
+          : [];
 
   const load = useCallback(() => {
     orpc.admin.entries
       .list({
         languageCode: filter === ALL ? undefined : filter,
+        categoryId: category === ALL ? undefined : category,
         limit: pageSize,
         offset: page * pageSize,
         q: q || undefined,
@@ -74,7 +107,7 @@ export function EntryManager({
         if (page > last) setPage(last);
       })
       .catch(() => setMsg("Failed to load entries"));
-  }, [filter, q, page, pageSize]);
+  }, [filter, category, q, page, pageSize]);
 
   useEffect(load, [load]);
 
@@ -97,6 +130,9 @@ export function EntryManager({
           value={filter}
           onValueChange={(v) => {
             setFilter(v);
+            // The categories of the language just left don't exist in the new
+            // scope, so the filter can't survive the switch.
+            setCategory(ALL);
             setPage(0);
           }}
         >
@@ -112,6 +148,27 @@ export function EntryManager({
             ))}
           </SelectContent>
         </Select>
+        {categoryOptions.length > 0 && (
+          <Select
+            value={category}
+            onValueChange={(v) => {
+              setCategory(v);
+              setPage(0);
+            }}
+          >
+            <SelectTrigger className="w-44" aria-label="Filter by category">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL}>All categories</SelectItem>
+              {categoryOptions.map((c) => (
+                <SelectItem key={c.id} value={c.id}>
+                  {c.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
         <Button className="ml-auto" onClick={() => setAddOpen(true)}>
           <PlusIcon />
           New entry

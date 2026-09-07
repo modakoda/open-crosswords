@@ -20,10 +20,11 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { CategoryPicker } from "@/components/CategoryPicker";
 import { DifficultyField } from "@/components/DifficultyField";
+import { LanguageField, type Language } from "@/components/LanguageField";
 import { PaperOptionsFields } from "@/components/PaperOptionsFields";
 import { generateErrorMessage } from "@/lib/generate-error";
 import { orpc } from "@/lib/orpc/client";
-import { getMessages, type Locale } from "@/lib/i18n";
+import { getMessages, resolveLocale, type Locale } from "@/lib/i18n";
 import {
   DIFFICULTY_LEVELS,
   ORIENTATIONS,
@@ -37,10 +38,12 @@ interface Category {
 
 export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   const router = useRouter();
-  // The content language always follows the site's UI locale — there is no
-  // separate picker, so a visitor browsing in Lithuanian gets Lithuanian clues.
-  const language = initialLocale;
-  const [available, setAvailable] = useState<boolean | null>(null);
+  // The content language starts from the site's UI locale — a visitor browsing
+  // in Lithuanian gets Lithuanian clues — but the picker lets them build a
+  // puzzle in any language the library actually has. Empty until the library
+  // answers, since only it can say which languages exist.
+  const [languages, setLanguages] = useState<Language[] | null>(null);
+  const [language, setLanguage] = useState("");
   // The list and the language it belongs to are one piece of state, so
   // "still loading" is derived during render instead of being set from inside
   // the effect (which would cascade renders).
@@ -58,23 +61,31 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const t = getMessages(initialLocale).generateForm;
+  // Chrome inside the form follows the language the puzzle will be built in,
+  // falling back to the site locale for a content language with no dictionary.
+  const t = getMessages(resolveLocale(language, initialLocale)).generateForm;
 
   useEffect(() => {
-    // Only to tell "this locale has no clue library yet" apart from "this
-    // library has no categories" — the result never changes what's selected.
     orpc.languages
       .list()
-      .then((d) => setAvailable(d.languages.some((l) => l.code === language)))
+      .then((d) => {
+        setLanguages(d.languages);
+        // The site's language wins when the library has it; otherwise the
+        // visitor still gets a working form in whatever it does have.
+        const preferred =
+          d.languages.find((l) => l.code === initialLocale) ?? d.languages[0];
+        if (preferred) setLanguage(preferred.code);
+      })
       .catch(() => {
-        setAvailable(false);
-        setError(t.loadError);
+        setLanguages([]);
+        setError(getMessages(initialLocale).generateForm.loadError);
       });
-    // Runs once on mount — the locale is fixed for the component's lifetime.
+    // Runs once on mount — the site locale is fixed for the component's lifetime.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
+    if (!language) return;
     let cancelled = false;
     const settle = (categories: Category[]) => {
       if (!cancelled) setLoaded({ language, categories });
@@ -87,6 +98,13 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
       cancelled = true;
     };
   }, [language]);
+
+  function changeLanguage(code: string) {
+    setLanguage(code);
+    // Category ids belong to one language, so a stale selection would filter
+    // the new library down to nothing.
+    setSelected(new Set());
+  }
 
   // A list fetched for a previous language still reads as "loading".
   const categories = loaded?.language === language ? loaded.categories : [];
@@ -124,7 +142,7 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
     }
   }
 
-  if (available === false) {
+  if (languages?.length === 0) {
     return (
       <Card className="border-border/60 bg-card/60 backdrop-blur-sm">
         <CardContent className="py-8 text-sm text-muted-foreground">
@@ -142,6 +160,15 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
       </CardHeader>
 
       <CardContent className="space-y-6">
+        <LanguageField
+          languages={languages ?? []}
+          language={language}
+          onLanguageChange={changeLanguage}
+          t={t}
+        />
+
+        <Separator />
+
         <CategoryPicker
           categories={categories}
           loading={catLoading}
@@ -190,7 +217,7 @@ export function GenerateForm({ initialLocale }: { initialLocale: Locale }) {
         <Button
           size="lg"
           onClick={generate}
-          disabled={busy}
+          disabled={busy || !language}
           className="w-full bg-gradient-to-r from-primary to-chart-5 text-primary-foreground shadow-md transition-shadow hover:shadow-lg hover:brightness-105 sm:w-auto"
         >
           {busy ? <LoaderCircleIcon className="animate-spin" /> : <SparklesIcon />}
