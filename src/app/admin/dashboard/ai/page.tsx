@@ -1,15 +1,15 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { AiDraftPanel } from "@/components/admin/AiDraftPanel";
-import { useAdminWorkspace } from "@/components/admin/workspace";
+import { getAdmin } from "@/lib/auth-guard";
+import { AiDraftView } from "@/components/admin/AiDraftView";
 
-export default function AdminAiDraftPage() {
-  const { language, categories, aiEnabled } = useAdminWorkspace();
-  return (
-    <AiDraftPanel
-      language={language}
-      categories={categories}
-      aiEnabled={aiEnabled}
-    />
-  );
+/**
+ * The gate is re-asserted here, not left to `dashboard/layout.tsx` alone: a
+ * client-supplied `Next-Router-State-Tree` can make Next skip a parent
+ * layout's render entirely, so a layout guard is chrome, not an authorization
+ * boundary. `getAdmin` is `cache()`-wrapped, so this costs nothing.
+ */
+export default async function AdminAiDraftPage() {
+  if (!(await getAdmin())) redirect("/admin/login");
+  return <AiDraftView />;
 }

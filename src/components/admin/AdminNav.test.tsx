@@ -2,12 +2,19 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 
 import { ADMIN_VIEWS, AdminNav } from "./AdminNav";
+import { ADMIN_VIEW_SEGMENTS } from "./views";
 
 const pathname = vi.fn(() => "/admin/dashboard/entries");
 
 vi.mock("next/navigation", () => ({ usePathname: () => pathname() }));
 
 describe("AdminNav", () => {
+  // The nav and the server-side redirect read separate modules (the redirect
+  // can't import a client one) — this is what keeps the two lists together.
+  it("offers exactly the routed view segments", () => {
+    expect(ADMIN_VIEWS.map((v) => v.segment)).toEqual([...ADMIN_VIEW_SEGMENTS]);
+  });
+
   it("links to every admin view, so each one has its own URL", () => {
     render(<AdminNav language="en" />);
     for (const { segment, label } of ADMIN_VIEWS) {

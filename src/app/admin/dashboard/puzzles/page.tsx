@@ -1,9 +1,15 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { PuzzleManager } from "@/components/admin/PuzzleManager";
-import { useAdminWorkspace } from "@/components/admin/workspace";
+import { getAdmin } from "@/lib/auth-guard";
+import { PuzzlesView } from "@/components/admin/PuzzlesView";
 
-export default function AdminPuzzlesPage() {
-  const { language, languages } = useAdminWorkspace();
-  return <PuzzleManager language={language} languages={languages} />;
+/**
+ * The gate is re-asserted here, not left to `dashboard/layout.tsx` alone: a
+ * client-supplied `Next-Router-State-Tree` can make Next skip a parent
+ * layout's render entirely, so a layout guard is chrome, not an authorization
+ * boundary. `getAdmin` is `cache()`-wrapped, so this costs nothing.
+ */
+export default async function AdminPuzzlesPage() {
+  if (!(await getAdmin())) redirect("/admin/login");
+  return <PuzzlesView />;
 }

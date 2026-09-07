@@ -5,12 +5,18 @@ import userEvent from "@testing-library/user-event";
 import { EntryManager } from "./EntryManager";
 
 vi.mock("@/lib/orpc/client", () => ({
-  orpc: { admin: { entries: { list: vi.fn(), delete: vi.fn() } } },
+  orpc: { admin: { entries: { list: vi.fn(), delete: vi.fn(), deleteMany: vi.fn() } } },
+}));
+
+vi.mock("sonner", () => ({
+  toast: { success: vi.fn(), error: vi.fn() },
 }));
 
 const { orpc } = await import("@/lib/orpc/client");
+const { toast } = await import("sonner");
 const list = vi.mocked(orpc.admin.entries.list);
 const remove = vi.mocked(orpc.admin.entries.delete);
+const removeMany = vi.mocked(orpc.admin.entries.deleteMany);
 
 const languages = [
   { code: "en", name: "English" },
@@ -200,5 +206,104 @@ describe("EntryManager pagination", () => {
     await user.click(screen.getByRole("button", { name: "Delete" }));
 
     await waitFor(() => expect(screen.getByText("Showing 51–100 of 100")).toBeInTheDocument());
+  });
+});
+
+describe("EntryManager bulk delete", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    list.mockResolvedValue({ rows, total: rows.length });
+    removeMany.mockResolvedValue({ deleted: 2 });
+  });
+
+  async function selectRow(user: ReturnType<typeof userEvent.setup>, clue: string) {
+    const row = screen.getByText(clue).closest("tr")!;
+    await user.click(within(row).getByRole("checkbox", { name: `Select ${clue}` }));
+  }
+
+  it("offers no bulk action until a row is selected", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: "Delete selected" })).not.toBeInTheDocument();
+
+    await selectRow(user, "Capital of France");
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Delete selected" })).toBeInTheDocument();
+  });
+
+  it("selects and clears every visible row at once", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    expect(screen.getByText("2 selected")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    expect(screen.queryByText("2 selected")).not.toBeInTheDocument();
+  });
+
+  it("confirms before deleting, and deletes nothing if the dialog is cancelled", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    await user.click(screen.getByRole("button", { name: "Delete selected" }));
+
+    expect(await screen.findByRole("alertdialog")).toHaveTextContent("Delete 2 entries?");
+    expect(removeMany).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
+    expect(removeMany).not.toHaveBeenCalled();
+    expect(screen.getByText("2 selected")).toBeInTheDocument();
+  });
+
+  it("deletes the selected ids once confirmed, then reloads and clears", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(1));
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    await user.click(screen.getByRole("button", { name: "Delete selected" }));
+    await user.click(await screen.findByRole("button", { name: "Delete" }));
+
+    await waitFor(() => expect(removeMany).toHaveBeenCalledWith({ ids: ["1", "2"] }));
+    expect(toast.success).toHaveBeenCalledWith("Deleted 2 entries");
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    expect(screen.queryByText("2 selected")).not.toBeInTheDocument();
+  });
+
+  it("keeps the selection and reports a failed delete", async () => {
+    const user = userEvent.setup();
+    removeMany.mockRejectedValue(new Error("nope"));
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+
+    await selectRow(user, "Capital of France");
+    await user.click(screen.getByRole("button", { name: "Delete selected" }));
+    await user.click(await screen.findByRole("button", { name: "Delete" }));
+
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith("Failed to delete the selected entries"),
+    );
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+  });
+
+  it("drops the selection when the listing changes underneath it", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
+    await selectRow(user, "Capital of France");
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+
+    list.mockResolvedValue({ rows: [entry("3", "en", "Another clue")], total: 1 });
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "All languages" }));
+
+    await waitFor(() => expect(screen.getByText("Another clue")).toBeInTheDocument());
+    expect(screen.queryByText("1 selected")).not.toBeInTheDocument();
   });
 });

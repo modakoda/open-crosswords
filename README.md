@@ -41,7 +41,7 @@ docker compose -f compose.tryout.yaml exec app \
 ADMIN_EMAILS=you@example.com docker compose -f compose.tryout.yaml up -d app
 ```
 
-Then add clues from `/admin/dashboard` → *Bulk import*, or load the bundled
+Then add clues from `/admin/dashboard/import`, or load the bundled
 English starter set: `docker compose -f compose.tryout.yaml exec app npm run seed`.
 
 See the comments in [compose.tryout.yaml](./compose.tryout.yaml) for details
@@ -68,8 +68,8 @@ npm run db:migrate            # apply migrations
 npm run dev                   # http://localhost:3000
 ```
 
-The question library starts empty. Add clues from `/admin/dashboard` →
-*Bulk import*, or run `npm run seed` to load the bundled English starter set
+The question library starts empty. Add clues from `/admin/dashboard/import`,
+or run `npm run seed` to load the bundled English starter set
 (`data/seed-en.json`). A Lithuanian starter set is also bundled
 (`npm run seed -- data/seed-lt.json`), covering easy through hard, more
 obscure clues. For a much larger English pool (~1.1M entries
@@ -114,7 +114,7 @@ Sign in at `/admin/login`.
 | `DATABASE_URL` | yes | Postgres connection string |
 | `BETTER_AUTH_SECRET` | yes | 32-byte random string (`openssl rand -base64 32`) |
 | `BETTER_AUTH_URL` | no | Public base URL, no trailing slash (default `http://localhost:3000`) |
-| `ADMIN_EMAILS` | no | Comma-separated emails allowed into `/admin/dashboard` (default: none — set this or nobody can sign in) |
+| `ADMIN_EMAILS` | no | Comma-separated emails allowed into `/admin/dashboard/**` (default: none — set this or nobody can sign in) |
 | `AUTH_IP_HEADER` | no | The one header the platform sets to the client address, used to key rate limiting (default `x-vercel-forwarded-for`; `cf-connecting-ip` on Cloudflare, `x-real-ip` behind most proxies). The origin must be reachable only through whatever sets it, or a caller can forge it. Empty trusts no header, which puts every visitor in one bucket and lets ten sign-in requests a minute from anyone hold everyone out |
 | `AUTH_TRUSTED_PROXIES` | no | Comma-separated IPs/CIDRs of the proxies in front of the app, when they set none of the headers above — `x-forwarded-for` is then read and walked past these hops |
 | `ANTHROPIC_API_KEY` | no | Enables the "AI draft" admin panel |
@@ -244,20 +244,20 @@ persistent volume; all state lives in Postgres.
 
 The library starts empty either way. Load the bundled English starter set with
 `npm run seed` in the same terminal, or import your own from
-`/admin/dashboard` → *Bulk import*.
+`/admin/dashboard/import`.
 
 ## Adding questions
 
-- **Admin UI** (`/admin/dashboard` → *Entries*) — add one clue/answer at a
+- **Admin UI** (`/admin/dashboard/entries`) — add one clue/answer at a
   time, with an optional category and difficulty 1–5.
-- **Bulk import** (`/admin/dashboard` → *Bulk import*, or
+- **Bulk import** (`/admin/dashboard/import`, or
   `npm run import -- <lang> <file>`):
   - JSON: `[{ "clue": "...", "answer": "...", "category": "...", "difficulty": 3 }]`
     (or `{ "entries": [...] }`)
   - CSV: header row with `clue,answer[,category][,difficulty]`
   - Answers are normalised to grid letters (accents folded, non-letters dropped).
     Unknown categories are created automatically; exact duplicates are skipped.
-- **AI draft** (`/admin/dashboard` → *AI draft*, needs `ANTHROPIC_API_KEY`) —
+- **AI draft** (`/admin/dashboard/ai`, needs `ANTHROPIC_API_KEY`) —
   describe a topic and language, review the suggestions, save the ones you want.
 
 ### Add a language
@@ -271,7 +271,7 @@ npm run import -- lt data/my-lithuanian-clues.csv
 
 ## Managing generated puzzles
 
-`/admin/dashboard` → *Puzzles* lists every puzzle the app has generated —
+`/admin/dashboard/puzzles` lists every puzzle the app has generated —
 newest first, filterable by language and searchable by title or link. Each row
 shows its grid size, word count, paper setting and who generated it (or
 *Anonymous*), and links straight to the solve and print views. From the row

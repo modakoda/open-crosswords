@@ -1,5 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
-import { E2E_ADMIN_EMAIL, E2E_BASE_URL, E2E_PORT } from "./e2e/constants";
+import {
+  E2E_ADMIN_EMAIL,
+  E2E_BASE_URL,
+  E2E_PORT,
+  E2E_UNPROVISIONED_ADMIN_EMAIL,
+} from "./e2e/constants";
 
 /**
  * Runs against a real Postgres (see compose.yaml) — PGlite (used by the
@@ -10,11 +15,11 @@ import { E2E_ADMIN_EMAIL, E2E_BASE_URL, E2E_PORT } from "./e2e/constants";
 export default defineConfig({
   testDir: "./e2e",
   globalSetup: "./e2e/global-setup.ts",
-  // The in-memory rate-limit bucket (src/lib/rate-limit.ts) is keyed by
-  // client IP and shared by the whole server process — every test run here
-  // shares one browser IP against one server, so tests must run one at a
-  // time or the rate-limit edge-case spec would collide with every other
-  // spec's own puzzles.generate calls.
+  // Specs share one question library and one puzzle listing against a single
+  // server, so they run one at a time: a spec that imports, deletes or pages
+  // through entries would otherwise see its neighbours' rows. (Rate limiting
+  // is no longer a reason — every test carries its own client address, see
+  // e2e/fixtures.ts.)
   fullyParallel: false,
   workers: 1,
   forbidOnly: !!process.env.CI,
@@ -34,12 +39,15 @@ export default defineConfig({
     env: {
       PORT: String(E2E_PORT),
       BETTER_AUTH_URL: E2E_BASE_URL,
-      ADMIN_EMAILS: E2E_ADMIN_EMAIL,
+      // Two allow-listed addresses, only one of them provisioned. The second
+      // is how the suite shows that being on the list is not by itself admin
+      // access — see auth-session.spec.ts.
+      ADMIN_EMAILS: `${E2E_ADMIN_EMAIL},${E2E_UNPROVISIONED_ADMIN_EMAIL}`,
       NODE_ENV: "production",
       // NODE_ENV=production arms the boot guard in src/lib/env.ts, so the
-      // address header has to be stated. Naming one also lets the rate-limit
-      // spec put its burst in a bucket of its own instead of exhausting the
-      // one every other spec generates through.
+      // address header has to be stated. Naming one is also what lets each
+      // test claim a bucket of its own (e2e/fixtures.ts) instead of the whole
+      // run sharing the single bucket an addressless caller falls into.
       AUTH_IP_HEADER: "x-vercel-forwarded-for",
     },
   },

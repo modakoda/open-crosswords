@@ -168,6 +168,69 @@ describe("admin.entries.update / delete", () => {
   });
 });
 
+describe("admin.entries.deleteMany", () => {
+  async function seed(clues: string[]) {
+    const ids: string[] = [];
+    for (const clue of clues) {
+      const { entry } = await call(
+        adminRouter.entries.create,
+        { languageCode: "en", clue, answer: `Answer${ids.length}` },
+        ctx(),
+      );
+      ids.push(entry.id);
+    }
+    return ids;
+  }
+
+  it("rejects a non-admin, and deletes nothing", async () => {
+    const ids = await seed(["Capital of France"]);
+    adminState.allow = false;
+    await expect(call(adminRouter.entries.deleteMany, { ids }, ctx())).rejects.toThrow();
+
+    // A throw alone would also pass if input parsing ran ahead of the guard;
+    // the entry still being there is what pins the gate.
+    adminState.allow = true;
+    const data = await call(adminRouter.entries.list, {}, ctx());
+    expect(data.total).toBe(1);
+  });
+
+  it("deletes every selected entry and leaves the rest", async () => {
+    const [a, b, c] = await seed(["First clue", "Second clue", "Third clue"]);
+
+    const { deleted } = await call(adminRouter.entries.deleteMany, { ids: [a, c] }, ctx());
+    expect(deleted).toBe(2);
+
+    const data = await call(adminRouter.entries.list, {}, ctx());
+    expect(data.total).toBe(1);
+    expect(data.rows[0].id).toBe(b);
+  });
+
+  it("counts only what existed, rather than failing on a stale id", async () => {
+    const [a] = await seed(["First clue"]);
+    const { deleted } = await call(
+      adminRouter.entries.deleteMany,
+      { ids: [a, "00000000-0000-0000-0000-000000000000"] },
+      ctx(),
+    );
+    expect(deleted).toBe(1);
+  });
+
+  it("rejects an empty selection and a non-uuid id", async () => {
+    await expect(call(adminRouter.entries.deleteMany, { ids: [] }, ctx())).rejects.toThrow();
+    await expect(
+      call(adminRouter.entries.deleteMany, { ids: ["not-a-uuid"] }, ctx()),
+    ).rejects.toThrow();
+  });
+
+  it("rejects a batch larger than the cap", async () => {
+    const ids = Array.from(
+      { length: 201 },
+      (_, i) => `00000000-0000-0000-0000-${String(i).padStart(12, "0")}`,
+    );
+    await expect(call(adminRouter.entries.deleteMany, { ids }, ctx())).rejects.toThrow();
+  });
+});
+
 describe("admin.entries.import", () => {
   it("rejects malformed JSON", async () => {
     await expect(

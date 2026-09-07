@@ -20,8 +20,12 @@ Focus areas specific to this repo:
   **verified** email, and that email in `ADMIN_EMAILS` (fail-closed —
   `create-admin` marks the email verified on provisioning). Flag any
   admin/library-mutation path that is reachable without that gate, or that
-  infers admin status from a client-supplied value. `getAdmin` in
-  `/admin/dashboard` must redirect unauthenticated/non-admin users.
+  infers admin status from a client-supplied value. Every
+  `/admin/dashboard/**` page must call `getAdmin()` and redirect *in its own
+  `page.tsx`*, not lean on `dashboard/layout.tsx` — a caller controls
+  `Next-Router-State-Tree`, and a tree naming a sibling leaf makes Next skip
+  the layout's render, so a layout-only gate is bypassable. Flag any new view
+  route added under that layout without its own guard.
 - **Authorization (per-user scoping)**: every `client.*` oRPC procedure
   (`src/lib/orpc/routers/client.ts`) must be built on `userProcedure`
   (wrapping `requireUser` — any signed-in user, no allow-list). Flag any

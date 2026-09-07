@@ -1,18 +1,15 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { EntryManager } from "@/components/admin/EntryManager";
-import { useAdminWorkspace } from "@/components/admin/workspace";
+import { getAdmin } from "@/lib/auth-guard";
+import { EntriesView } from "@/components/admin/EntriesView";
 
-export default function AdminEntriesPage() {
-  const { language, languages, categories, reloadCategories } =
-    useAdminWorkspace();
-
-  return (
-    <EntryManager
-      language={language}
-      languages={languages}
-      categories={categories}
-      onCategoriesChanged={reloadCategories}
-    />
-  );
+/**
+ * The gate is re-asserted here, not left to `dashboard/layout.tsx` alone: a
+ * client-supplied `Next-Router-State-Tree` can make Next skip a parent
+ * layout's render entirely, so a layout guard is chrome, not an authorization
+ * boundary. `getAdmin` is `cache()`-wrapped, so this costs nothing.
+ */
+export default async function AdminEntriesPage() {
+  if (!(await getAdmin())) redirect("/admin/login");
+  return <EntriesView />;
 }

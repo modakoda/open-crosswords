@@ -54,6 +54,15 @@ export const updateEntrySchema = z
   .partial()
   .refine((v) => Object.keys(v).length > 0, "No fields to update");
 
+/**
+ * Bulk delete. The cap keeps one request bounded — the admin UI can only
+ * select the rows on the current page, whose size tops out at the listing's
+ * own 200-row limit.
+ */
+export const deleteEntriesSchema = z.object({
+  ids: z.array(z.uuid()).min(1).max(200),
+});
+
 export const listEntriesQuerySchema = z.object({
   languageCode: LANGUAGE_CODE.optional(),
   categoryId: z.uuid().optional(),

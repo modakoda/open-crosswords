@@ -8,9 +8,27 @@ or solve them online via a shareable link. Open source, single Next.js app.
 - **Next.js App Router** (`src/app/**`), React 19, TypeScript, Tailwind CSS v4.
   Routes are grouped by audience: `src/app/public/**` (generate form, solve,
   print, sign-up — all public), `src/app/admin/**` (`/admin/login`,
-  `/admin/dashboard`), `src/app/client/**` (`/client/login`,
+  `/admin/dashboard/**`), `src/app/client/**` (`/client/login`,
   `/client/dashboard`). `/` just redirects to `/public`, and the bare
   `/admin` and `/client` index pages redirect to their own dashboards.
+  Every admin view is its own route rather than a tab —
+  `/admin/dashboard/{entries,puzzles,import,ai}`, with `/admin/dashboard`
+  redirecting to the first — so each one is linkable, bookmarkable and
+  reload-safe. `src/app/admin/dashboard/layout.tsx` renders the chrome shared
+  across views (`AdminShell`) and gates it, but **every page under it repeats
+  the `getAdmin()` + redirect itself** — a layout is not an authorization
+  boundary, because Next picks where to start rendering from the caller's own
+  `Next-Router-State-Tree` header and will skip a parent layout's render
+  entirely (`e2e/edge-cases.spec.ts` proves this per view). `getAdmin` is
+  `cache()`-wrapped, so repeating it is free. Each page is a server component
+  that guards, then renders a thin `*View` client component
+  (`src/components/admin/{Entries,Puzzles,Import,AiDraft}View.tsx`) that reads
+  `useAdminWorkspace()`. The working language is a
+  `?lang=` search param, not component state, so a linked view opens scoped
+  the way the sender saw it; `AdminShell` validates it with `LANGUAGE_CODE`
+  and falls back to the first language the library has. Segment names live in
+  `src/components/admin/views.ts` — a plain module, because the server-side
+  redirect can't import them from `AdminNav` (`"use client"`).
 - **UI primitives** in `src/components/ui/` are shadcn/ui components (config in
   `components.json`) — build forms and controls from these (`Button`, `Input`,
   `Select`, `Table`, `Tabs`, etc.) rather than raw `<button>`/`<input>` with
@@ -151,7 +169,10 @@ external input, or the AI/import paths must meet these before it's done:
   `requireAdmin` — a valid session **and** a verified email in `ADMIN_EMAILS`
   (fail closed; `npm run create-admin` marks the email verified). Never infer
   admin from a client-supplied value, and never expose a library-mutation
-  path outside that gate. Per-user-owned rows (`puzzles.userId`,
+  path outside that gate. On the page side, every `/admin/**` route guards in
+  its own `page.tsx` — a shared `layout.tsx` guard is defence in depth, not a
+  boundary, since the caller's `Next-Router-State-Tree` decides which segments
+  Next renders and can skip the layout entirely. Per-user-owned rows (`puzzles.userId`,
   `solve_states`) must always be scoped to the id from `context.user`
   (set by `userProcedure` from the verified session) — never from a
   client-supplied id (missing scoping / IDOR is a blocking defect).

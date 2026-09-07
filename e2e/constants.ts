@@ -12,6 +12,15 @@ export const E2E_CLIENT2_PASSWORD = "e2e-client-2-password-123";
 export const E2E_SIGNUP_EMAIL = "e2e-signup-test@example.com";
 export const E2E_SIGNUP_PASSWORD = "e2e-signup-password-123";
 
+/**
+ * In ADMIN_EMAILS (see playwright.config.ts) but never provisioned by
+ * `create-admin`, so nothing ever marks it verified. Self-serve sign-up must
+ * not be able to claim it: the allow-list is only half the admin check, and
+ * `getAdmin` fails closed on the unverified half. Created through the UI by
+ * auth-session.spec.ts, and deleted by the seed like the other e2e accounts.
+ */
+export const E2E_UNPROVISIONED_ADMIN_EMAIL = "e2e-unprovisioned-admin@example.com";
+
 export const E2E_PORT = 3100;
 export const E2E_BASE_URL = `http://localhost:${E2E_PORT}`;
 
@@ -25,3 +34,18 @@ export const E2E_LANGUAGE_NAME = "E2E Test Language";
  * the UI-driven specs need clues under `en` as well as the isolated `zz` set.
  */
 export const E2E_UI_LANGUAGE_CODE = "en";
+
+/**
+ * A public puzzle URL, whose slug is four lowercase words plus an eight-digit
+ * number (`src/lib/puzzle-slug.ts`). Kept here so a change to the slug format
+ * lands in one place rather than in every spec that waits for a generate.
+ */
+export const PUZZLE_URL_PATTERN = /\/public\/puzzles\/[a-z]+(-[a-z]+){3}-\d{8}$/;
+
+/**
+ * The admin views, each its own route. Mirrors `ADMIN_VIEW_SEGMENTS` in
+ * `src/components/admin/views.ts` — stated here rather than imported, so the
+ * specs assert the routes the app is expected to expose rather than whatever
+ * it currently lists.
+ */
+export const ADMIN_VIEWS = ["entries", "puzzles", "import", "ai"] as const;

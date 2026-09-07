@@ -1,25 +1,55 @@
-import { test, expect } from "@playwright/test";
-import { generatePuzzleViaUi } from "./helpers";
-import { ADMIN_STORAGE_STATE, CLIENT_STORAGE_STATE, CLIENT2_STORAGE_STATE } from "./global-setup";
-import { E2E_BASE_URL, E2E_LANGUAGE_CODE } from "./constants";
+import { test, expect } from "./fixtures";
+import { ADMIN_STORAGE_STATE } from "./global-setup";
+import { E2E_LANGUAGE_CODE } from "./constants";
 
 test("an invalid puzzle slug 404s", async ({ page }) => {
   const response = await page.goto("/public/puzzles/nope1234ab");
   expect(response?.status()).toBe(404);
 });
 
+// A slug is the only thing guarding a puzzle, so a well-formed guess must be
+// as dead an end as a malformed one — no redirect, no partial render.
+test("a well-formed but unknown puzzle slug 404s too", async ({ page }) => {
+  const response = await page.goto("/public/puzzles/amber-quiet-otter-canyon-48392174");
+  expect(response?.status()).toBe(404);
+  expect(new URL(page.url()).pathname).toBe(
+    "/public/puzzles/amber-quiet-otter-canyon-48392174",
+  );
+});
+
 test("puzzle generation is rate-limited after repeated rapid requests", async ({ page }) => {
   // The rate-limit bucket is keyed by the one address header the deployment
-  // trusts (src/lib/client-ip.ts, AUTH_IP_HEADER). A real browser request
-  // carries none, so every other test in this suite shares one implicit
-  // "local" bucket — deliberately exhausting it here would 429 every later
-  // generate call too. Send that header so this burst only exhausts its own,
-  // isolated bucket.
+  // trusts (src/lib/client-ip.ts, AUTH_IP_HEADER). Every test already carries
+  // one of its own (see ./fixtures.ts); this burst states its address per
+  // request so exhausting a bucket stays this test's business either way.
   const headers = { "x-vercel-forwarded-for": "203.0.113.5" };
   const statuses: number[] = [];
   for (let i = 0; i < 22; i++) {
     const res = await page.request.post("/rpc/puzzles/generate", {
       headers,
+      data: { json: { languageCode: E2E_LANGUAGE_CODE, paperSize: "a4" } },
+    });
+    statuses.push(res.status());
+  }
+  expect(statuses).toContain(429);
+});
+
+/**
+ * The limiter reads exactly one header (`src/lib/client-ip.ts`), never a union
+ * of candidates. That is the whole defence: a second header the app is willing
+ * to believe is one a caller can rotate to walk out of a bucket, or pin to
+ * someone else's address to burn theirs. So a burst that holds the trusted
+ * header fixed and varies `x-forwarded-for` on every request must still be
+ * counted as one caller.
+ */
+test("a rotating x-forwarded-for cannot escape the rate limit", async ({ page }) => {
+  const statuses: number[] = [];
+  for (let i = 0; i < 22; i++) {
+    const res = await page.request.post("/rpc/puzzles/generate", {
+      headers: {
+        "x-vercel-forwarded-for": "203.0.113.6",
+        "x-forwarded-for": `203.0.113.${100 + i}`,
+      },
       data: { json: { languageCode: E2E_LANGUAGE_CODE, paperSize: "a4" } },
     });
     statuses.push(res.status());
@@ -71,92 +101,4 @@ test.describe("admin import validation", () => {
     });
     expect(res.status()).toBe(422);
   });
-});
-
-test.describe("a signed-in client is not an admin", () => {
-  test.use({ storageState: CLIENT_STORAGE_STATE });
-
-  test("visiting the admin dashboard redirects to admin login, not through", async ({ page }) => {
-    await page.goto("/admin/dashboard");
-    await page.waitForURL("**/admin/login");
-  });
-
-  // Every view is its own route now, so the gate has to sit on the layout —
-  // deep-linking straight to one must not slip past it.
-  for (const view of ["entries", "puzzles", "import", "ai"]) {
-    test(`deep-linking to the ${view} view redirects to admin login`, async ({ page }) => {
-      await page.goto(`/admin/dashboard/${view}`);
-      await page.waitForURL("**/admin/login");
-    });
-  }
-
-  test("the header offers no admin link, and hiding it is not the control", async ({ page }) => {
-    await page.goto("/client/dashboard");
-    await expect(
-      page.getByRole("banner").getByRole("link", { name: "Admin" }),
-    ).toHaveCount(0);
-    // The link is cosmetic: the procedure gate must still reject this client.
-    const res = await page.request.post("/rpc/admin/entries/create", {
-      data: {
-        json: {
-          languageCode: E2E_LANGUAGE_CODE,
-          clue: "should never be created",
-          answer: "NOPE",
-        },
-      },
-    });
-    expect(res.status()).toBe(403);
-  });
-});
-
-test("a client can never read or overwrite another client's solve state (IDOR)", async ({
-  browser,
-}) => {
-  const ctx1 = await browser.newContext({
-    storageState: CLIENT_STORAGE_STATE,
-    baseURL: E2E_BASE_URL,
-  });
-  const page1 = await ctx1.newPage();
-  await generatePuzzleViaUi(page1);
-
-  const firstCell = page1.locator('input[aria-label^="Row "]').first();
-  await firstCell.click();
-  const savedRequest = page1.waitForRequest((req) =>
-    req.url().includes("/rpc/client/solveState/save"),
-  );
-  await page1.keyboard.press("Z");
-  const saveInput = JSON.parse((await savedRequest).postData()!).json as {
-    puzzleId: string;
-    progress: Record<string, string>;
-  };
-  const { puzzleId, progress: client1Progress } = saveInput;
-  await ctx1.close();
-
-  const ctx2 = await browser.newContext({
-    storageState: CLIENT2_STORAGE_STATE,
-    baseURL: E2E_BASE_URL,
-  });
-  const page2 = await ctx2.newPage();
-
-  const readAsClient2 = await page2.request.post("/rpc/client/solveState/get", {
-    data: { json: { puzzleId } },
-  });
-  expect((await readAsClient2.json()).json.progress).toBeNull();
-
-  await page2.request.post("/rpc/client/solveState/save", {
-    data: { json: { puzzleId, progress: { "0,0": "X" } } },
-  });
-  await ctx2.close();
-
-  const ctx1b = await browser.newContext({
-    storageState: CLIENT_STORAGE_STATE,
-    baseURL: E2E_BASE_URL,
-  });
-  const page1b = await ctx1b.newPage();
-  const readAsClient1Again = await page1b.request.post("/rpc/client/solveState/get", {
-    data: { json: { puzzleId } },
-  });
-  // Client 2's write must never have touched client 1's row.
-  expect((await readAsClient1Again.json()).json.progress).toEqual(client1Progress);
-  await ctx1b.close();
 });

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect } from "./fixtures";
 import { generatePuzzleViaUi } from "./helpers";
 import { CLIENT_STORAGE_STATE } from "./global-setup";
 import { E2E_SIGNUP_EMAIL, E2E_SIGNUP_PASSWORD } from "./constants";

@@ -5,18 +5,18 @@ import { usePathname } from "next/navigation";
 import { GridIcon, SparklesIcon, TableIcon, UploadIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { ADMIN_BASE_PATH, type AdminViewSegment } from "./views";
 
-export const ADMIN_VIEWS = [
+export const ADMIN_VIEWS: readonly {
+  segment: AdminViewSegment;
+  label: string;
+  Icon: typeof TableIcon;
+}[] = [
   { segment: "entries", label: "Entries", Icon: TableIcon },
   { segment: "puzzles", label: "Puzzles", Icon: GridIcon },
   { segment: "import", label: "Bulk import", Icon: UploadIcon },
   { segment: "ai", label: "AI draft", Icon: SparklesIcon },
-] as const;
-
-export const ADMIN_BASE_PATH = "/admin/dashboard";
-
-/** The default view — `/admin/dashboard` redirects here. */
-export const DEFAULT_ADMIN_VIEW = ADMIN_VIEWS[0].segment;
+];
 
 /**
  * Views are routes, not tab state, so these are links: each one is

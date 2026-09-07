@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, entries, languages } from "@/db/schema";
 import { normalizeAnswer, isPlaceableAnswer } from "@/lib/crossword/normalize";
@@ -170,4 +170,17 @@ export async function deleteEntry(id: string) {
     .where(eq(entries.id, id))
     .returning({ id: entries.id });
   return row ?? null;
+}
+
+/**
+ * Deletes several entries in one statement. Ids that match nothing are simply
+ * absent from the result, so a stale selection deletes what still exists
+ * rather than failing the whole batch.
+ */
+export async function deleteEntries(ids: string[]) {
+  if (ids.length === 0) return [];
+  return db
+    .delete(entries)
+    .where(inArray(entries.id, ids))
+    .returning({ id: entries.id });
 }

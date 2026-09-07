@@ -5,6 +5,7 @@ import { adminPuzzlesRouter } from "./admin-puzzles";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import {
   createEntry,
+  deleteEntries,
   deleteEntry,
   ensureCategory,
   ensureLanguage,
@@ -21,6 +22,7 @@ import {
   createCategorySchema,
   createEntrySchema,
   createLanguageSchema,
+  deleteEntriesSchema,
   importSchema,
   listEntriesQuerySchema,
   updateEntrySchema,
@@ -84,6 +86,19 @@ const entriesDelete = adminProcedure
     return { deleted: true };
   });
 
+/**
+ * Bulk delete. Unlike the single delete this doesn't 404 on ids that no longer
+ * exist — a selection can go stale between listing and confirming, and the
+ * admin's intent ("remove these") is still satisfied. The count says what
+ * actually went.
+ */
+const entriesDeleteMany = adminProcedure
+  .input(deleteEntriesSchema)
+  .handler(async ({ input }) => {
+    const rows = await deleteEntries(input.ids);
+    return { deleted: rows.length };
+  });
+
 const MAX_IMPORT_ROWS = 2000;
 
 const entriesImport = adminProcedure.input(importSchema).handler(async ({ input }) => {
@@ -135,6 +150,7 @@ export const adminRouter = {
     create: entriesCreate,
     update: entriesUpdate,
     delete: entriesDelete,
+    deleteMany: entriesDeleteMany,
     import: entriesImport,
     aiDraft: entriesAiDraft,
   },

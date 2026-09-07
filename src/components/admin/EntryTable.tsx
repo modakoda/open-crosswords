@@ -3,9 +3,12 @@
 import { useState } from "react";
 import { MoreHorizontalIcon } from "lucide-react";
 
+import { EntryBulkBar } from "./EntryBulkBar";
+import { useRowSelection } from "./use-row-selection";
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -64,6 +67,7 @@ export function EntryTable({
   onChanged: () => void;
 }) {
   const [pendingDelete, setPendingDelete] = useState<Entry | null>(null);
+  const selection = useRowSelection(rows.map((r) => r.id));
 
   async function toggle(entry: Entry) {
     await orpc.admin.entries.update({ id: entry.id, patch: { enabled: entry.enabled === 0 } });
@@ -79,10 +83,24 @@ export function EntryTable({
 
   return (
     <>
+      <EntryBulkBar
+        ids={selection.selectedIds}
+        onDeleted={onChanged}
+        onClear={selection.clear}
+      />
+
       <div className="overflow-hidden rounded-lg border border-border">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
+              <TableHead className="w-10">
+                <Checkbox
+                  aria-label="Select all rows"
+                  checked={selection.allSelected}
+                  disabled={rows.length === 0}
+                  onCheckedChange={selection.toggleAll}
+                />
+              </TableHead>
               <TableHead>Lang</TableHead>
               <TableHead>Clue</TableHead>
               <TableHead>Answer</TableHead>
@@ -96,13 +114,24 @@ export function EntryTable({
           <TableBody>
             {rows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={8} className="py-10 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={9} className="py-10 text-center text-sm text-muted-foreground">
                   No entries {q ? "match your search" : "yet"}.
                 </TableCell>
               </TableRow>
             )}
             {rows.map((e) => (
-              <TableRow key={e.id} data-disabled={!e.enabled}>
+              <TableRow
+                key={e.id}
+                data-disabled={!e.enabled}
+                data-state={selection.selected.has(e.id) ? "selected" : undefined}
+              >
+                <TableCell>
+                  <Checkbox
+                    aria-label={`Select ${e.clue}`}
+                    checked={selection.selected.has(e.id)}
+                    onCheckedChange={() => selection.toggle(e.id)}
+                  />
+                </TableCell>
                 <TableCell>
                   <Badge variant="outline" className="font-mono text-xs uppercase">
                     {e.languageCode}

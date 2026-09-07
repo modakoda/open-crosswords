@@ -16,6 +16,7 @@ import {
   E2E_LANGUAGE_NAME,
   E2E_SIGNUP_EMAIL,
   E2E_UI_LANGUAGE_CODE,
+  E2E_UNPROVISIONED_ADMIN_EMAIL,
 } from "./constants";
 
 /** Reliably interlocks into a crossword — verified in src/lib/puzzles/queries.test.ts. */
@@ -86,6 +87,7 @@ async function main() {
         E2E_CLIENT_EMAIL,
         E2E_CLIENT2_EMAIL,
         E2E_SIGNUP_EMAIL,
+        E2E_UNPROVISIONED_ADMIN_EMAIL,
       ]),
     );
   await seedQuestionLibrary();
