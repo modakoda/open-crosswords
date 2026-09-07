@@ -21,9 +21,9 @@ vi.mock("@/lib/auth-guard", async () => {
 });
 
 const { db } = await import("@/db");
-const { entries, languages, puzzles, user } = await import("@/db/schema");
+const { entries, languages, puzzles, solveStates, user } = await import("@/db/schema");
 const { clientRouter } = await import("./client");
-const { generatePuzzle } = await import("@/lib/puzzles");
+const { generatePuzzle, getPuzzleBySlug, listPuzzlesForUser } = await import("@/lib/puzzles");
 
 const ctx = () => ({ context: { headers: new Headers() } });
 
@@ -62,7 +62,7 @@ async function seedPuzzle() {
     { languageCode: "en", paperSize: "a4", orientation: "portrait", seed: "fixed" },
     "u1",
   );
-  return dto.id;
+  return dto;
 }
 
 beforeEach(async () => {
@@ -74,7 +74,7 @@ beforeEach(async () => {
 
 describe("client.solveState", () => {
   it("rejects a signed-out caller", async () => {
-    const puzzleId = await seedPuzzle();
+    const { id: puzzleId } = await seedPuzzle();
     currentUser.value = null as never;
     await expect(
       call(clientRouter.solveState.get, { puzzleId }, ctx()),
@@ -82,14 +82,14 @@ describe("client.solveState", () => {
   });
 
   it("saves and reads back the caller's own progress", async () => {
-    const puzzleId = await seedPuzzle();
+    const { id: puzzleId } = await seedPuzzle();
     await call(clientRouter.solveState.save, { puzzleId, progress: { "0,0": "P" } }, ctx());
     const { progress } = await call(clientRouter.solveState.get, { puzzleId }, ctx());
     expect(progress).toEqual({ "0,0": "P" });
   });
 
   it("never returns another user's progress (IDOR)", async () => {
-    const puzzleId = await seedPuzzle();
+    const { id: puzzleId } = await seedPuzzle();
     await call(clientRouter.solveState.save, { puzzleId, progress: { "0,0": "P" } }, ctx());
 
     currentUser.value = { id: "u2", email: "bob@example.com" };
@@ -98,7 +98,7 @@ describe("client.solveState", () => {
   });
 
   it("never lets one user overwrite another user's progress (IDOR)", async () => {
-    const puzzleId = await seedPuzzle();
+    const { id: puzzleId } = await seedPuzzle();
     await call(clientRouter.solveState.save, { puzzleId, progress: { "0,0": "P" } }, ctx());
 
     currentUser.value = { id: "u2", email: "bob@example.com" };
@@ -107,5 +107,47 @@ describe("client.solveState", () => {
     currentUser.value = { id: "u1", email: "alice@example.com" };
     const { progress } = await call(clientRouter.solveState.get, { puzzleId }, ctx());
     expect(progress).toEqual({ "0,0": "P" });
+  });
+});
+
+describe("client.puzzles.delete", () => {
+  it("rejects a signed-out caller", async () => {
+    const { slug } = await seedPuzzle();
+    currentUser.value = null as never;
+    await expect(call(clientRouter.puzzles.delete, { slug }, ctx())).rejects.toThrow();
+  });
+
+  it("deletes the caller's own puzzle", async () => {
+    const { slug } = await seedPuzzle();
+    await expect(call(clientRouter.puzzles.delete, { slug }, ctx())).resolves.toEqual({
+      deleted: true,
+    });
+    expect(await listPuzzlesForUser("u1")).toEqual([]);
+  });
+
+  it("takes the caller's saved progress with it", async () => {
+    const { id: puzzleId, slug } = await seedPuzzle();
+    await call(clientRouter.solveState.save, { puzzleId, progress: { "0,0": "P" } }, ctx());
+    await call(clientRouter.puzzles.delete, { slug }, ctx());
+    expect(await db.select().from(solveStates)).toEqual([]);
+  });
+
+  it("never deletes another user's puzzle (IDOR)", async () => {
+    const { slug } = await seedPuzzle();
+    currentUser.value = { id: "u2", email: "bob@example.com" };
+    await expect(call(clientRouter.puzzles.delete, { slug }, ctx())).rejects.toThrow();
+    expect(await listPuzzlesForUser("u1")).toHaveLength(1);
+  });
+
+  it("leaves an anonymous puzzle alone", async () => {
+    await seedPuzzle();
+    const anon = await generatePuzzle(
+      { languageCode: "en", paperSize: "a4", orientation: "portrait", seed: "anon" },
+      null,
+    );
+    await expect(
+      call(clientRouter.puzzles.delete, { slug: anon.slug }, ctx()),
+    ).rejects.toThrow();
+    expect(await getPuzzleBySlug(anon.slug)).not.toBeNull();
   });
 });

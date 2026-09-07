@@ -101,6 +101,12 @@ function renderManager(
   return render(<Harness byLanguage={{ en: categories, ...byLanguage }} />);
 }
 
+/** The listing opens across every language, so most cases narrow it first. */
+async function narrowTo(user: ReturnType<typeof userEvent.setup>, name: string) {
+  await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+  await user.click(screen.getByRole("option", { name }));
+}
+
 describe("EntryManager language filter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -108,22 +114,27 @@ describe("EntryManager language filter", () => {
     list.mockResolvedValue({ rows, total: rows.length });
   });
 
-  it("starts scoped to the working language", async () => {
+  it("starts across every language, not scoped to the working one", async () => {
     renderManager();
     await waitFor(() => expect(list).toHaveBeenCalled());
-    expect(list.mock.calls[0][0]).toMatchObject({ languageCode: "en" });
+    // The working language says what a *new* entry is created in; filtering
+    // the listing to it on arrival would hide most of the library.
+    expect(list.mock.calls[0][0].languageCode).toBeUndefined();
   });
 
-  it("drops the language scope when every language is selected", async () => {
+  it("drops the language scope again when every language is selected", async () => {
     const user = userEvent.setup();
     renderManager();
     await waitFor(() => expect(list).toHaveBeenCalled());
 
-    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
-    await user.click(screen.getByRole("option", { name: "All languages" }));
-
+    await narrowTo(user, "Lietuvi\u0173 (lt)");
     await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
-    expect(list.mock.calls[1][0].languageCode).toBeUndefined();
+    expect(list.mock.calls[1][0]).toMatchObject({ languageCode: "lt" });
+
+    await narrowTo(user, "All languages");
+
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
+    expect(list.mock.calls[2][0].languageCode).toBeUndefined();
   });
 
   it("shows each row's own language, even while scoped to one language", async () => {
@@ -132,16 +143,15 @@ describe("EntryManager language filter", () => {
     await waitFor(() => expect(screen.getByText("Capital of France")).toBeInTheDocument());
     expect(screen.getByRole("columnheader", { name: "Lang" })).toBeInTheDocument();
     expect(
-      within(screen.getByText("Capital of France").closest("tr")!).getByText("en"),
+      within(screen.getByText("Prancūzijos sostinė").closest("tr")!).getByText("lt"),
     ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
-    await user.click(screen.getByRole("option", { name: "All languages" }));
+    await narrowTo(user, "English (en)");
 
     await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
     expect(screen.getByRole("columnheader", { name: "Lang" })).toBeInTheDocument();
-    const row = screen.getByText("Prancūzijos sostinė").closest("tr")!;
-    expect(within(row).getByText("lt")).toBeInTheDocument();
+    const row = screen.getByText("Capital of France").closest("tr")!;
+    expect(within(row).getByText("en")).toBeInTheDocument();
   });
 
   it("narrows to one language when that language is picked", async () => {
@@ -172,12 +182,14 @@ describe("EntryManager language filter", () => {
     renderManager();
     await waitFor(() => expect(list).toHaveBeenCalled());
 
-    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
-    await user.click(screen.getByRole("option", { name: "All languages" }));
+    await narrowTo(user, "English (en)");
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+
+    await narrowTo(user, "All languages");
 
     // "All languages" is a wider view of the listing, not a language a new
     // entry could be created in, so it has nothing to move the working one to.
-    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
     expect(languageChanged).not.toHaveBeenCalled();
   });
 });
@@ -189,16 +201,31 @@ describe("EntryManager category filter", () => {
     list.mockResolvedValue({ rows, total: rows.length });
   });
 
-  it("lists every category until one is picked", async () => {
+  it("offers no category filter until the listing is scoped to one language", async () => {
+    const user = userEvent.setup();
     renderManager(enCategories);
     await waitFor(() => expect(list).toHaveBeenCalled());
-    expect(list.mock.calls[0][0].categoryId).toBeUndefined();
+    // Categories belong to a single language, so the listing's opening span
+    // over every language leaves no coherent set to offer.
+    expect(
+      screen.queryByRole("combobox", { name: "Filter by category" }),
+    ).not.toBeInTheDocument();
+
+    await narrowTo(user, "English (en)");
+
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    expect(list.mock.calls[1][0].categoryId).toBeUndefined();
     expect(screen.getByRole("combobox", { name: "Filter by category" })).toBeInTheDocument();
   });
 
   it("offers no category filter when the language has no categories", async () => {
+    const user = userEvent.setup();
     renderManager();
     await waitFor(() => expect(list).toHaveBeenCalled());
+
+    await narrowTo(user, "English (en)");
+
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
     expect(
       screen.queryByRole("combobox", { name: "Filter by category" }),
     ).not.toBeInTheDocument();
@@ -209,29 +236,32 @@ describe("EntryManager category filter", () => {
     list.mockResolvedValue({ rows, total: 120 });
     renderManager(enCategories);
     await waitFor(() => expect(list).toHaveBeenCalled());
-    await user.click(screen.getByRole("button", { name: "Next page" }));
+    await narrowTo(user, "English (en)");
     await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    await user.click(screen.getByRole("button", { name: "Next page" }));
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
 
     await user.click(screen.getByRole("combobox", { name: "Filter by category" }));
     await user.click(screen.getByRole("option", { name: "History" }));
 
-    await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
-    expect(list.mock.calls[2][0]).toMatchObject({ categoryId: HISTORY, offset: 0 });
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(4));
+    expect(list.mock.calls[3][0]).toMatchObject({ categoryId: HISTORY, offset: 0 });
   });
 
   it("drops the category filter when the listing spans every language", async () => {
     const user = userEvent.setup();
     renderManager(enCategories);
     await waitFor(() => expect(list).toHaveBeenCalled());
+    await narrowTo(user, "English (en)");
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
     await user.click(screen.getByRole("combobox", { name: "Filter by category" }));
     await user.click(screen.getByRole("option", { name: "Geography" }));
-    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
-
-    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
-    await user.click(screen.getByRole("option", { name: "All languages" }));
-
     await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
-    expect(list.mock.calls[2][0].categoryId).toBeUndefined();
+
+    await narrowTo(user, "All languages");
+
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(4));
+    expect(list.mock.calls[3][0].categoryId).toBeUndefined();
     expect(
       screen.queryByRole("combobox", { name: "Filter by category" }),
     ).not.toBeInTheDocument();
@@ -330,8 +360,7 @@ describe("EntryManager pagination", () => {
     await user.click(screen.getByRole("button", { name: "Next page" }));
     await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
 
-    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
-    await user.click(screen.getByRole("option", { name: "All languages" }));
+    await narrowTo(user, "Lietuvi\u0173 (lt)");
 
     await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
     expect(list.mock.calls[2][0]).toMatchObject({ offset: 0 });
@@ -449,8 +478,7 @@ describe("EntryManager bulk delete", () => {
     expect(screen.getByText("1 selected")).toBeInTheDocument();
 
     list.mockResolvedValue({ rows: [entry("3", "en", "Another clue")], total: 1 });
-    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
-    await user.click(screen.getByRole("option", { name: "All languages" }));
+    await narrowTo(user, "Lietuvi\u0173 (lt)");
 
     await waitFor(() => expect(screen.getByText("Another clue")).toBeInTheDocument());
     expect(screen.queryByText("1 selected")).not.toBeInTheDocument();

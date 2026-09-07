@@ -70,7 +70,11 @@ or solve them online via a shareable link. Open source, single Next.js app.
   and delete in `admin.ts`), `entries.ts` / `taxonomy.ts` / `import.ts`
   (question-library CRUD, the languages and language-scoped categories it
   files rows under, and bulk import — an entry can be moved between languages,
-  but a category can't follow it), `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
+  but a category can't follow it; `deleteLanguage` drops a language only while
+  no entries and no puzzles name it, guarded inside the delete statement
+  itself rather than by a check before it, since `entries` cascades and a row
+  that landed between the two would be swept away with the language),
+  `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
   (per-user solve progress, read/write always scoped to the caller's own id),
   `print-layout.ts` (paper geometry: it sizes each print sheet's cells, clue
   font and clue columns so the puzzle occupies exactly one page and the answer

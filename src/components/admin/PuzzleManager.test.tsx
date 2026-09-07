@@ -64,22 +64,27 @@ describe("PuzzleManager listing", () => {
     list.mockResolvedValue({ rows, total: rows.length });
   });
 
-  it("starts scoped to the working language", async () => {
+  it("starts across every language, not scoped to the working one", async () => {
     renderManager();
     await waitFor(() => expect(list).toHaveBeenCalled());
-    expect(list.mock.calls[0][0]).toMatchObject({ languageCode: "en", limit: 50, offset: 0 });
+    expect(list.mock.calls[0][0]).toMatchObject({ limit: 50, offset: 0 });
+    expect(list.mock.calls[0][0].languageCode).toBeUndefined();
   });
 
-  it("drops the language scope when every language is selected", async () => {
+  it("drops the language scope again when every language is selected", async () => {
     const user = userEvent.setup();
     renderManager();
     await waitFor(() => expect(list).toHaveBeenCalled());
 
     await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "Lietuvi\u0173 (lt)" }));
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
     await user.click(screen.getByRole("option", { name: "All languages" }));
 
-    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
-    expect(list.mock.calls[1][0].languageCode).toBeUndefined();
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(3));
+    expect(list.mock.calls[2][0].languageCode).toBeUndefined();
   });
 
   it("moves the dashboard's working language when one is picked", async () => {
