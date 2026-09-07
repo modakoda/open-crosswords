@@ -16,3 +16,8 @@ Conventions:
 - Documentation changes should reflect what the code actually does now, verified by reading it — not what a commit message or memory claims it does.
 - Keep instructions runnable: any command you document (`npm run ...`) should be copy-pasteable and correct for this repo's actual scripts.
 - Favor concise, accurate docs over exhaustive ones.
+
+Response format (hard rule):
+- Return no explanation. No preamble, no narration of steps taken, no rationale, no recap of files touched, no "I also noticed" asides, no summary of the change.
+- Reply with the result only: `done` for a completed change, plus a bare list of changed files only if asked. If something failed or is blocked, state that in one line with the error.
+- Explain only when the task itself is a question whose answer is an explanation.

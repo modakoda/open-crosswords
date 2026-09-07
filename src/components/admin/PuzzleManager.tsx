@@ -20,34 +20,41 @@ import {
 /** Sentinel for "don't filter by language" — an empty Select value is invalid. */
 const ALL = "__all__";
 
+/**
+ * The library-wide puzzle listing. As on the entries view, its language filter
+ * *is* the dashboard's working language, so this is the only language control
+ * the view needs.
+ */
 export function PuzzleManager({
   language,
   languages,
+  onLanguageChange,
 }: {
   language: string;
   languages: Language[];
+  onLanguageChange: (code: string) => void;
 }) {
   const [rows, setRows] = useState<Puzzle[]>([]);
   const [total, setTotal] = useState(0);
   const [q, setQ] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
-  const [filter, setFilter] = useState(language);
+  const [spanLanguages, setSpanLanguages] = useState(false);
   const [lastLanguage, setLastLanguage] = useState(language);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
-  // Follow the dashboard's working language the way the entry listing does —
-  // realigned during render so no pass lists the language just left behind.
+  // The language can also move from outside this toolbar (adding one switches
+  // to it) — realigned during render so no pass lists the language left behind.
   if (lastLanguage !== language) {
     setLastLanguage(language);
-    setFilter(language);
+    setSpanLanguages(false);
     setPage(0);
   }
 
   const load = useCallback(() => {
     orpc.admin.puzzles
       .list({
-        languageCode: filter === ALL ? undefined : filter,
+        languageCode: spanLanguages ? undefined : language,
         limit: pageSize,
         offset: page * pageSize,
         q: q || undefined,
@@ -61,7 +68,7 @@ export function PuzzleManager({
         if (page > last) setPage(last);
       })
       .catch(() => setMsg("Failed to load puzzles"));
-  }, [filter, q, page, pageSize]);
+  }, [spanLanguages, language, q, page, pageSize]);
 
   useEffect(load, [load]);
 
@@ -81,10 +88,11 @@ export function PuzzleManager({
           />
         </div>
         <Select
-          value={filter}
+          value={spanLanguages ? ALL : language}
           onValueChange={(v) => {
-            setFilter(v);
+            setSpanLanguages(v === ALL);
             setPage(0);
+            if (v !== ALL && v !== language) onLanguageChange(v);
           }}
         >
           <SelectTrigger className="w-44" aria-label="Filter by language">

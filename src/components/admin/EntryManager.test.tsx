@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { EntryManager } from "./EntryManager";
+import type { Category } from "./workspace";
 
 vi.mock("@/lib/orpc/client", () => ({
   orpc: {
@@ -69,15 +71,34 @@ function entry(id: string, languageCode: string, clue: string) {
 
 const rows = [entry("1", "en", "Capital of France"), entry("2", "lt", "Prancūzijos sostinė")];
 
-function renderManager(categories: { id: string; name: string }[] = []) {
-  return render(
+const languageChanged = vi.fn();
+
+/**
+ * Stands in for `AdminShell`: the working language lives above the manager (in
+ * the URL there, in state here), and the categories handed down are always the
+ * ones belonging to it.
+ */
+function Harness({ byLanguage }: { byLanguage: Record<string, Category[]> }) {
+  const [language, setLanguage] = useState("en");
+  return (
     <EntryManager
-      language="en"
+      language={language}
       languages={languages}
-      categories={categories}
+      categories={byLanguage[language] ?? []}
+      onLanguageChange={(code) => {
+        languageChanged(code);
+        setLanguage(code);
+      }}
       onCategoriesChanged={() => {}}
-    />,
+    />
   );
+}
+
+function renderManager(
+  categories: Category[] = [],
+  byLanguage: Record<string, Category[]> = {},
+) {
+  return render(<Harness byLanguage={{ en: categories, ...byLanguage }} />);
 }
 
 describe("EntryManager language filter", () => {
@@ -133,6 +154,31 @@ describe("EntryManager language filter", () => {
 
     await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
     expect(list.mock.calls[1][0]).toMatchObject({ languageCode: "lt" });
+  });
+
+  it("moves the dashboard's working language rather than filtering alone", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(list).toHaveBeenCalled());
+
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "Lietuvių (lt)" }));
+
+    expect(languageChanged).toHaveBeenCalledWith("lt");
+  });
+
+  it("leaves the working language alone when the listing spans every language", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(list).toHaveBeenCalled());
+
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "All languages" }));
+
+    // "All languages" is a wider view of the listing, not a language a new
+    // entry could be created in, so it has nothing to move the working one to.
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    expect(languageChanged).not.toHaveBeenCalled();
   });
 });
 
@@ -191,23 +237,21 @@ describe("EntryManager category filter", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("follows the filtered language rather than the working one", async () => {
+  it("offers the picked language's own categories, without refetching them", async () => {
     const user = userEvent.setup();
-    listCategories.mockResolvedValue({
-      categories: [category(HISTORY, "Istorija", "lt")],
-    });
-    renderManager(enCategories);
+    renderManager(enCategories, { lt: [category(HISTORY, "Istorija", "lt")] });
     await waitFor(() => expect(list).toHaveBeenCalled());
 
     await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
     await user.click(screen.getByRole("option", { name: "Lietuvi\u0173 (lt)" }));
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
 
-    await waitFor(() =>
-      expect(listCategories).toHaveBeenCalledWith({ languageCode: "lt" }),
-    );
+    // Picking a language here moves the working one, so the shell's own list
+    // follows it — the listing has no second set of categories to fetch.
     await user.click(screen.getByRole("combobox", { name: "Filter by category" }));
     expect(screen.getByRole("option", { name: "Istorija" })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: "Geography" })).not.toBeInTheDocument();
+    expect(listCategories).not.toHaveBeenCalled();
   });
 });
 

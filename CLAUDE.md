@@ -26,9 +26,15 @@ or solve them online via a shareable link. Open source, single Next.js app.
   `useAdminWorkspace()`. The working language is a
   `?lang=` search param, not component state, so a linked view opens scoped
   the way the sender saw it; `AdminShell` validates it with `LANGUAGE_CODE`
-  and falls back to the first language the library has. Segment names live in
-  `src/components/admin/views.ts` — a plain module, because the server-side
-  redirect can't import them from `AdminNav` (`"use client"`).
+  and falls back to the first language the library has. Only the views with
+  no listing of their own — bulk import and AI draft
+  (`usesWorkingLanguagePicker`) — show the shell's picker for it; the entries
+  and puzzles listings set the same `?lang=` from their own "Filter by
+  language" control, so no view carries two controls for one thing (their
+  "All languages" option widens the listing without moving the working
+  language, which still governs what a new entry is created in). Segment names
+  live in `src/components/admin/views.ts` — a plain module, because the
+  server-side redirect can't import them from `AdminNav` (`"use client"`).
 - **UI primitives** in `src/components/ui/` are shadcn/ui components (config in
   `components.json`) — build forms and controls from these (`Button`, `Input`,
   `Select`, `Table`, `Tabs`, etc.) rather than raw `<button>`/`<input>` with
@@ -255,6 +261,14 @@ a required gate, not an optional pass.
 Keep responses as short as possible. Skip preamble, restating the request, and
 summarizing what was just done unless asked. Answer directly; expand only when
 the task genuinely requires it.
+
+Subagents return **no explanation** — no narration of what they did, no
+rationale, no recap of the files they touched, no "I also noticed" asides. A
+subagent's final message is only the answer that was asked for: the requested
+value, the list, the verdict, or a bare `done` when the task was a change with
+nothing to report. Never explain reasoning unless the task itself is a
+question whose answer is an explanation. The same applies to work done in the
+main session: do the work, report the result, skip the commentary.
 
 ## Testing requirements
 

@@ -56,7 +56,8 @@ test.describe("admin view routing", () => {
     page,
   }) => {
     await page.goto("/admin/dashboard/entries");
-    await page.getByRole("combobox").first().click();
+    // The listing's own filter is the working-language control on this view.
+    await page.getByRole("combobox", { name: "Filter by language" }).click();
     await page
       .getByRole("option", { name: `${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})` })
       .click();
@@ -64,9 +65,30 @@ test.describe("admin view routing", () => {
     await expect(page).toHaveURL(new RegExp(`lang=${E2E_LANGUAGE_CODE}`));
 
     await page.reload();
-    await expect(page.getByRole("combobox").first()).toHaveText(
-      `${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})`,
-    );
+    await expect(
+      page.getByRole("combobox", { name: "Filter by language" }),
+    ).toHaveText(`${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})`);
+  });
+
+  test("only the views without a language filter carry the working-language picker", async ({
+    page,
+  }) => {
+    const picker = page.getByRole("combobox", { name: "Working language" });
+
+    for (const view of ["entries", "puzzles"]) {
+      await page.goto(`/admin/dashboard/${view}?lang=${E2E_LANGUAGE_CODE}`);
+      await expect(
+        page.getByRole("combobox", { name: "Filter by language" }),
+      ).toBeVisible();
+      await expect(picker).toHaveCount(0);
+    }
+
+    for (const view of ["import", "ai"]) {
+      await page.goto(`/admin/dashboard/${view}?lang=${E2E_LANGUAGE_CODE}`);
+      await expect(picker).toHaveText(
+        `${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})`,
+      );
+    }
   });
 });
 

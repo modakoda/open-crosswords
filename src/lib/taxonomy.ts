@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/db";
-import { categories, languages } from "@/db/schema";
+import { categories, entries, languages, puzzles } from "@/db/schema";
 import { slugify } from "@/lib/slug";
 
 /**
@@ -20,6 +20,48 @@ export async function ensureLanguage(code: string, name?: string) {
     .insert(languages)
     .values({ code, name: name ?? code.toUpperCase() })
     .onConflictDoNothing();
+}
+
+/**
+ * The languages screen's listing: every language with what is filed under it,
+ * so an admin can tell an empty code left by a typo from one the library
+ * actually depends on. The counts come from correlated subqueries rather than
+ * joins — joining both tables at once multiplies the rows and would need a
+ * `count(distinct)` over the product.
+ */
+export async function listLanguagesWithCounts() {
+  const countOf = (table: typeof entries | typeof categories | typeof puzzles) =>
+    sql<number>`(select count(*) from ${table} where ${table.languageCode} = ${languages.code})`;
+
+  const rows = await db
+    .select({
+      code: languages.code,
+      name: languages.name,
+      createdAt: languages.createdAt,
+      entryCount: countOf(entries),
+      categoryCount: countOf(categories),
+      puzzleCount: countOf(puzzles),
+    })
+    .from(languages)
+    .orderBy(languages.name);
+
+  // postgres.js hands back `count(*)` as a string (bigint); PGlite as a number.
+  return rows.map((r) => ({
+    ...r,
+    entryCount: Number(r.entryCount),
+    categoryCount: Number(r.categoryCount),
+    puzzleCount: Number(r.puzzleCount),
+  }));
+}
+
+/** Renames a language in place. The code is its primary key and never moves. */
+export async function renameLanguage(code: string, name: string) {
+  const [row] = await db
+    .update(languages)
+    .set({ name })
+    .where(eq(languages.code, code))
+    .returning();
+  return row;
 }
 
 /** Whether the library already has this language — see `updateEntry`. */

@@ -20,7 +20,11 @@ function distinctLetters(languageCode?: string): Set<string> {
   const base = languageCode?.toLowerCase().split("-")[0] ?? "";
   let set = alphabets.get(base);
   if (!set) {
-    set = new Set(DISTINCT_LETTERS[base] ?? "");
+    // `hasOwn`, not a bare lookup: `DISTINCT_LETTERS` is a plain object, so a
+    // code like `constructor` would otherwise reach an inherited value. Nothing
+    // over HTTP can be one (`LANGUAGE_CODE` pins the shape), but the CLI entry
+    // points take a language straight from argv.
+    set = new Set(Object.hasOwn(DISTINCT_LETTERS, base) ? DISTINCT_LETTERS[base] : "");
     alphabets.set(base, set);
   }
   return set;
@@ -54,6 +58,9 @@ const MIN_ANSWER_LENGTH = 2;
 const MAX_ANSWER_LENGTH = 21;
 
 export function isPlaceableAnswer(normalized: string): boolean {
-  const length = Array.from(normalized).length;
-  return length >= MIN_ANSWER_LENGTH && length <= MAX_ANSWER_LENGTH;
+  // Counted in UTF-16 units, the same way `generate` slices a word into cells.
+  return (
+    normalized.length >= MIN_ANSWER_LENGTH &&
+    normalized.length <= MAX_ANSWER_LENGTH
+  );
 }

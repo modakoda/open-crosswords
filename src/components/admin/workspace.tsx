@@ -18,8 +18,12 @@ export interface Category {
  */
 export interface AdminWorkspace {
   languages: Language[];
+  /** Re-reads the language list after the languages view changes it. */
+  reloadLanguages: () => void;
   /** The working language — governs what newly created rows belong to. */
   language: string;
+  /** Moves the working language, which lives in the URL rather than state. */
+  setLanguage: (code: string) => void;
   categories: Category[];
   reloadCategories: () => void;
   aiEnabled: boolean;

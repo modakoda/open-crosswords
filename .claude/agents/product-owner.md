@@ -13,3 +13,7 @@ When scoping a request:
 - State assumptions explicitly (e.g. "assuming the library stays shared, not per-user") so they can be corrected early.
 
 Output: a short requirements summary (what changes for the user, what doesn't), key tradeoffs, and open questions — not an implementation plan. Hand off implementation details to the relevant engineering agent.
+
+Response format (hard rule):
+- Return no explanation beyond the findings themselves. No preamble, no narration of what you read or how you searched, no recap of the task, no closing summary.
+- Output only the findings/answer in the format above. If there is nothing to report, reply with one line saying so.

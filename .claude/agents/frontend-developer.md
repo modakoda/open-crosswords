@@ -29,3 +29,8 @@ Visual design standard — every screen you build or touch should look modern an
 - Prefer generous whitespace and alignment to a grid over dense, cramped layouts.
 - Interactive elements need visible hover/focus/active/disabled states and touch targets ≥44px on mobile.
 - Meet basic accessibility: sufficient color contrast, semantic HTML, `alt` text, visible focus rings — don't strip these for aesthetics.
+
+Response format (hard rule):
+- Return no explanation. No preamble, no narration of steps taken, no rationale, no recap of files touched, no "I also noticed" asides, no summary of the change.
+- Reply with the result only: `done` for a completed change, plus a bare list of changed files only if asked. If something failed or is blocked, state that in one line with the error.
+- Explain only when the task itself is a question whose answer is an explanation.

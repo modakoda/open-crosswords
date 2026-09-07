@@ -14,7 +14,13 @@ import {
   InvalidAnswerError,
   UnknownLanguageError,
 } from "@/lib/entries";
-import { ensureCategory, ensureLanguage, listLanguages } from "@/lib/taxonomy";
+import {
+  ensureCategory,
+  ensureLanguage,
+  listLanguages,
+  listLanguagesWithCounts,
+  renameLanguage,
+} from "@/lib/taxonomy";
 import { importEntries, parseImportText, ImportTooLargeError } from "@/lib/import";
 import { draftEntries, AiDisabledError } from "@/lib/ai/draft";
 import { isAiEnabled } from "@/lib/env/server";
@@ -23,6 +29,7 @@ import {
   createEntrySchema,
   createLanguageSchema,
   deleteEntriesSchema,
+  renameLanguageSchema,
   importSchema,
   listEntriesQuerySchema,
   updateEntrySchema,
@@ -34,6 +41,25 @@ const languagesCreate = adminProcedure
   .handler(async ({ input }) => {
     await ensureLanguage(input.code, input.name);
     return { languages: await listLanguages() };
+  });
+
+/**
+ * The languages screen's own listing. Kept apart from the public
+ * `languages.list` every view fills its picker from: this one carries the
+ * counts that only an admin has any business seeing.
+ */
+const languagesList = adminProcedure
+  .input(z.void())
+  .handler(async () => ({ languages: await listLanguagesWithCounts() }));
+
+const languagesRename = adminProcedure
+  .input(renameLanguageSchema)
+  .handler(async ({ input }) => {
+    const language = await renameLanguage(input.code, input.name);
+    if (!language) {
+      throw new ORPCError("NOT_FOUND", { message: "Language not found" });
+    }
+    return { languages: await listLanguagesWithCounts() };
   });
 
 const categoriesCreate = adminProcedure
@@ -149,7 +175,7 @@ const entriesAiDraft = adminProcedure
   });
 
 export const adminRouter = {
-  languages: { create: languagesCreate },
+  languages: { list: languagesList, create: languagesCreate, rename: languagesRename },
   puzzles: adminPuzzlesRouter,
   categories: { create: categoriesCreate },
   entries: {

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -38,7 +39,24 @@ function puzzle(id: string, languageCode: string, title: string) {
 
 const rows = [puzzle("1", "en", "Animals"), puzzle("2", "lt", "Gyvūnai")];
 
-const renderManager = () => render(<PuzzleManager language="en" languages={languages} />);
+const languageChanged = vi.fn();
+
+/** Stands in for `AdminShell`, which owns the working language (in the URL). */
+function Harness() {
+  const [language, setLanguage] = useState("en");
+  return (
+    <PuzzleManager
+      language={language}
+      languages={languages}
+      onLanguageChange={(code) => {
+        languageChanged(code);
+        setLanguage(code);
+      }}
+    />
+  );
+}
+
+const renderManager = () => render(<Harness />);
 
 describe("PuzzleManager listing", () => {
   beforeEach(() => {
@@ -62,6 +80,19 @@ describe("PuzzleManager listing", () => {
 
     await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
     expect(list.mock.calls[1][0].languageCode).toBeUndefined();
+  });
+
+  it("moves the dashboard's working language when one is picked", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(list).toHaveBeenCalled());
+
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "Lietuvių (lt)" }));
+
+    expect(languageChanged).toHaveBeenCalledWith("lt");
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    expect(list.mock.calls[1][0]).toMatchObject({ languageCode: "lt" });
   });
 
   it("shows each puzzle's grid, word count and owner", async () => {

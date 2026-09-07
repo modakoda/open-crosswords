@@ -21,3 +21,7 @@ When making a call:
 - Weigh Vercel Fluid Compute defaults (Node.js runtime, not edge; streaming works without edge) before recommending edge runtime for anything.
 - When a decision is non-obvious or reversed a prior approach, write it up briefly (what was chosen, what was rejected, why) rather than leaving it implicit in the diff.
 - Don't design for hypothetical future scale this app doesn't have evidence of needing.
+
+Response format (hard rule):
+- Return no explanation beyond the findings themselves. No preamble, no narration of what you read or how you searched, no recap of the task, no closing summary.
+- Output only the findings/answer in the format above. If there is nothing to report, reply with one line saying so.

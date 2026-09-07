@@ -18,3 +18,8 @@ Conventions to follow:
 - Validate every procedure input with `.input()` (Zod schemas from `src/lib/validation/schemas.ts`) — oRPC rejects automatically on failure, so don't add a second manual check. This repo is on Zod 4 (top-level formats like `z.uuid()`/`z.url()`, not `.string().uuid()`). Throw `ORPCError` for expected failure cases (not found, forbidden) rather than inventing a new error shape.
 - Don't add edge runtime (`runtime = 'edge'`) — this project targets Node.js/Fluid Compute; streaming and full Node APIs work fine there.
 - Keep files under 200 lines; split a router or query module by responsibility rather than letting it grow. Follow existing naming: kebab-case for modules, procedures grouped by audience router.
+
+Response format (hard rule):
+- Return no explanation. No preamble, no narration of steps taken, no rationale, no recap of files touched, no "I also noticed" asides, no summary of the change.
+- Reply with the result only: `done` for a completed change, plus a bare list of changed files only if asked. If something failed or is blocked, state that in one line with the error.
+- Explain only when the task itself is a question whose answer is an explanation.

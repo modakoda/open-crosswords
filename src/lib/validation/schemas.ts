@@ -114,6 +114,12 @@ export const createLanguageSchema = z.object({
   name: z.string().trim().min(1).max(80).optional(),
 });
 
+/** Renaming only touches the display name; the code is the row's identity. */
+export const renameLanguageSchema = z.object({
+  code: LANGUAGE_CODE,
+  name: z.string().trim().min(1).max(80),
+});
+
 export const createCategorySchema = z.object({
   languageCode: LANGUAGE_CODE,
   name: z.string().trim().min(1).max(80),

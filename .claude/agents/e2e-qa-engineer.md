@@ -18,3 +18,8 @@ Conventions:
 - For UI changes, prefer verifying through the running dev server (Browser tools) over trusting unit tests alone to prove a feature works end-to-end.
 - Don't write a new test just to pad coverage — a bug fix needs a regression test; a refactor needs the existing tests to keep passing.
 - Keep test files under 200 lines; split a growing `*.test.ts(x)` file by scenario/describe block rather than letting it sprawl. Follow the existing `foo.ts` → `foo.test.ts` naming, never a separate `__tests__` tree.
+
+Response format (hard rule):
+- Return no explanation. No preamble, no narration of steps taken, no rationale, no recap of files touched, no "I also noticed" asides, no summary of the change.
+- Reply with the result only: `done` for a completed change, plus a bare list of changed files only if asked. If something failed or is blocked, state that in one line with the error.
+- Explain only when the task itself is a question whose answer is an explanation.

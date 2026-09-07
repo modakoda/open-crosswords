@@ -26,15 +26,24 @@ import {
 /** Sentinel for "don't filter by this" — an empty Select value is invalid. */
 const ALL = "__all__";
 
+/**
+ * The entries listing. Its language filter *is* the dashboard's working
+ * language — picking one moves the shell's `?lang=`, so the toolbar is the
+ * only language control this view needs. "All languages" is a wider view of
+ * the same listing and deliberately doesn't move it: the working language
+ * still says what a new entry is created in.
+ */
 export function EntryManager({
   language,
   languages,
   categories,
+  onLanguageChange,
   onCategoriesChanged,
 }: {
   language: string;
   languages: Language[];
   categories: Category[];
+  onLanguageChange: (code: string) => void;
   onCategoriesChanged: () => void;
 }) {
   const [rows, setRows] = useState<Entry[]>([]);
@@ -43,56 +52,31 @@ export function EntryManager({
   const [msg, setMsg] = useState<string | null>(null);
   const [editing, setEditing] = useState<Entry | null>(null);
   const [formOpen, setFormOpen] = useState(false);
-  const [filter, setFilter] = useState(language);
+  const [spanLanguages, setSpanLanguages] = useState(false);
   const [category, setCategory] = useState(ALL);
-  // Categories of a language other than the working one, once fetched.
-  const [fetched, setFetched] = useState<{ code: string; rows: Category[] } | null>(
-    null,
-  );
   const [lastLanguage, setLastLanguage] = useState(language);
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
-  // The working language governs what gets created; the filter starts there but
-  // can be widened to the whole library. Realigning it during render (rather
-  // than in an effect) avoids a pass that lists the language just left behind.
+  // The language can also move from outside this toolbar (adding one switches
+  // to it), and the categories of the language just left don't exist in the new
+  // scope. Realigning during render rather than in an effect avoids a pass that
+  // lists the language already gone.
   if (lastLanguage !== language) {
     setLastLanguage(language);
-    setFilter(language);
+    setSpanLanguages(false);
     setCategory(ALL);
     setPage(0);
   }
 
-  // Categories are scoped to one language, so the options have to follow the
-  // language being listed rather than the working one — otherwise picking a
-  // category from the wrong language quietly lists nothing. The working
-  // language's own list already comes from the workspace; any other language
-  // is fetched, and spanning every language leaves no coherent set at all.
-  useEffect(() => {
-    if (filter === ALL || filter === language) return;
-    let cancelled = false;
-    orpc.categories
-      .list({ languageCode: filter })
-      .then((d) => !cancelled && setFetched({ code: filter, rows: d.categories }))
-      .catch(() => !cancelled && setFetched({ code: filter, rows: [] }));
-    return () => {
-      cancelled = true;
-    };
-  }, [filter, language]);
-
-  const categoryOptions =
-    filter === ALL
-      ? []
-      : filter === language
-        ? categories
-        : fetched?.code === filter
-          ? fetched.rows
-          : [];
+  // Categories are scoped to one language, so spanning every language leaves no
+  // coherent set to offer at all.
+  const categoryOptions = spanLanguages ? [] : categories;
 
   const load = useCallback(() => {
     orpc.admin.entries
       .list({
-        languageCode: filter === ALL ? undefined : filter,
+        languageCode: spanLanguages ? undefined : language,
         categoryId: category === ALL ? undefined : category,
         limit: pageSize,
         offset: page * pageSize,
@@ -108,7 +92,7 @@ export function EntryManager({
         if (page > last) setPage(last);
       })
       .catch(() => setMsg("Failed to load entries"));
-  }, [filter, category, q, page, pageSize]);
+  }, [spanLanguages, language, category, q, page, pageSize]);
 
   useEffect(load, [load]);
 
@@ -128,13 +112,14 @@ export function EntryManager({
           />
         </div>
         <Select
-          value={filter}
+          value={spanLanguages ? ALL : language}
           onValueChange={(v) => {
-            setFilter(v);
+            setSpanLanguages(v === ALL);
             // The categories of the language just left don't exist in the new
             // scope, so the filter can't survive the switch.
             setCategory(ALL);
             setPage(0);
+            if (v !== ALL && v !== language) onLanguageChange(v);
           }}
         >
           <SelectTrigger className="w-44" aria-label="Filter by language">

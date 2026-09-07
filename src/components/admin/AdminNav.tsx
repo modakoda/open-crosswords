@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { GridIcon, SparklesIcon, TableIcon, UploadIcon } from "lucide-react";
+import {
+  GridIcon,
+  LanguagesIcon,
+  SparklesIcon,
+  TableIcon,
+  UploadIcon,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { ADMIN_BASE_PATH, type AdminViewSegment } from "./views";
@@ -14,6 +20,7 @@ export const ADMIN_VIEWS: readonly {
 }[] = [
   { segment: "entries", label: "Entries", Icon: TableIcon },
   { segment: "puzzles", label: "Puzzles", Icon: GridIcon },
+  { segment: "languages", label: "Languages", Icon: LanguagesIcon },
   { segment: "import", label: "Bulk import", Icon: UploadIcon },
   { segment: "ai", label: "AI draft", Icon: SparklesIcon },
 ];

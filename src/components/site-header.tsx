@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { GridIcon, MenuIcon, ShieldIcon, UserIcon } from "lucide-react";
+import { GridIcon, MenuIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { useSession } from "@/lib/auth-client";
+import { UserMenu } from "@/components/user-menu";
 import type { Locale, Messages } from "@/lib/i18n";
 
 function isActive(pathname: string, href: string) {
@@ -36,17 +36,10 @@ export function SiteHeader({
   isAdmin: boolean;
 }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
-  const nav = [
-    { href: "/public", label: messages.nav.generate, icon: GridIcon },
-    session
-      ? { href: "/client/dashboard", label: messages.nav.client, icon: UserIcon }
-      : { href: "/client/login", label: messages.nav.signIn, icon: UserIcon },
-    ...(isAdmin
-      ? [{ href: "/admin/dashboard", label: messages.nav.admin, icon: ShieldIcon }]
-      : []),
-  ];
+  // Destinations only. Everything about the signed-in account — the address,
+  // the dashboards, sign-out — belongs to `UserMenu`.
+  const nav = [{ href: "/public", label: messages.nav.generate, icon: GridIcon }];
 
   return (
     <header className="no-print sticky top-0 z-40 border-b border-border/60 bg-background/70 backdrop-blur-xl supports-[backdrop-filter]:bg-background/50">
@@ -87,6 +80,7 @@ export function SiteHeader({
           </nav>
           <LanguageSwitcher currentLocale={locale} ariaLabel={messages.language} />
           <ThemeToggle />
+          <UserMenu messages={messages} isAdmin={isAdmin} />
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>

@@ -72,3 +72,7 @@ Conventions:
   or secret-leak finding to advisory.
 - Prioritize the admin gate, injection, and untrusted-input (import/AI) risks
   over cosmetic hardening.
+
+Response format (hard rule):
+- Return no explanation beyond the findings themselves. No preamble, no narration of what you read or how you searched, no recap of the task, no closing summary.
+- Output only the findings/answer in the format above. If there is nothing to report, reply with one line saying so.

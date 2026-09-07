@@ -8,6 +8,7 @@ import { LANGUAGE_CODE } from "@/lib/validation/schemas";
 import { AdminLanguageBar } from "./AdminLanguageBar";
 import { AdminNav } from "./AdminNav";
 import { AdminWorkspaceProvider, type Category, type Language } from "./workspace";
+import { usesWorkingLanguagePicker } from "./views";
 
 /** Used only until the language list loads, or if the library has none yet. */
 const FALLBACK_LANGUAGE = "en";
@@ -15,7 +16,9 @@ const FALLBACK_LANGUAGE = "en";
 /**
  * Chrome shared by every admin view. The view itself is a route (`children`),
  * and the working language is a `?lang=` query param rather than component
- * state, so any admin screen can be linked to, bookmarked and reloaded.
+ * state, so any admin screen can be linked to, bookmarked and reloaded. The
+ * picker for it belongs to the views that have no listing of their own to
+ * filter (see `usesWorkingLanguagePicker`); the rest set it from their toolbar.
  */
 export function AdminShell({
   aiEnabled,
@@ -40,9 +43,11 @@ export function AdminShell({
       ? requested
       : (languages[0]?.code ?? FALLBACK_LANGUAGE);
 
-  useEffect(() => {
+  const reloadLanguages = useCallback(() => {
     orpc.languages.list().then((d) => setLanguages(d.languages)).catch(() => {});
   }, []);
+
+  useEffect(reloadLanguages, [reloadLanguages]);
 
   // Write the resolved language back so the address bar always describes what
   // is on screen — deferred until the list is known, or an unloaded page would
@@ -73,8 +78,24 @@ export function AdminShell({
   );
 
   const workspace = useMemo(
-    () => ({ languages, language, categories, reloadCategories, aiEnabled }),
-    [languages, language, categories, reloadCategories, aiEnabled],
+    () => ({
+      languages,
+      reloadLanguages,
+      language,
+      setLanguage,
+      categories,
+      reloadCategories,
+      aiEnabled,
+    }),
+    [
+      languages,
+      reloadLanguages,
+      language,
+      setLanguage,
+      categories,
+      reloadCategories,
+      aiEnabled,
+    ],
   );
 
   return (
@@ -82,8 +103,10 @@ export function AdminShell({
       <AdminLanguageBar
         language={language}
         languages={languages}
+        // Entries, puzzles and the languages view all have a listing of their
+        // own; a picker here as well would be two controls for one thing.
+        showLanguage={usesWorkingLanguagePicker(pathname)}
         onLanguageChange={setLanguage}
-        onLanguagesChanged={setLanguages}
       />
       <AdminNav language={language} />
       <AdminWorkspaceProvider value={workspace}>{children}</AdminWorkspaceProvider>

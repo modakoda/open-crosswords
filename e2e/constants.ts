@@ -62,4 +62,10 @@ export const PUZZLE_URL_PATTERN = /\/public\/puzzles\/[a-z]+(-[a-z]+){3}-\d{8}$/
  * specs assert the routes the app is expected to expose rather than whatever
  * it currently lists.
  */
-export const ADMIN_VIEWS = ["entries", "puzzles", "import", "ai"] as const;
+export const ADMIN_VIEWS = [
+  "entries",
+  "puzzles",
+  "languages",
+  "import",
+  "ai",
+] as const;

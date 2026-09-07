@@ -44,7 +44,12 @@ export const ADMIN_PROCEDURES: { path: string; input: unknown }[] = [
     path: "admin/entries/aiDraft",
     input: { languageCode: E2E_LANGUAGE_CODE, topic: "should never be drafted", count: 1 },
   },
+  { path: "admin/languages/list", input: undefined },
   { path: "admin/languages/create", input: { code: "qq", name: "Should never exist" } },
+  {
+    path: "admin/languages/rename",
+    input: { code: E2E_LANGUAGE_CODE, name: "Should never be renamed" },
+  },
   {
     path: "admin/categories/create",
     input: { languageCode: E2E_LANGUAGE_CODE, name: "Should never exist" },

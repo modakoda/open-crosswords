@@ -7,9 +7,10 @@ import { useAdminWorkspace } from "./workspace";
 
 const replace = vi.fn();
 let search = new URLSearchParams();
+let pathname = "/admin/dashboard/entries";
 
 vi.mock("next/navigation", () => ({
-  usePathname: () => "/admin/dashboard/entries",
+  usePathname: () => pathname,
   useSearchParams: () => search,
   useRouter: () => ({ replace, push: vi.fn(), refresh: vi.fn() }),
 }));
@@ -20,7 +21,6 @@ vi.mock("@/lib/orpc/client", () => ({
   orpc: {
     languages: { list: vi.fn() },
     categories: { list: vi.fn() },
-    admin: { languages: { create: vi.fn() } },
   },
 }));
 
@@ -45,8 +45,9 @@ function Probe() {
   );
 }
 
-function renderShell(query = "") {
+function renderShell(query = "", route = "/admin/dashboard/entries") {
   search = new URLSearchParams(query);
+  pathname = route;
   return render(
     <AdminShell aiEnabled={false}>
       <Probe />
@@ -100,14 +101,44 @@ describe("AdminShell working language", () => {
 
   it("switching the working language navigates rather than holding local state", async () => {
     const user = userEvent.setup();
-    renderShell("lang=en");
+    renderShell("lang=en", "/admin/dashboard/import");
     await waitFor(() => expect(screen.getByTestId("count")).toHaveTextContent("2"));
 
-    await user.click(screen.getAllByRole("combobox")[0]);
+    await user.click(screen.getByRole("combobox", { name: "Working language" }));
     await user.click(screen.getByRole("option", { name: "Lietuvių (lt)" }));
 
-    expect(replace).toHaveBeenCalledWith("/admin/dashboard/entries?lang=lt", {
+    expect(replace).toHaveBeenCalledWith("/admin/dashboard/import?lang=lt", {
       scroll: false,
     });
+  });
+
+  it("leaves adding a language to the languages view, not the chrome", async () => {
+    renderShell("lang=en", "/admin/dashboard/entries");
+    await waitFor(() => expect(screen.getByTestId("count")).toHaveTextContent("2"));
+    expect(screen.queryByText("Add a language")).not.toBeInTheDocument();
+  });
+
+  it("offers the picker only to the views without a language filter of their own", async () => {
+    const { unmount } = renderShell("lang=en", "/admin/dashboard/import");
+    await waitFor(() => expect(screen.getByTestId("count")).toHaveTextContent("2"));
+    expect(
+      screen.getByRole("combobox", { name: "Working language" }),
+    ).toBeInTheDocument();
+    unmount();
+
+    for (const route of [
+      "/admin/dashboard/entries",
+      "/admin/dashboard/puzzles",
+      "/admin/dashboard/languages",
+    ]) {
+      const view = renderShell("lang=en", route);
+      await waitFor(() => expect(screen.getByTestId("count")).toHaveTextContent("2"));
+      // The listing's own "Filter by language" is the control there; a second
+      // one here would be two ways to set one thing.
+      expect(
+        screen.queryByRole("combobox", { name: "Working language" }),
+      ).not.toBeInTheDocument();
+      view.unmount();
+    }
   });
 });

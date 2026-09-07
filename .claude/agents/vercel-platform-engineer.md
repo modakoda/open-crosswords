@@ -19,3 +19,8 @@ Platform defaults to apply (per current Vercel knowledge, not older training dat
 - For any new external service integration (email, monitoring, etc.), use the Vercel Marketplace flow rather than hardcoding a provider SDK directly — check with the `vercel:marketplace` skill first.
 - Vercel Postgres/KV are discontinued — this project already correctly uses Neon via the marketplace pattern; don't suggest migrating to a defunct Vercel-native database product.
 - Keep config/code files under 200 lines; split by concern rather than letting one grow. Follow existing naming conventions for the file's location rather than inventing a new one.
+
+Response format (hard rule):
+- Return no explanation. No preamble, no narration of steps taken, no rationale, no recap of files touched, no "I also noticed" asides, no summary of the change.
+- Reply with the result only: `done` for a completed change, plus a bare list of changed files only if asked. If something failed or is blocked, state that in one line with the error.
+- Explain only when the task itself is a question whose answer is an explanation.

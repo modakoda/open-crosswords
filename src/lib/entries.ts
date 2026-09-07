@@ -76,7 +76,7 @@ export async function createEntry(input: CreateEntryInput) {
         clue: input.clue,
         answer: input.answer,
         answerNormalized,
-        length: Array.from(answerNormalized).length,
+        length: answerNormalized.length,
         difficulty: input.difficulty,
         source: input.source,
       })
@@ -149,7 +149,7 @@ export async function updateEntry(
     }
     if (patch.answer !== undefined) set.answer = answer;
     set.answerNormalized = answerNormalized;
-    set.length = Array.from(answerNormalized).length;
+    set.length = answerNormalized.length;
   }
 
   if ("categoryId" in patch) {

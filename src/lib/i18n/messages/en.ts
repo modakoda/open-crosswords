@@ -2,6 +2,10 @@ export const en = {
   header: {
     nav: { generate: "Generate", admin: "Admin", client: "My puzzles", signIn: "Sign in" },
     menu: "Menu",
+    account: "Account",
+    signOut: "Sign out",
+    signUp: "Create account",
+    signOutFailed: "Sign out failed. Please try again.",
     source: "Source",
     sourceAria: "Source on GitHub",
     language: "Language",

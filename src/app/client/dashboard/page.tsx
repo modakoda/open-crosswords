@@ -19,5 +19,5 @@ export default async function ClientDashboardPage() {
   ]);
   const messages = getMessages(locale);
 
-  return <ClientDashboard email={user.email} puzzles={puzzles} messages={messages.client} />;
+  return <ClientDashboard puzzles={puzzles} messages={messages.client} />;
 }

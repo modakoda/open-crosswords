@@ -35,6 +35,7 @@ A single Next.js App Router app that:
 | `npm run db:studio` | Drizzle Studio against `DATABASE_URL` |
 | `npm run seed -- [file]` | Load a data file (default `data/seed-en.json`) |
 | `npm run import -- <lang> <file.csv\|json>` | Bulk import into one language |
+| `npm run renormalize -- [lang]` | Recompute every entry's grid form after `normalize.ts`'s rules change |
 | `npm run create-admin -- <email> <name> <password>` | Provision an admin login |
 
 ## Layout
@@ -58,6 +59,8 @@ src/db/schema/            Drizzle schema: auth.ts, content.ts, solve-state.ts
 src/lib/crossword/        engine: normalize, select, generate, number, rng,
                           word (solve-UI word/cursor geometry)
 src/lib/                  puzzles/ (types+queries), entries, taxonomy, import, csv, paper,
+                          renormalize (rewrite stored grid forms after a
+                          normalize.ts rules change),
                           rate-limit, client-ip (the one trusted address
                           header), auth-throttle (per-account sign-in backoff)
                           + known-device, solve-state, slug, puzzle-slug
@@ -123,6 +126,13 @@ font and column count that fit the space left over. The generate form's difficul
 `medium` / `hard`) maps to inclusive `entries.difficulty` bounds via
 `difficultyRange` in `src/lib/difficulty.ts`, applied both in the candidate
 query and in `selectCandidates`. A `seed` makes the whole thing reproducible.
+
+## Response style
+
+No explanation. Return only the answer asked for — no narration of steps, no
+rationale, no recap of files touched, no unsolicited observations. For a change
+task, a bare `done` (plus anything that actually failed) is the whole reply.
+Explain only when the task itself is a question whose answer is an explanation.
 
 <!-- BEGIN:nextjs-agent-rules -->
 

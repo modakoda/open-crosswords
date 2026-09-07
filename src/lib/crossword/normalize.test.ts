@@ -57,4 +57,8 @@ describe("isPlaceableAnswer", () => {
     expect(isPlaceableAnswer("Ž".repeat(21))).toBe(true);
     expect(isPlaceableAnswer("Ž".repeat(22))).toBe(false);
   });
+
+  it("rejects a language code that names an inherited property", () => {
+    expect(normalizeAnswer("žuvis", "constructor")).toBe("ZUVIS");
+  });
 });

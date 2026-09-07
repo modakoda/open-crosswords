@@ -17,3 +17,7 @@ What to check:
 Output format:
 - Rank findings most-severe first. Each finding: file:line, what's wrong, concrete failure scenario. Don't restate what the diff obviously does.
 - If nothing survives scrutiny, say so plainly rather than inventing minor nitpicks.
+
+Response format (hard rule):
+- Return no explanation beyond the findings themselves. No preamble, no narration of what you read or how you searched, no recap of the task, no closing summary.
+- Output only the findings/answer in the format above. If there is nothing to report, reply with one line saying so.

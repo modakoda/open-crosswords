@@ -251,26 +251,37 @@ The library starts empty either way. Load the bundled English starter set with
 ## Adding questions
 
 - **Admin UI** (`/admin/dashboard/entries`) — add one clue/answer at a
-  time, with an optional category and difficulty 1–5. Existing rows are edited
-  from their row menu (**Edit**), which reopens the same form on that entry —
-  in the entry's own language, whichever one the listing is scoped to. That
-  language can be changed there too, which moves the entry; its category can't
-  follow (categories belong to one language), so pick or name one in the
+  time, with an optional category and difficulty 1–5. The listing's language
+  filter is also what a new entry is added to, so scope it first (**All
+  languages** widens the listing without changing that). Existing rows are
+  edited from their row menu (**Edit**), which reopens the same form on that
+  entry — in the entry's own language, whichever one the listing is scoped to.
+  That language can be changed there too, which moves the entry; its category
+  can't follow (categories belong to one language), so pick or name one in the
   language you're moving to.
 - **Bulk import** (`/admin/dashboard/import`, or
   `npm run import -- <lang> <file>`):
   - JSON: `[{ "clue": "...", "answer": "...", "category": "...", "difficulty": 3 }]`
     (or `{ "entries": [...] }`)
   - CSV: header row with `clue,answer[,category][,difficulty]`
-  - Answers are normalised to grid letters (accents folded, non-letters dropped).
+  - Answers are normalised to grid letters: non-letters are dropped and
+    accents are folded to their base letter, except in languages whose
+    alphabet counts them as letters of their own — a Lithuanian `žuvis`
+    stays `ŽUVIS`, a French `café` becomes `CAFE`. Add a language to that
+    list in `DISTINCT_LETTERS` (`src/lib/crossword/normalize.ts`), then run
+    `npm run renormalize -- <lang>` to bring entries already imported under
+    the old rules into line.
     Unknown categories are created automatically; exact duplicates are skipped.
 - **AI draft** (`/admin/dashboard/ai`, needs `ANTHROPIC_API_KEY`) —
   describe a topic and language, review the suggestions, save the ones you want.
 
 ### Add a language
 
-Any BCP-47-ish code (`en`, `lt`, `pt-br`, …) works. Pick or type it in the admin
-dashboard and start adding entries, or:
+Any BCP-47-ish code (`en`, `lt`, `pt-br`, …) works. Type it into **Add a
+language** in the dashboard header — the whole dashboard switches to it — and
+start adding entries. Afterwards you pick the language you're working in from
+the listing's own filter on the entries and puzzles views, or from **Working
+language** on bulk import and AI draft. Or from the command line:
 
 ```bash
 npm run import -- lt data/my-lithuanian-clues.csv

@@ -1,66 +1,30 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { LogOutIcon, PuzzleIcon } from "lucide-react";
+import { PuzzleIcon } from "lucide-react";
 
-import { signOut } from "@/lib/auth-client";
 import type { PuzzleSummary } from "@/lib/puzzles";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Messages } from "@/lib/i18n";
 
+/** The account itself — the signed-in address and signing out — is the
+ *  header's user menu, so this page is only the puzzle listing. */
 export function ClientDashboard({
-  email,
   puzzles,
   messages,
 }: {
-  email: string;
   puzzles: PuzzleSummary[];
   messages: Messages["client"];
 }) {
-  const router = useRouter();
-  const [signOutFailed, setSignOutFailed] = useState(false);
   const t = messages;
-
-  // better-auth's client resolves to `{ data, error }` rather than throwing,
-  // so a rejected sign-out (its rate limit covers /sign-out too) would
-  // otherwise land on the login page with the session cookie still live.
-  async function handleSignOut() {
-    const result = await signOut();
-    if (result?.error) {
-      setSignOutFailed(true);
-      return;
-    }
-    router.push("/client/login");
-    router.refresh();
-  }
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="bg-gradient-to-br from-foreground to-primary bg-clip-text text-2xl font-semibold tracking-tight text-transparent">
-            {t.dashboardTitle}
-          </h1>
-          <p className="text-sm text-muted-foreground">{t.dashboardSubtitle}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{email}</span>
-          {signOutFailed && (
-            <span role="alert" className="text-sm text-destructive">
-              {t.errorGeneric}
-            </span>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleSignOut}
-          >
-            <LogOutIcon />
-            {t.signOut}
-          </Button>
-        </div>
+      <header>
+        <h1 className="bg-gradient-to-br from-foreground to-primary bg-clip-text text-2xl font-semibold tracking-tight text-transparent">
+          {t.dashboardTitle}
+        </h1>
+        <p className="text-sm text-muted-foreground">{t.dashboardSubtitle}</p>
       </header>
 
       {puzzles.length === 0 ? (

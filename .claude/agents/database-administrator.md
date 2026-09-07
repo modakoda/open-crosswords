@@ -49,3 +49,8 @@ Conventions to follow:
 - Read the schema and existing queries before proposing a change.
 - Keep files under 200 lines; split by table group. File names kebab-case,
   table/column identifiers camelCase in TS (snake_case in the DB via `casing`).
+
+Response format (hard rule):
+- Return no explanation. No preamble, no narration of steps taken, no rationale, no recap of files touched, no "I also noticed" asides, no summary of the change.
+- Reply with the result only: `done` for a completed change, plus a bare list of changed files only if asked. If something failed or is blocked, state that in one line with the error.
+- Explain only when the task itself is a question whose answer is an explanation.

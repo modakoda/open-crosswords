@@ -454,3 +454,63 @@ describe("admin.languages.create", () => {
     ).rejects.toThrow();
   });
 });
+
+describe("admin.languages.list", () => {
+  it("rejects a non-admin", async () => {
+    adminState.allow = false;
+    await expect(call(adminRouter.languages.list, undefined, ctx())).rejects.toThrow();
+  });
+
+  it("counts what each language holds, so an empty code is visible as one", async () => {
+    await call(adminRouter.languages.create, { code: "en", name: "English" }, ctx());
+    await call(adminRouter.languages.create, { code: "lt", name: "Lietuvių" }, ctx());
+    await call(
+      adminRouter.entries.create,
+      { languageCode: "en", clue: "Capital of France", answer: "Paris" },
+      ctx(),
+    );
+    await call(
+      adminRouter.categories.create,
+      { languageCode: "en", name: "Geography" },
+      ctx(),
+    );
+
+    const { languages: list } = await call(adminRouter.languages.list, undefined, ctx());
+    const en = list.find((l) => l.code === "en");
+    const lt = list.find((l) => l.code === "lt");
+    expect(en).toMatchObject({ entryCount: 1, categoryCount: 1, puzzleCount: 0 });
+    expect(lt).toMatchObject({ entryCount: 0, categoryCount: 0, puzzleCount: 0 });
+  });
+});
+
+describe("admin.languages.rename", () => {
+  it("rejects a non-admin", async () => {
+    adminState.allow = false;
+    await expect(
+      call(adminRouter.languages.rename, { code: "lt", name: "Lithuanian" }, ctx()),
+    ).rejects.toThrow();
+  });
+
+  it("changes the display name and leaves the code alone", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "LT" }, ctx());
+    const { languages: list } = await call(
+      adminRouter.languages.rename,
+      { code: "lt", name: "Lietuvių" },
+      ctx(),
+    );
+    expect(list).toEqual([expect.objectContaining({ code: "lt", name: "Lietuvių" })]);
+  });
+
+  it("404s rather than inventing a language it was asked to rename", async () => {
+    await expect(
+      call(adminRouter.languages.rename, { code: "lt", name: "Lietuvių" }, ctx()),
+    ).rejects.toThrow();
+  });
+
+  it("rejects an empty name", async () => {
+    await call(adminRouter.languages.create, { code: "lt", name: "LT" }, ctx());
+    await expect(
+      call(adminRouter.languages.rename, { code: "lt", name: "   " }, ctx()),
+    ).rejects.toThrow();
+  });
+});
