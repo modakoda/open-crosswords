@@ -68,8 +68,13 @@ npm run db:migrate            # apply migrations
 npm run dev                   # http://localhost:3000
 ```
 
+<<<<<<< Updated upstream
 The question library starts empty. Add clues from `/admin/dashboard/import`,
 or run `npm run seed` to load the bundled English starter set
+=======
+The question library starts empty. Add clues from `/admin/dashboard` →
+*Bulk import*, or run `npm run seed` to load the bundled English starter set
+>>>>>>> Stashed changes
 (`data/seed-en.json`). A Lithuanian starter set is also bundled
 (`npm run seed -- data/seed-lt.json`), covering easy through hard, more
 obscure clues. For a much larger English pool (~1.1M entries
@@ -271,7 +276,11 @@ npm run import -- lt data/my-lithuanian-clues.csv
 
 ## Managing generated puzzles
 
+<<<<<<< Updated upstream
 `/admin/dashboard/puzzles` lists every puzzle the app has generated —
+=======
+`/admin/dashboard` → *Puzzles* lists every puzzle the app has generated —
+>>>>>>> Stashed changes
 newest first, filterable by language and searchable by title or link. Each row
 shows its grid size, word count, paper setting and who generated it (or
 *Anonymous*), and links straight to the solve and print views. From the row

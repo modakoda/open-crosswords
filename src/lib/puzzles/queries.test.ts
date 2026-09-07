@@ -100,6 +100,15 @@ describe("generatePuzzle", () => {
 
     const fromDb = await getPuzzleBySlug(dto.slug);
     expect(fromDb?.title).toBe(dto.title);
+
+    // an untitled puzzle is named after its own slug
+    expect(dto.title).toBe(
+      dto.slug
+        .split("-")
+        .slice(0, 4)
+        .map((w) => w[0].toUpperCase() + w.slice(1))
+        .join(" "),
+    );
   });
 
   it("marks the entries it used (timesUsed / lastUsedAt)", async () => {

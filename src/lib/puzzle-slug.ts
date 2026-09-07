@@ -30,3 +30,17 @@ export function generatePuzzleSlug(): string {
     randomInt(NUMBER_MIN, NUMBER_MAX),
   ].join("-");
 }
+
+/**
+ * Human-readable name for an untitled puzzle, taken from its own slug so the
+ * name a solver sees matches the link they were sent — `Amber Quiet Otter
+ * Canyon` for `amber-quiet-otter-canyon-48392174`. The trailing digits are
+ * dropped; a legacy random-id slug carries no words, so callers fall back.
+ */
+export function puzzleNameFromSlug(slug: string): string | null {
+  const words = slug
+    .split("-")
+    .filter((part) => /^[a-z]+$/.test(part))
+    .map((part) => part[0].toUpperCase() + part.slice(1));
+  return words.length ? words.join(" ") : null;
+}

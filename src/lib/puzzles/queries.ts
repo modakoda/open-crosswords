@@ -6,6 +6,7 @@ import type { Candidate, Placement } from "@/lib/crossword/types";
 import { randomSeed } from "@/lib/crossword/rng";
 import { difficultyRange, type DifficultyLevel } from "@/lib/difficulty";
 import { paperToGrid } from "@/lib/paper";
+import { puzzleNameFromSlug } from "@/lib/puzzle-slug";
 import type { GeneratePuzzleInput } from "@/lib/validation/schemas";
 import { insertUniquePuzzle } from "./insert-unique";
 import { toClues, type PuzzleDTO, type PuzzleSummary } from "./types";
@@ -101,8 +102,11 @@ export async function generatePuzzle(
     );
   }
 
-  const title =
-    input.title ?? `${input.languageCode.toUpperCase()} crossword`;
+  /** Untitled puzzles are named after their own slug, so name and link match. */
+  const titleFor = (slug: string) =>
+    input.title ??
+    puzzleNameFromSlug(slug) ??
+    `${input.languageCode.toUpperCase()} crossword`;
   const usedIds = crossword.placements.map((p) => p.entryId);
 
   const insertWithSlug = (slug: string) =>
@@ -111,7 +115,7 @@ export async function generatePuzzle(
         .insert(puzzles)
         .values({
           slug,
-          title,
+          title: titleFor(slug),
           languageCode: input.languageCode,
           userId,
           paperSize: input.paperSize,
@@ -138,7 +142,7 @@ export async function generatePuzzle(
   return {
     id,
     slug,
-    title,
+    title: titleFor(slug),
     languageCode: input.languageCode,
     paperSize: input.paperSize,
     orientation: input.orientation,

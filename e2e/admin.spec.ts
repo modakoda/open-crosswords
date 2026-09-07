@@ -107,7 +107,11 @@ test.describe("admin dashboard", () => {
 
   test("imports entries from a chosen JSON file", async ({ page }) => {
     const clue = `E2E file import clue ${Date.now()}`;
+<<<<<<< Updated upstream
     await page.getByRole("link", { name: "Bulk import" }).click();
+=======
+    await page.getByRole("tab", { name: "Bulk import" }).click();
+>>>>>>> Stashed changes
 
     await page.getByLabel("Choose a JSON or CSV file").setInputFiles({
       name: "entries.json",
@@ -121,7 +125,11 @@ test.describe("admin dashboard", () => {
     await page.getByRole("button", { name: "Import" }).click();
     await expect(page.getByText(/Inserted 1, skipped 0 duplicate\(s\), 0 error\(s\)\./)).toBeVisible();
 
+<<<<<<< Updated upstream
     await page.getByRole("link", { name: "Entries" }).click();
+=======
+    await page.getByRole("tab", { name: "Entries" }).click();
+>>>>>>> Stashed changes
     await expect(page.getByRole("row").filter({ hasText: clue })).toBeVisible();
   });
 
@@ -132,18 +140,29 @@ test.describe("admin dashboard", () => {
       answer: `Batched${i}`,
     }));
 
+<<<<<<< Updated upstream
     await page.getByRole("link", { name: "Bulk import" }).click();
+=======
+    await page.getByRole("tab", { name: "Bulk import" }).click();
+>>>>>>> Stashed changes
     await page.getByLabel("Choose a JSON or CSV file").setInputFiles({
       name: "big.json",
       mimeType: "application/json",
       buffer: Buffer.from(JSON.stringify(rows)),
     });
 
+<<<<<<< Updated upstream
     // 600 rows exceeds the 500-row chunk cap, so this goes out as two requests.
     await page.getByRole("button", { name: "Import" }).click();
     await expect(
       page.getByText(/Inserted 600, skipped 0 duplicate\(s\), 0 error\(s\)\./),
     ).toBeVisible({ timeout: 60_000 });
+=======
+    await page.getByRole("button", { name: "Import" }).click();
+    await expect(page.getByText(/Inserted 600, skipped 0 duplicate\(s\), 0 error\(s\)\./)).toBeVisible({
+      timeout: 60_000,
+    });
+>>>>>>> Stashed changes
   });
 
   test("pages through the entry listing", async ({ page }) => {
