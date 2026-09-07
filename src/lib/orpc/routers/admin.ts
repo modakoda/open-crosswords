@@ -86,7 +86,6 @@ const entriesDelete = adminProcedure
     return { deleted: true };
   });
 
-<<<<<<< Updated upstream
 /**
  * Bulk delete. Unlike the single delete this doesn't 404 on ids that no longer
  * exist — a selection can go stale between listing and confirming, and the
@@ -100,8 +99,6 @@ const entriesDeleteMany = adminProcedure
     return { deleted: rows.length };
   });
 
-=======
->>>>>>> Stashed changes
 const MAX_IMPORT_ROWS = 2000;
 
 const entriesImport = adminProcedure.input(importSchema).handler(async ({ input }) => {

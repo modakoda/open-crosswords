@@ -30,7 +30,7 @@ describe("SiteFooter", () => {
     const messages = renderFooter();
     expect(
       screen.getByRole("link", { name: messages.header.sourceAria }),
-    ).toHaveAttribute("href", "https://github.com/open-crosswords/open-crosswords");
+    ).toHaveAttribute("href", "https://github.com/modakoda/open-crosswords");
   });
 
   it("renders the localised attribution label", () => {

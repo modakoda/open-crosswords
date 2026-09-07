@@ -3,7 +3,7 @@ import { ArrowUpRightIcon, GridIcon, LinkIcon } from "lucide-react";
 import { GithubIcon } from "@/components/icons";
 import type { Messages } from "@/lib/i18n";
 
-const REPO_URL = "https://github.com/open-crosswords/open-crosswords";
+const REPO_URL = "https://github.com/modakoda/open-crosswords";
 const AUTHOR_URL = "https://modakoda.com";
 
 /**

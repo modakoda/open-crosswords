@@ -93,7 +93,6 @@ export function EntryTable({
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
-<<<<<<< Updated upstream
               <TableHead className="w-10">
                 <Checkbox
                   aria-label="Select all rows"
@@ -102,8 +101,6 @@ export function EntryTable({
                   onCheckedChange={selection.toggleAll}
                 />
               </TableHead>
-=======
->>>>>>> Stashed changes
               <TableHead>Lang</TableHead>
               <TableHead>Clue</TableHead>
               <TableHead>Answer</TableHead>
@@ -117,17 +114,12 @@ export function EntryTable({
           <TableBody>
             {rows.length === 0 && (
               <TableRow>
-<<<<<<< Updated upstream
                 <TableCell colSpan={9} className="py-10 text-center text-sm text-muted-foreground">
-=======
-                <TableCell colSpan={8} className="py-10 text-center text-sm text-muted-foreground">
->>>>>>> Stashed changes
                   No entries {q ? "match your search" : "yet"}.
                 </TableCell>
               </TableRow>
             )}
             {rows.map((e) => (
-<<<<<<< Updated upstream
               <TableRow
                 key={e.id}
                 data-disabled={!e.enabled}
@@ -140,9 +132,6 @@ export function EntryTable({
                     onCheckedChange={() => selection.toggle(e.id)}
                   />
                 </TableCell>
-=======
-              <TableRow key={e.id} data-disabled={!e.enabled}>
->>>>>>> Stashed changes
                 <TableCell>
                   <Badge variant="outline" className="font-mono text-xs uppercase">
                     {e.languageCode}
