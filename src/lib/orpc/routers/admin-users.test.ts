@@ -123,9 +123,9 @@ describe("admin.users.list", () => {
       "createdAt",
       "email",
       "emailVerified",
+      "holdsAdminAddress",
       "id",
       "isAdmin",
-      "isPendingAdmin",
       "name",
       "puzzleCount",
       "solveCount",
@@ -139,8 +139,8 @@ describe("admin.users.list", () => {
 
     const rows = (await call(adminUsersRouter.list, {}, ctx())).rows;
     const by = (id: string) => rows.find((r) => r.id === id)!;
-    expect(by("the-admin")).toMatchObject({ isAdmin: true, isPendingAdmin: false });
-    expect(by("client")).toMatchObject({ isAdmin: false, isPendingAdmin: false });
+    expect(by("the-admin")).toMatchObject({ isAdmin: true, holdsAdminAddress: false });
+    expect(by("client")).toMatchObject({ isAdmin: false, holdsAdminAddress: false });
 
     // Same address, email not verified: allow-listed but no access yet.
     await db.delete(user).where(sql`${user.id} = 'the-admin'`);
@@ -148,7 +148,7 @@ describe("admin.users.list", () => {
     const again = (await call(adminUsersRouter.list, {}, ctx())).rows;
     expect(again.find((r) => r.id === "unverified-admin")).toMatchObject({
       isAdmin: false,
-      isPendingAdmin: true,
+      holdsAdminAddress: true,
     });
   });
 
@@ -211,18 +211,28 @@ describe("admin.users.delete", () => {
     expect(row.userId).toBeNull();
   });
 
-  it("refuses to delete an allow-listed admin, verified or not", async () => {
+  it("refuses to delete an admin — allow-listed and verified", async () => {
     await seedUser("other-admin", { email: ADMIN_EMAIL });
     await expect(
       call(adminUsersRouter.delete, { id: "other-admin" }, ctx()),
     ).rejects.toThrow(/out-of-band/);
-
-    await db.update(user).set({ emailVerified: false });
-    await expect(
-      call(adminUsersRouter.delete, { id: "other-admin" }, ctx()),
-    ).rejects.toThrow(/out-of-band/);
-
     expect(await db.select().from(user)).toHaveLength(1);
+  });
+
+  /**
+   * The mirror of the case above, and the reason the guard tests both halves.
+   * `npm run create-admin` verifies in the same run and refuses an address an
+   * unverified account already holds, so this row is a public sign-up
+   * squatting an allow-listed address: no admin access, and it blocks that
+   * address from ever being provisioned. Shielding it would make the block
+   * permanent, so it must stay removable.
+   */
+  it("deletes an unverified account squatting an allow-listed address", async () => {
+    await seedUser("squatter", { email: ADMIN_EMAIL, emailVerified: false });
+    await expect(
+      call(adminUsersRouter.delete, { id: "squatter" }, ctx()),
+    ).resolves.toMatchObject({ deleted: true });
+    expect(await db.select().from(user)).toHaveLength(0);
   });
 
   it("refuses to delete the calling admin's own account", async () => {
@@ -264,7 +274,7 @@ describe("admin.users.revokeSessions", () => {
     expect(await db.select().from(user)).toHaveLength(2);
   });
 
-  it("refuses to touch an admin account or the caller's own", async () => {
+  it("refuses to touch a verified admin account or the caller's own", async () => {
     await seedUser("other-admin", { email: ADMIN_EMAIL });
     await seedUser("admin-self", { email: "someone-else@example.com" });
     await seedSession("a1", "other-admin", hour(1));

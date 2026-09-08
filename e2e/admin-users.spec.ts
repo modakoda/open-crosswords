@@ -25,12 +25,24 @@ test.describe("admin users view", () => {
 
   test("lists accounts and marks who is an administrator", async ({ page }) => {
     await expect(rowFor(page, E2E_CLIENT_EMAIL)).toBeVisible();
-    await expect(rowFor(page, E2E_ADMIN_EMAIL).getByText("Admin")).toBeVisible();
-    await expect(rowFor(page, E2E_CLIENT_EMAIL).getByText("Client")).toBeVisible();
+    // Exact, or "Admin" also matches the name cell ("E2E Admin") and the
+    // address itself — the badge is the only thing under assertion here.
+    await expect(
+      rowFor(page, E2E_ADMIN_EMAIL).getByText("Admin", { exact: true }),
+    ).toBeVisible();
+    await expect(
+      rowFor(page, E2E_CLIENT_EMAIL).getByText("Client", { exact: true }),
+    ).toBeVisible();
   });
 
   test("searches by email", async ({ page }) => {
+    await expect(rowFor(page, E2E_CLIENT_EMAIL)).toBeVisible();
     await page.getByPlaceholder("Search name or email…").fill(E2E_CLIENT2_EMAIL);
+
+    // The summary is the only thing that distinguishes the filtered listing
+    // from the stale one — the searched-for row is on screen either way, so
+    // asserting it first would race the refetch rather than wait for it.
+    await expect(page.getByText("Showing 1–1 of 1")).toBeVisible();
     await expect(rowFor(page, E2E_CLIENT2_EMAIL)).toBeVisible();
     await expect(rowFor(page, E2E_CLIENT_EMAIL)).toHaveCount(0);
   });

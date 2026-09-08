@@ -1,4 +1,4 @@
-import { and, eq, notExists, sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, entries, languages, puzzles } from "@/db/schema";
 import { slugify } from "@/lib/slug";
@@ -65,28 +65,49 @@ export async function renameLanguage(code: string, name: string) {
 }
 
 /**
- * Drops a language, but only while nothing depends on it. The guard is part of
- * the same statement as the delete — a separate "is it empty?" check would let
- * an entry land between the two, and `entries` cascades, so that entry would
- * be swept away with the language. Returns the removed row, or `undefined`
- * when there was nothing to remove *or* the language is still in use; the
- * caller tells those apart with `languageExists`.
+ * Drops a language, but only while nothing depends on it. Returns the removed
+ * row, or `undefined` when there was nothing to remove *or* the language is
+ * still in use; the caller tells those apart with `languageExists`.
  *
- * Categories go with it (they cascade, and a category can't outlive the
- * language it is scoped to); puzzles deliberately do not cascade, which is why
- * they are one of the two things that block the delete.
+ * The parent row is locked before anything is counted, and that ordering is
+ * load-bearing rather than incidental. A child insert naming this language
+ * takes a `FOR KEY SHARE` lock on it, which conflicts with `FOR UPDATE`, so
+ * the lock blocks every new entry and puzzle for the language until this
+ * transaction ends — which is what makes the emptiness check still true at the
+ * moment of the delete. A single guarded `DELETE ... WHERE NOT EXISTS(...)`
+ * would not: its subqueries are evaluated before it reaches the row lock, so
+ * an insert committing in between would be cascaded away with the language
+ * (`entries` cascades) or, for a puzzle, would fail the delete on the foreign
+ * key instead of being refused cleanly.
+ *
+ * Categories go with it — they cascade, and a category can't outlive the
+ * language it is scoped to. Puzzles deliberately don't, which is why they are
+ * one of the two things that block the delete.
  */
 export async function deleteLanguage(code: string) {
-  const unused = (table: typeof entries | typeof puzzles) =>
-    notExists(
-      db.select({ one: sql`1` }).from(table).where(eq(table.languageCode, code)),
-    );
+  return db.transaction(async (tx) => {
+    const [locked] = await tx
+      .select({ code: languages.code })
+      .from(languages)
+      .where(eq(languages.code, code))
+      .for("update");
+    if (!locked) return undefined;
 
-  const [row] = await db
-    .delete(languages)
-    .where(and(eq(languages.code, code), unused(entries), unused(puzzles)))
-    .returning();
-  return row;
+    const [{ inUse }] = await tx
+      .select({
+        inUse: sql<boolean>`(exists (select 1 from ${entries} where ${entries.languageCode} = ${code})
+          or exists (select 1 from ${puzzles} where ${puzzles.languageCode} = ${code}))`,
+      })
+      .from(languages)
+      .where(eq(languages.code, code));
+    if (inUse) return undefined;
+
+    const [row] = await tx
+      .delete(languages)
+      .where(eq(languages.code, code))
+      .returning();
+    return row;
+  });
 }
 
 /** Whether the library already has this language — see `updateEntry`. */

@@ -12,7 +12,7 @@ or solve them online via a shareable link. Open source, single Next.js app.
   `/client/dashboard`). `/` just redirects to `/public`, and the bare
   `/admin` and `/client` index pages redirect to their own dashboards.
   Every admin view is its own route rather than a tab —
-  `/admin/dashboard/{entries,puzzles,import,ai}`, with `/admin/dashboard`
+  `/admin/dashboard/{entries,puzzles,languages,users,import,ai}`, with `/admin/dashboard`
   redirecting to the first — so each one is linkable, bookmarkable and
   reload-safe. `src/app/admin/dashboard/layout.tsx` renders the chrome shared
   across views (`AdminShell`) and gates it, but **every page under it repeats
@@ -22,18 +22,21 @@ or solve them online via a shareable link. Open source, single Next.js app.
   entirely (`e2e/edge-cases.spec.ts` proves this per view). `getAdmin` is
   `cache()`-wrapped, so repeating it is free. Each page is a server component
   that guards, then renders a thin `*View` client component
-  (`src/components/admin/{Entries,Puzzles,Import,AiDraft}View.tsx`) that reads
+  (`src/components/admin/{Entries,Puzzles,Languages,Users,Import,AiDraft}View.tsx`)
+  that reads
   `useAdminWorkspace()`. The working language is a
-  `?lang=` search param, not component state, so a linked view opens scoped
-  the way the sender saw it; `AdminShell` validates it with `LANGUAGE_CODE`
+  `?lang=` search param, not component state, so a linked view opens with the
+  same working language the sender had; `AdminShell` validates it with `LANGUAGE_CODE`
   and falls back to the first language the library has. Only the views with
   no listing of their own — bulk import and AI draft
   (`usesWorkingLanguagePicker`) — show the shell's picker for it; the entries
   and puzzles listings set the same `?lang=` from their own "Filter by
-  language" control, so no view carries two controls for one thing (their
-  "All languages" option widens the listing without moving the working
-  language, which still governs what a new entry is created in). Segment names
-  live in `src/components/admin/views.ts` — a plain module, because the
+  language" control, so no view carries two controls for one thing. Those
+  listings **open across every language** regardless of `?lang=` — the working
+  language governs what a new entry is created in, not what the admin came to
+  read — and their "All languages" option returns to that wider view without
+  moving the working language. Segment names live in
+  `src/components/admin/views.ts` — a plain module, because the
   server-side redirect can't import them from `AdminNav` (`"use client"`).
 - **UI primitives** in `src/components/ui/` are shadcn/ui components (config in
   `components.json`) — build forms and controls from these (`Button`, `Input`,
@@ -71,9 +74,14 @@ or solve them online via a shareable link. Open source, single Next.js app.
   (question-library CRUD, the languages and language-scoped categories it
   files rows under, and bulk import — an entry can be moved between languages,
   but a category can't follow it; `deleteLanguage` drops a language only while
-  no entries and no puzzles name it, guarded inside the delete statement
-  itself rather than by a check before it, since `entries` cascades and a row
-  that landed between the two would be swept away with the language),
+  no entries and no puzzles name it, and locks the language row `for update`
+  before counting either — that lock is what blocks a concurrent insert naming
+  it, and without it a row landing after the check would be cascaded away with
+  the language, since `entries` cascades),
+  `users.ts` (the admin account listing plus account deletion and session
+  revocation — deleting an account cascades its sessions, credentials and
+  solve progress, but `puzzles.userId` is `on delete set null`, so the puzzles
+  it generated survive as anonymous ones and no shared link breaks),
   `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
   (per-user solve progress, read/write always scoped to the caller's own id),
   `print-layout.ts` (paper geometry: it sizes each print sheet's cells, clue
@@ -140,7 +148,18 @@ or solve them online via a shareable link. Open source, single Next.js app.
   The question library stays a single shared resource managed by admins
   (every `admin.*` oRPC procedure is admin-gated, including `admin.puzzles.*`
   — the only listing that spans every client's puzzles and surfaces their
-  owner's email, so it must never be reached from anywhere else).
+  owner's email, so it must never be reached from anywhere else — and
+  `admin.users.*`, which lists every registered account and can delete one or
+  revoke its sessions). Neither of those two destructive actions may target an
+  administrator: `targetOf` in `routers/admin-users.ts` refuses the calling
+  admin's own row and any row that is allow-listed **and** verified — the same
+  pair `getAdmin` demands, deliberately not membership alone, because
+  `create-admin` verifies in the same run and refuses an address an unverified
+  account already holds, so an allow-listed-but-unverified row is a public
+  sign-up squatting that address and must stay removable or the address can
+  never be provisioned. Nothing on that screen can grant or revoke admin-ness,
+  and `emailVerified` is deliberately not editable there: verifying an
+  allow-listed address would be a privilege-escalation lever.
   Generated puzzles are **public** and addressed by an unguessable
   word-and-number slug (e.g.
   `amber-quiet-otter-canyon-48392174`), and optionally owned by

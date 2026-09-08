@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { MoreHorizontalIcon, ShieldIcon } from "lucide-react";
+import { MoreHorizontalIcon, ShieldIcon, TriangleAlertIcon } from "lucide-react";
 
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
@@ -38,7 +38,7 @@ export interface AdminUser {
   email: string;
   emailVerified: boolean;
   isAdmin: boolean;
-  isPendingAdmin: boolean;
+  holdsAdminAddress: boolean;
   puzzleCount: number;
   solveCount: number;
   activeSessions: number;
@@ -57,6 +57,10 @@ const dateFormat = new Intl.DateTimeFormat("en-CA", {
  * of the database so there is one source of truth for it — which also means
  * the two destructive actions here refuse to touch an admin account, and the
  * server refuses again regardless of what this table renders.
+ *
+ * An account holding an allow-listed address *without* a verified email is
+ * the opposite case and is flagged, not shielded: it has no admin access, and
+ * it is what stands between an operator and provisioning that address.
  */
 export function UserTable({
   rows,
@@ -150,10 +154,14 @@ export function UserTable({
                       <ShieldIcon className="size-3" />
                       Admin
                     </Badge>
-                  ) : u.isPendingAdmin ? (
-                    <Badge variant="outline" className="gap-1" title="Allow-listed in ADMIN_EMAILS, but the email is not verified yet">
-                      <ShieldIcon className="size-3" />
-                      Pending
+                  ) : u.holdsAdminAddress ? (
+                    <Badge
+                      variant="destructive"
+                      className="gap-1"
+                      title="This address is in ADMIN_EMAILS but the account is an unverified public sign-up, so it has no admin access — and it blocks `npm run create-admin` from provisioning the address until it is removed."
+                    >
+                      <TriangleAlertIcon className="size-3" />
+                      Unclaimed admin address
                     </Badge>
                   ) : (
                     <span className="text-sm text-muted-foreground">Client</span>
@@ -176,7 +184,7 @@ export function UserTable({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem
-                        disabled={u.isAdmin || u.isPendingAdmin || u.activeSessions === 0}
+                        disabled={u.isAdmin || u.activeSessions === 0}
                         onClick={() => setPendingRevoke(u)}
                       >
                         Sign out everywhere
@@ -184,7 +192,7 @@ export function UserTable({
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         variant="destructive"
-                        disabled={u.isAdmin || u.isPendingAdmin}
+                        disabled={u.isAdmin}
                         onClick={() => setPendingDelete(u)}
                       >
                         Delete account

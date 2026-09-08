@@ -15,6 +15,17 @@ type ListQuery = z.infer<typeof listUsersQuerySchema>;
  */
 const OUTER_USER_ID = sql`${user}.${sql.identifier("id")}`;
 
+/**
+ * "Now", as the naive UTC wall-clock these tables are written in.
+ *
+ * `session.expires_at` is `timestamp without time zone` holding UTC, so a bare
+ * `now()` (a `timestamptz`) is coerced using the *server's* TimeZone and
+ * mis-classifies every session by that offset on any deployment not set to
+ * UTC. Binding a JS `Date` instead is worse: it reaches the driver untyped and
+ * Postgres refuses the comparison outright. Converting in SQL avoids both.
+ */
+const NOW_UTC = sql`(now() at time zone 'utc')`;
+
 /** One row of the admin user listing. Never carries anything from `account`. */
 export interface AdminUserRow {
   id: string;
@@ -27,8 +38,15 @@ export interface AdminUserRow {
    * reported, never set: admin-ness lives in ADMIN_EMAILS, out of the database.
    */
   isAdmin: boolean;
-  /** Allow-listed but not yet verified — provisioned, no access yet. */
-  isPendingAdmin: boolean;
+  /**
+   * Allow-listed address, unverified email — so no admin access. This is not
+   * a half-provisioned admin: `npm run create-admin` verifies in the same run
+   * and refuses an address already held by an unverified account, telling the
+   * operator it came from public sign-up. So this row is someone squatting an
+   * address the allow-list names, and it *blocks* provisioning that address
+   * until it is removed — which is why it must stay deletable.
+   */
+  holdsAdminAddress: boolean;
   puzzleCount: number;
   solveCount: number;
   /** Unexpired sessions, i.e. devices that can act as this user right now. */
@@ -47,11 +65,6 @@ export interface AdminUserRow {
 export async function listUsers(
   q: ListQuery,
 ): Promise<{ rows: AdminUserRow[]; total: number }> {
-  // `session.expires_at` is a naive `timestamp`, so comparing it to `now()`
-  // would be read in the database server's own time zone and mis-classify
-  // every session by that offset. Binding the instant here compares the same
-  // clock the sessions were written with.
-  const now = new Date();
   const filters = [];
   if (q.q) {
     // Treat the search term literally — escape LIKE metacharacters.
@@ -70,7 +83,7 @@ export async function listUsers(
         emailVerified: user.emailVerified,
         puzzleCount: sql<number>`(select count(*) from ${puzzles} where ${puzzles.userId} = ${OUTER_USER_ID})::int`,
         solveCount: sql<number>`(select count(*) from ${solveStates} where ${solveStates.userId} = ${OUTER_USER_ID})::int`,
-        activeSessions: sql<number>`(select count(*) from ${session} where ${session.userId} = ${OUTER_USER_ID} and ${session.expiresAt} > ${now})::int`,
+        activeSessions: sql<number>`(select count(*) from ${session} where ${session.userId} = ${OUTER_USER_ID} and ${session.expiresAt} > ${NOW_UTC})::int`,
         createdAt: user.createdAt,
       })
       .from(user)
@@ -87,7 +100,7 @@ export async function listUsers(
       return {
         ...r,
         isAdmin: allowListed && r.emailVerified,
-        isPendingAdmin: allowListed && !r.emailVerified,
+        holdsAdminAddress: allowListed && !r.emailVerified,
         createdAt: r.createdAt.toISOString(),
       };
     }),
@@ -95,10 +108,19 @@ export async function listUsers(
   };
 }
 
-/** The email is what every admin-account guard is keyed to, so it comes back. */
+/**
+ * The pair every admin-account guard is keyed to comes back: admin-ness is
+ * allow-list membership *and* a verified email, so a caller checking only one
+ * of them would guard the wrong set of rows.
+ */
 export async function findUser(id: string) {
   const [row] = await db
-    .select({ id: user.id, email: user.email, name: user.name })
+    .select({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      emailVerified: user.emailVerified,
+    })
     .from(user)
     .where(eq(user.id, id))
     .limit(1);

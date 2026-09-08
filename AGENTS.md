@@ -48,9 +48,10 @@ src/app/                  routes + pages (App Router)
   rpc/[[...rest]]/        oRPC catch-all — the entire typed API surface
   api/auth/[...all]/      better-auth handler (the one non-oRPC API route)
   public/                 generate form, sign-up, puzzles/[slug] solver + /print
-  admin/                  login + dashboard/{entries,puzzles,import,ai} —
-                          one route per view; each page.tsx re-asserts the
-                          admin gate (the shared layout is not a boundary)
+  admin/                  login + dashboard/{entries,puzzles,languages,users,
+                          import,ai} — one route per view; each page.tsx
+                          re-asserts the admin gate (the shared layout is not
+                          a boundary)
   client/                 login + dashboard (any signed-in user)
 src/lib/orpc/             router.ts + middleware.ts (adminProcedure/userProcedure) +
                           context.ts + client.ts + routers/{public,admin,client}.ts

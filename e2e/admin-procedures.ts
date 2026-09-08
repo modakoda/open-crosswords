@@ -60,6 +60,11 @@ export const ADMIN_PROCEDURES: { path: string; input: unknown }[] = [
     input: { id: NO_SUCH_ID, title: "should never be renamed" },
   },
   { path: "admin/puzzles/delete", input: { id: NO_SUCH_ID } },
+  { path: "admin/users/list", input: { limit: 20, offset: 0 } },
+  // A user id is a better-auth string, not a uuid, so these name a shape the
+  // schema accepts and no row has.
+  { path: "admin/users/delete", input: { id: "no-such-user" } },
+  { path: "admin/users/revokeSessions", input: { id: "no-such-user" } },
 ];
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -73,7 +78,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
  * too, which is the point at which its gate gets an assertion.
  */
 export function countAdminProceduresInSource() {
-  const routers = ["admin.ts", "admin-puzzles.ts"].map((file) =>
+  const routers = ["admin.ts", "admin-puzzles.ts", "admin-users.ts"].map((file) =>
     readFileSync(path.join(dirname, "../src/lib/orpc/routers", file), "utf8"),
   );
   return routers.reduce(

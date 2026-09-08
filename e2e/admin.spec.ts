@@ -52,6 +52,19 @@ test.describe("admin view routing", () => {
     await expect(page.getByRole("button", { name: "New entry" })).toBeVisible();
   });
 
+  test("the listing opens across every language, whatever the working one is", async ({
+    page,
+  }) => {
+    // The working language scopes what a new entry is created in; it is not a
+    // reason to hide the rest of the library on arrival.
+    for (const view of ["entries", "puzzles"]) {
+      await page.goto(`/admin/dashboard/${view}?lang=${E2E_LANGUAGE_CODE}`);
+      await expect(
+        page.getByRole("combobox", { name: "Filter by language" }),
+      ).toHaveText("All languages");
+    }
+  });
+
   test("the working language is written to the URL and survives a reload", async ({
     page,
   }) => {
@@ -65,8 +78,17 @@ test.describe("admin view routing", () => {
     await expect(page).toHaveURL(new RegExp(`lang=${E2E_LANGUAGE_CODE}`));
 
     await page.reload();
+    // The listing reopens unfiltered — it is a filter, not the working
+    // language — but the working language itself rides the URL, so the views
+    // that show it still see the picked one.
+    await expect(page).toHaveURL(new RegExp(`lang=${E2E_LANGUAGE_CODE}`));
     await expect(
       page.getByRole("combobox", { name: "Filter by language" }),
+    ).toHaveText("All languages");
+
+    await page.getByRole("link", { name: "Bulk import" }).click();
+    await expect(
+      page.getByRole("combobox", { name: "Working language" }),
     ).toHaveText(`${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})`);
   });
 
@@ -172,6 +194,14 @@ test.describe("admin dashboard", () => {
     const row = page.getByRole("row").filter({ hasText: clue });
     await expect(row).toBeVisible();
 
+    // Narrow the listing to the language the entry starts in, so leaving that
+    // language is something the listing can actually show.
+    await page.getByRole("combobox", { name: "Filter by language" }).click();
+    await page
+      .getByRole("option", { name: `${E2E_LANGUAGE_NAME} (${E2E_LANGUAGE_CODE})` })
+      .click();
+    await expect(row).toBeVisible();
+
     await row.getByRole("button", { name: "Row actions" }).click();
     await page.getByRole("menuitem", { name: "Edit" }).click();
     await page.getByRole("combobox", { name: "Language" }).click();
@@ -183,6 +213,12 @@ test.describe("admin dashboard", () => {
     // Gone from the language it left, present in the one it moved to.
     await expect(page.getByRole("row").filter({ hasText: clue })).toHaveCount(0);
     await page.goto(`/admin/dashboard/entries?lang=${E2E_ALT_LANGUAGE_CODE}`);
+    await page.getByRole("combobox", { name: "Filter by language" }).click();
+    await page
+      .getByRole("option", {
+        name: `${E2E_ALT_LANGUAGE_NAME} (${E2E_ALT_LANGUAGE_CODE})`,
+      })
+      .click();
     const moved = page.getByRole("row").filter({ hasText: clue });
     await expect(moved).toBeVisible();
 

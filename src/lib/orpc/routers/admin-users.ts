@@ -17,7 +17,7 @@ const userRowSchema = z.object({
   email: z.email(),
   emailVerified: z.boolean(),
   isAdmin: z.boolean(),
-  isPendingAdmin: z.boolean(),
+  holdsAdminAddress: z.boolean(),
   puzzleCount: z.number(),
   solveCount: z.number(),
   activeSessions: z.number(),
@@ -34,9 +34,13 @@ const list = adminProcedure
  * would turn this screen into a way to remove administrators.
  *
  * Both guards are keyed to the row the *server* read, never to anything the
- * caller sent, and the admin one tests allow-list membership alone — an
- * allow-listed account whose email isn't verified yet is a provisioned admin
- * mid-setup, and deleting it would undo `npm run create-admin`.
+ * caller sent, and the admin one tests exactly the pair `getAdmin` demands:
+ * allow-listed *and* verified. Testing membership alone would over-protect —
+ * `npm run create-admin` verifies in the same run and refuses an address an
+ * unverified account already holds, so an allow-listed-but-unverified row is
+ * a public sign-up squatting that address, with no admin access and nothing
+ * to protect. Shielding it would make it undeletable from here and leave the
+ * address unprovisionable for good.
  */
 async function targetOf(id: string, adminId: string) {
   if (id === adminId) {
@@ -46,7 +50,7 @@ async function targetOf(id: string, adminId: string) {
   }
   const target = await findUser(id);
   if (!target) throw new ORPCError("NOT_FOUND", { message: "User not found" });
-  if (isAdminEmail(target.email)) {
+  if (isAdminEmail(target.email) && target.emailVerified) {
     throw new ORPCError("FORBIDDEN", {
       message:
         "Admin accounts are managed out-of-band — remove the address from ADMIN_EMAILS instead",

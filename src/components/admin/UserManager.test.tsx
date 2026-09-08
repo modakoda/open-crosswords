@@ -29,7 +29,7 @@ function account(
     email: string;
     name: string;
     isAdmin: boolean;
-    isPendingAdmin: boolean;
+    holdsAdminAddress: boolean;
     emailVerified: boolean;
     activeSessions: number;
   }> = {},
@@ -40,7 +40,7 @@ function account(
     email: over.email ?? `${id}@example.com`,
     emailVerified: over.emailVerified ?? true,
     isAdmin: over.isAdmin ?? false,
-    isPendingAdmin: over.isPendingAdmin ?? false,
+    holdsAdminAddress: over.holdsAdminAddress ?? false,
     puzzleCount: 3,
     solveCount: 1,
     activeSessions: over.activeSessions ?? 2,
@@ -78,6 +78,36 @@ describe("UserManager", () => {
     expect(
       within(rowFor("client@example.com")).getByText("Client"),
     ).toBeInTheDocument();
+  });
+
+  /**
+   * An unverified account on an allow-listed address has no admin access and
+   * blocks `create-admin` from provisioning that address, so the screen must
+   * flag it as a problem and leave it removable — shielding it like an admin
+   * would make it permanent.
+   */
+  it("flags an account squatting an admin address, and still offers to remove it", async () => {
+    list.mockResolvedValue({
+      rows: [
+        account("squatter", {
+          email: "squatter@example.com",
+          emailVerified: false,
+          holdsAdminAddress: true,
+        }),
+      ],
+      total: 1,
+    });
+    render(<UserManager />);
+    await screen.findByText("squatter@example.com");
+
+    expect(
+      within(rowFor("squatter@example.com")).getByText("Unclaimed admin address"),
+    ).toBeInTheDocument();
+
+    await openActions("squatter@example.com");
+    expect(
+      screen.getByRole("menuitem", { name: "Delete account" }),
+    ).not.toHaveAttribute("aria-disabled", "true");
   });
 
   it("flags an account whose email is not verified", async () => {
