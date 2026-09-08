@@ -295,6 +295,10 @@ shows its grid size, word count, paper setting and who generated it (or
 *Anonymous*), and links straight to the solve and print views. From the row
 menu you can retitle a puzzle (its shared link is unchanged) or delete it —
 deleting also removes any saved solve progress and dead-links the shared URL.
+To clear out several at once, tick their checkboxes (or the one in the header
+to take the whole page) and use **Delete selected**; the selection is dropped
+whenever the listing changes, so a batch only ever reaches rows still on
+screen.
 
 ## How a puzzle is built
 

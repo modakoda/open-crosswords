@@ -66,6 +66,14 @@ export const deleteEntriesSchema = z.object({
   ids: z.array(z.uuid()).min(1).max(200),
 });
 
+/**
+ * Bulk puzzle delete. Same bound as the entries batch, and for the same
+ * reason: the admin UI can only tick rows on the page it is showing.
+ */
+export const deletePuzzlesSchema = z.object({
+  ids: z.array(z.uuid()).min(1).max(200),
+});
+
 export const listEntriesQuerySchema = z.object({
   languageCode: LANGUAGE_CODE.optional(),
   categoryId: z.uuid().optional(),

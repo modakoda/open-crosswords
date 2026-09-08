@@ -7,13 +7,21 @@ import { PuzzleManager } from "./PuzzleManager";
 
 vi.mock("@/lib/orpc/client", () => ({
   orpc: {
-    admin: { puzzles: { list: vi.fn(), delete: vi.fn(), rename: vi.fn() } },
+    admin: {
+      puzzles: { list: vi.fn(), delete: vi.fn(), deleteMany: vi.fn(), rename: vi.fn() },
+    },
   },
 }));
 
+vi.mock("sonner", () => ({
+  toast: { success: vi.fn(), error: vi.fn() },
+}));
+
 const { orpc } = await import("@/lib/orpc/client");
+const { toast } = await import("sonner");
 const list = vi.mocked(orpc.admin.puzzles.list);
 const remove = vi.mocked(orpc.admin.puzzles.delete);
+const removeMany = vi.mocked(orpc.admin.puzzles.deleteMany);
 const rename = vi.mocked(orpc.admin.puzzles.rename);
 
 const languages = [
@@ -212,5 +220,104 @@ describe("PuzzleManager actions", () => {
 
     expect(await screen.findByText("Could not rename that puzzle.")).toBeInTheDocument();
     expect(screen.getByLabelText("Title")).toBeInTheDocument();
+  });
+});
+
+describe("PuzzleManager bulk delete", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    list.mockResolvedValue({ rows, total: rows.length });
+    removeMany.mockResolvedValue({ deleted: 2 });
+  });
+
+  async function selectRow(user: ReturnType<typeof userEvent.setup>, title: string) {
+    const row = screen.getByText(title).closest("tr")!;
+    await user.click(within(row).getByRole("checkbox", { name: `Select ${title}` }));
+  }
+
+  it("offers no bulk action until a row is selected", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Animals")).toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: "Delete selected" })).not.toBeInTheDocument();
+
+    await selectRow(user, "Animals");
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Delete selected" })).toBeInTheDocument();
+  });
+
+  it("selects and clears every visible row at once", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Animals")).toBeInTheDocument());
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    expect(screen.getByText("2 selected")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    expect(screen.queryByText("2 selected")).not.toBeInTheDocument();
+  });
+
+  it("confirms before deleting, and deletes nothing if the dialog is cancelled", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Animals")).toBeInTheDocument());
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    await user.click(screen.getByRole("button", { name: "Delete selected" }));
+
+    expect(await screen.findByRole("alertdialog")).toHaveTextContent("Delete 2 puzzles?");
+    expect(removeMany).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
+    expect(removeMany).not.toHaveBeenCalled();
+    expect(screen.getByText("2 selected")).toBeInTheDocument();
+  });
+
+  it("deletes the selected ids once confirmed, then reloads and clears", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(1));
+
+    await user.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+    await user.click(screen.getByRole("button", { name: "Delete selected" }));
+    await user.click(await screen.findByRole("button", { name: "Delete" }));
+
+    await waitFor(() => expect(removeMany).toHaveBeenCalledWith({ ids: ["1", "2"] }));
+    expect(toast.success).toHaveBeenCalledWith("Deleted 2 puzzles");
+    await waitFor(() => expect(list).toHaveBeenCalledTimes(2));
+    expect(screen.queryByText("2 selected")).not.toBeInTheDocument();
+  });
+
+  it("keeps the selection and reports a failed delete", async () => {
+    const user = userEvent.setup();
+    removeMany.mockRejectedValue(new Error("nope"));
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Animals")).toBeInTheDocument());
+
+    await selectRow(user, "Animals");
+    await user.click(screen.getByRole("button", { name: "Delete selected" }));
+    await user.click(await screen.findByRole("button", { name: "Delete" }));
+
+    await waitFor(() =>
+      expect(toast.error).toHaveBeenCalledWith("Failed to delete the selected puzzles"),
+    );
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+  });
+
+  it("drops the selection when the listing changes underneath it", async () => {
+    const user = userEvent.setup();
+    renderManager();
+    await waitFor(() => expect(screen.getByText("Animals")).toBeInTheDocument());
+    await selectRow(user, "Animals");
+    expect(screen.getByText("1 selected")).toBeInTheDocument();
+
+    list.mockResolvedValue({ rows: [puzzle("3", "lt", "Kitas")], total: 1 });
+    await user.click(screen.getByRole("combobox", { name: "Filter by language" }));
+    await user.click(screen.getByRole("option", { name: "Lietuvi\u0173 (lt)" }));
+
+    await waitFor(() => expect(screen.getByText("Kitas")).toBeInTheDocument());
+    expect(screen.queryByText("1 selected")).not.toBeInTheDocument();
   });
 });

@@ -50,6 +50,8 @@ export const ADMIN_PROCEDURES: { path: string; input: unknown }[] = [
     path: "admin/languages/rename",
     input: { code: E2E_LANGUAGE_CODE, name: "Should never be renamed" },
   },
+  // A code no language uses, so a call that somehow ran would still drop nothing.
+  { path: "admin/languages/delete", input: { code: "qq" } },
   {
     path: "admin/categories/create",
     input: { languageCode: E2E_LANGUAGE_CODE, name: "Should never exist" },
@@ -60,6 +62,7 @@ export const ADMIN_PROCEDURES: { path: string; input: unknown }[] = [
     input: { id: NO_SUCH_ID, title: "should never be renamed" },
   },
   { path: "admin/puzzles/delete", input: { id: NO_SUCH_ID } },
+  { path: "admin/puzzles/deleteMany", input: { ids: [NO_SUCH_ID] } },
   { path: "admin/users/list", input: { limit: 20, offset: 0 } },
   // A user id is a better-auth string, not a uuid, so these name a shape the
   // schema accepts and no row has.

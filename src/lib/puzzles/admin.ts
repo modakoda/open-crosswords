@@ -1,4 +1,4 @@
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { puzzles, user } from "@/db/schema";
 import type { z } from "zod";
@@ -77,6 +77,19 @@ export async function deletePuzzle(id: string) {
     .where(eq(puzzles.id, id))
     .returning({ id: puzzles.id });
   return row ?? null;
+}
+
+/**
+ * Deletes several puzzles in one statement, dropping their solve progress with
+ * them. Ids that match nothing are simply absent from the result, so a stale
+ * selection removes what still exists rather than failing the whole batch.
+ */
+export async function deletePuzzles(ids: string[]) {
+  if (ids.length === 0) return [];
+  return db
+    .delete(puzzles)
+    .where(inArray(puzzles.id, ids))
+    .returning({ id: puzzles.id });
 }
 
 /** Retitle a puzzle; the slug (and so every shared link) is left untouched. */

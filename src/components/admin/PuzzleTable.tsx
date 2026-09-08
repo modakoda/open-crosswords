@@ -4,10 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { MoreHorizontalIcon } from "lucide-react";
 
+import { PuzzleBulkBar } from "./PuzzleBulkBar";
 import { PuzzleRenameDialog } from "./PuzzleRenameDialog";
+import { useRowSelection } from "./use-row-selection";
 import { orpc } from "@/lib/orpc/client";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
   TableBody,
@@ -65,6 +68,7 @@ export function PuzzleTable({
 }) {
   const [pendingDelete, setPendingDelete] = useState<Puzzle | null>(null);
   const [renaming, setRenaming] = useState<Puzzle | null>(null);
+  const selection = useRowSelection(rows.map((r) => r.id));
 
   async function confirmDelete() {
     if (!pendingDelete) return;
@@ -75,10 +79,24 @@ export function PuzzleTable({
 
   return (
     <>
+      <PuzzleBulkBar
+        ids={selection.selectedIds}
+        onDeleted={onChanged}
+        onClear={selection.clear}
+      />
+
       <div className="overflow-hidden rounded-lg border border-border">
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/40">
+              <TableHead className="w-10">
+                <Checkbox
+                  aria-label="Select all rows"
+                  checked={selection.allSelected}
+                  disabled={rows.length === 0}
+                  onCheckedChange={selection.toggleAll}
+                />
+              </TableHead>
               <TableHead>Lang</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Link</TableHead>
@@ -93,13 +111,23 @@ export function PuzzleTable({
           <TableBody>
             {rows.length === 0 && (
               <TableRow>
-                <TableCell colSpan={9} className="py-10 text-center text-sm text-muted-foreground">
+                <TableCell colSpan={10} className="py-10 text-center text-sm text-muted-foreground">
                   No puzzles {q ? "match your search" : "yet"}.
                 </TableCell>
               </TableRow>
             )}
             {rows.map((p) => (
-              <TableRow key={p.id}>
+              <TableRow
+                key={p.id}
+                data-state={selection.selected.has(p.id) ? "selected" : undefined}
+              >
+                <TableCell>
+                  <Checkbox
+                    aria-label={`Select ${p.title}`}
+                    checked={selection.selected.has(p.id)}
+                    onCheckedChange={() => selection.toggle(p.id)}
+                  />
+                </TableCell>
                 <TableCell>
                   <Badge variant="outline" className="font-mono text-xs uppercase">
                     {p.languageCode}

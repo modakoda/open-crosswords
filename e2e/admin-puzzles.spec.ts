@@ -81,3 +81,40 @@ test("deletes a puzzle, and its public link stops resolving", async ({ page }) =
   const response = await page.goto(`/public/puzzles/${slug}`);
   expect(response?.status()).toBe(404);
 });
+
+/**
+ * Bulk delete, addressed the same careful way as every other mutation here:
+ * the listing is narrowed to this test's own stamp and its row count checked
+ * before anything is ticked, so select-all can never reach a shared row.
+ */
+test("bulk-deletes the ticked puzzles, and their links stop resolving", async ({ page }) => {
+  const stamp = `${Date.now()}`;
+  const slugs = [
+    await generatePuzzleViaUi(page, `E2E bulk ${stamp} one`),
+    await generatePuzzleViaUi(page, `E2E bulk ${stamp} two`),
+  ];
+
+  await page.goto(PUZZLES);
+  await waitForListing(page);
+  await page.getByPlaceholder("Search title or link…").fill(`E2E bulk ${stamp}`);
+  await expect(page.getByRole("row")).toHaveCount(3);
+
+  // No rows ticked yet, so the bar isn't there at all.
+  await expect(page.getByText("selected")).toHaveCount(0);
+
+  await page.getByRole("checkbox", { name: "Select all rows" }).click();
+  await expect(page.getByText("2 selected")).toBeVisible();
+
+  await page.getByRole("button", { name: "Delete selected" }).click();
+  const confirm = page.getByRole("alertdialog");
+  await expect(confirm.getByText("Delete 2 puzzles?")).toBeVisible();
+  await confirm.getByRole("button", { name: "Delete" }).click();
+
+  await expect(page.getByText("No puzzles match your search")).toBeVisible();
+  await expect(page.getByText("2 selected")).toHaveCount(0);
+
+  for (const slug of slugs) {
+    const response = await page.goto(`/public/puzzles/${slug}`);
+    expect(response?.status()).toBe(404);
+  }
+});

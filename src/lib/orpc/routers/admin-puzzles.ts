@@ -1,8 +1,12 @@
 import { z } from "zod";
 import { ORPCError } from "@orpc/server";
 import { adminProcedure } from "@/lib/orpc/middleware";
-import { deletePuzzle, listPuzzles, renamePuzzle } from "@/lib/puzzles";
-import { listPuzzlesQuerySchema, renamePuzzleSchema } from "@/lib/validation/schemas";
+import { deletePuzzle, deletePuzzles, listPuzzles, renamePuzzle } from "@/lib/puzzles";
+import {
+  deletePuzzlesSchema,
+  listPuzzlesQuerySchema,
+  renamePuzzleSchema,
+} from "@/lib/validation/schemas";
 
 /**
  * Pins exactly what a listing may carry. Without it the redaction — no seed,
@@ -44,4 +48,16 @@ const remove = adminProcedure
     return { deleted: true };
   });
 
-export const adminPuzzlesRouter = { list, rename, delete: remove };
+/**
+ * Bulk delete. Like the entries batch it doesn't 404 on ids that are already
+ * gone — a selection can go stale between listing and confirming — and the
+ * count says what actually went.
+ */
+const removeMany = adminProcedure
+  .input(deletePuzzlesSchema)
+  .handler(async ({ input }) => {
+    const rows = await deletePuzzles(input.ids);
+    return { deleted: rows.length };
+  });
+
+export const adminPuzzlesRouter = { list, rename, delete: remove, deleteMany: removeMany };

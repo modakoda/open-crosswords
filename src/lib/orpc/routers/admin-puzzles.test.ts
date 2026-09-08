@@ -201,3 +201,58 @@ describe("admin.puzzles.delete", () => {
     ).rejects.toThrow(/not found/i);
   });
 });
+
+describe("admin.puzzles.deleteMany", () => {
+  it("rejects a non-admin, and deletes nothing", async () => {
+    const id = await seedPuzzle("keep");
+    adminState.allow = false;
+    await expect(call(adminPuzzlesRouter.deleteMany, { ids: [id] }, ctx())).rejects.toThrow();
+
+    // A throw alone would also pass if input parsing ran ahead of the guard;
+    // the puzzle still being there is what pins the gate.
+    expect(await db.select().from(puzzles)).toHaveLength(1);
+  });
+
+  it("deletes every selected puzzle, with its solve progress, and leaves the rest", async () => {
+    await db.insert(user).values({
+      id: "u1",
+      name: "Client",
+      email: "client@example.com",
+      emailVerified: true,
+    });
+    const a = await seedPuzzle("first", { userId: "u1" });
+    const b = await seedPuzzle("second");
+    const c = await seedPuzzle("third");
+    await db.insert(solveStates).values({ puzzleId: a, userId: "u1", progress: { "0,0": "A" } });
+
+    await expect(call(adminPuzzlesRouter.deleteMany, { ids: [a, c] }, ctx())).resolves.toEqual({
+      deleted: 2,
+    });
+
+    const left = await db.select({ id: puzzles.id }).from(puzzles);
+    expect(left.map((p) => p.id)).toEqual([b]);
+    expect(await db.select().from(solveStates)).toHaveLength(0);
+  });
+
+  it("counts only what existed, rather than failing on a stale id", async () => {
+    const id = await seedPuzzle("first");
+    await expect(
+      call(adminPuzzlesRouter.deleteMany, { ids: [id, crypto.randomUUID()] }, ctx()),
+    ).resolves.toEqual({ deleted: 1 });
+  });
+
+  it("rejects an empty selection and a non-uuid id", async () => {
+    await expect(call(adminPuzzlesRouter.deleteMany, { ids: [] }, ctx())).rejects.toThrow();
+    await expect(
+      call(adminPuzzlesRouter.deleteMany, { ids: ["not-a-uuid"] }, ctx()),
+    ).rejects.toThrow();
+  });
+
+  it("rejects a batch larger than the cap", async () => {
+    const ids = Array.from(
+      { length: 201 },
+      (_, i) => `00000000-0000-0000-0000-${String(i).padStart(12, "0")}`,
+    );
+    await expect(call(adminPuzzlesRouter.deleteMany, { ids }, ctx())).rejects.toThrow();
+  });
+});
