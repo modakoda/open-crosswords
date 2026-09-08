@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { AdminLanguageBar } from "./AdminLanguageBar";
 import { AdminShell } from "./AdminShell";
 import { useAdminWorkspace } from "./workspace";
 
@@ -45,12 +46,17 @@ function Probe() {
   );
 }
 
-function renderShell(query = "", route = "/admin/dashboard/entries") {
+function renderShell(
+  query = "",
+  route = "/admin/dashboard/entries",
+  children: React.ReactNode = null,
+) {
   search = new URLSearchParams(query);
   pathname = route;
   return render(
     <AdminShell aiEnabled={false}>
       <Probe />
+      {children}
     </AdminShell>,
   );
 }
@@ -101,7 +107,7 @@ describe("AdminShell working language", () => {
 
   it("switching the working language navigates rather than holding local state", async () => {
     const user = userEvent.setup();
-    renderShell("lang=en", "/admin/dashboard/import");
+    renderShell("lang=en", "/admin/dashboard/import", <AdminLanguageBar />);
     await waitFor(() => expect(screen.getByTestId("count")).toHaveTextContent("2"));
 
     await user.click(screen.getByRole("combobox", { name: "Working language" }));
@@ -118,23 +124,17 @@ describe("AdminShell working language", () => {
     expect(screen.queryByText("Add a language")).not.toBeInTheDocument();
   });
 
-  it("offers the picker only to the views without a language filter of their own", async () => {
-    const { unmount } = renderShell("lang=en", "/admin/dashboard/import");
-    await waitFor(() => expect(screen.getByTestId("count")).toHaveTextContent("2"));
-    expect(
-      screen.getByRole("combobox", { name: "Working language" }),
-    ).toBeInTheDocument();
-    unmount();
-
+  it("leaves the picker to the view rather than rendering it as chrome", async () => {
+    // The listings carry their own "Filter by language"; the chrome carrying a
+    // picker as well would be two ways to set one thing.
     for (const route of [
       "/admin/dashboard/entries",
       "/admin/dashboard/puzzles",
       "/admin/dashboard/languages",
+      "/admin/dashboard/import",
     ]) {
       const view = renderShell("lang=en", route);
       await waitFor(() => expect(screen.getByTestId("count")).toHaveTextContent("2"));
-      // The listing's own "Filter by language" is the control there; a second
-      // one here would be two ways to set one thing.
       expect(
         screen.queryByRole("combobox", { name: "Working language" }),
       ).not.toBeInTheDocument();

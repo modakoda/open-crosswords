@@ -5,10 +5,8 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { orpc } from "@/lib/orpc/client";
 import { LANGUAGE_CODE } from "@/lib/validation/schemas";
-import { AdminLanguageBar } from "./AdminLanguageBar";
 import { AdminNav } from "./AdminNav";
 import { AdminWorkspaceProvider, type Category, type Language } from "./workspace";
-import { usesWorkingLanguagePicker } from "./views";
 
 /** Used only until the language list loads, or if the library has none yet. */
 const FALLBACK_LANGUAGE = "en";
@@ -17,8 +15,8 @@ const FALLBACK_LANGUAGE = "en";
  * Chrome shared by every admin view. The view itself is a route (`children`),
  * and the working language is a `?lang=` query param rather than component
  * state, so any admin screen can be linked to, bookmarked and reloaded. The
- * picker for it belongs to the views that have no listing of their own to
- * filter (see `usesWorkingLanguagePicker`); the rest set it from their toolbar.
+ * picker for it is rendered by the view that needs it (`AdminLanguageBar`),
+ * below the nav; the rest set the same param from their own toolbar.
  */
 export function AdminShell({
   aiEnabled,
@@ -100,14 +98,6 @@ export function AdminShell({
 
   return (
     <div className="space-y-5">
-      <AdminLanguageBar
-        language={language}
-        languages={languages}
-        // Entries, puzzles and the languages view all have a listing of their
-        // own; a picker here as well would be two controls for one thing.
-        showLanguage={usesWorkingLanguagePicker(pathname)}
-        onLanguageChange={setLanguage}
-      />
       <AdminNav language={language} />
       <AdminWorkspaceProvider value={workspace}>{children}</AdminWorkspaceProvider>
     </div>

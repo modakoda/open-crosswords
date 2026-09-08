@@ -27,11 +27,12 @@ or solve them online via a shareable link. Open source, single Next.js app.
   `useAdminWorkspace()`. The working language is a
   `?lang=` search param, not component state, so a linked view opens with the
   same working language the sender had; `AdminShell` validates it with `LANGUAGE_CODE`
-  and falls back to the first language the library has. Only the views with
-  no listing of their own — bulk import and AI draft
-  (`usesWorkingLanguagePicker`) — show the shell's picker for it; the entries
-  and puzzles listings set the same `?lang=` from their own "Filter by
-  language" control, so no view carries two controls for one thing. Those
+  and falls back to the first language the library has. The picker for it is
+  not chrome: `AdminLanguageBar` reads the workspace context and is rendered by
+  the view that needs it — bulk import and AI draft, each below the nav and
+  above the panel it governs — so no view inherits a control it has no use for.
+  The entries and puzzles listings set the same `?lang=` from their own "Filter
+  by language" control, so no view carries two controls for one thing. Those
   listings **open across every language** regardless of `?lang=` — the working
   language governs what a new entry is created in, not what the admin came to
   read — and their "All languages" option returns to that wider view without

@@ -1,6 +1,6 @@
 "use client";
 
-import type { Language } from "./workspace";
+import { useAdminWorkspace } from "./workspace";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -11,24 +11,16 @@ import {
 } from "@/components/ui/select";
 
 /**
- * The admin chrome's working-language picker, shown only to the views that
- * have no language filter of their own (`usesWorkingLanguagePicker`) — so the
- * bar disappears entirely for the rest. Creating and renaming languages is the
- * Languages view's job; the account and sign-out live in the header's user
- * menu, not here.
+ * The working-language picker, rendered by the view that needs it rather than
+ * by the shell — so it sits below the nav, inside the screen it acts on, and
+ * only the screens whose whole action is scoped to one language carry it.
+ * Entries, puzzles and the languages view set the same `?lang=` from their own
+ * toolbar, so a second control here would be two ways to set one thing.
+ * Creating and renaming languages is the Languages view's job; the account and
+ * sign-out live in the header's user menu, not here.
  */
-export function AdminLanguageBar({
-  language,
-  languages,
-  showLanguage,
-  onLanguageChange,
-}: {
-  language: string;
-  languages: Language[];
-  showLanguage: boolean;
-  onLanguageChange: (code: string) => void;
-}) {
-  if (!showLanguage) return null;
+export function AdminLanguageBar() {
+  const { language, languages, setLanguage } = useAdminWorkspace();
 
   return (
     <Card>
@@ -37,7 +29,7 @@ export function AdminLanguageBar({
           <label className="text-xs font-medium text-muted-foreground">
             Working language
           </label>
-          <Select value={language} onValueChange={onLanguageChange}>
+          <Select value={language} onValueChange={setLanguage}>
             <SelectTrigger className="w-48" aria-label="Working language">
               <SelectValue />
             </SelectTrigger>
