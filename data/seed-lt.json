@@ -7163,12 +7163,6 @@
       "difficulty": 3
     },
     {
-      "clue": "1991 m. data, kai beginkliai žmonės apgynė Vilniaus televizijos bokštą",
-      "answer": "Sausio tryliktoji",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Trijų Baltijos valstybių 1989 m. akcija, sujungusi žmones grandine",
       "answer": "Baltijoskelias",
       "category": "Istorija (sunku)",
@@ -8417,12 +8411,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Viduramžių riterių žygiai į Šventąją žemę",
-      "answer": "Kryžiaus žygiai",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Senovės Graikijos miestas-valstybė, garsus karine drausme",
       "answer": "Sparta",
       "category": "Istorija (sunku)",
@@ -8501,20 +8489,8 @@
       "difficulty": 3
     },
     {
-      "clue": "Senovės Kinijos siena, statyta gintis nuo klajoklių",
-      "answer": "Kinijos siena",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Egipto karalienė, susijusi su Cezariu ir Antonijumi",
       "answer": "Kleopatra",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "1961 m. pastatyta siena, skyrusi Rytų ir Vakarų Berlyną",
-      "answer": "Berlyno siena",
       "category": "Istorija (sunku)",
       "difficulty": 3
     },
@@ -8747,12 +8723,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Dykuma, užimanti didžiąją Australijos dalį",
-      "answer": "Didžioji Viktorijos",
-      "category": "Geografija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Šalies, kurioje yra Machu Picchu, pavadinimas",
       "answer": "Peru",
       "category": "Geografija (sunku)",
@@ -8861,12 +8831,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Teorija, aiškinanti visatos atsiradimą iš vieno taško",
-      "answer": "Didysis sprogimas",
-      "category": "Mokslas (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Mokslininkas, sukūręs periodinę elementų lentelę",
       "answer": "Mendelejevas",
       "category": "Mokslas (sunku)",
@@ -8875,12 +8839,6 @@
     {
       "clue": "Reiškinys, kai šviesa skyla į spalvų juostą",
       "answer": "Spektras",
-      "category": "Mokslas (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "DNR molekulės forma, atrasta 1953 m.",
-      "answer": "Dviguba spiralė",
       "category": "Mokslas (sunku)",
       "difficulty": 3
     },
@@ -8905,12 +8863,6 @@
     {
       "clue": "Mokslininkas, sukonstravęs pirmąjį praktišką telefoną",
       "answer": "Belas",
-      "category": "Mokslas (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Elementarioji dalelė, atsakinga už masės suteikimą kitoms dalelėms",
-      "answer": "Higso bozonas",
       "category": "Mokslas (sunku)",
       "difficulty": 3
     },
@@ -9095,12 +9047,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Smegenų dalis, atsakinga už kvėpavimą ir širdies ritmą",
-      "answer": "Pailgosios smegenys",
-      "category": "Anatomija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Kūno skystis, gabenantis maistines medžiagas ir imuninius elementus",
       "answer": "Limfa",
       "category": "Anatomija (sunku)",
@@ -9251,12 +9197,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Rūgštinis lietus susidaro dėl šių dujų, išmetamų deginant kurą",
-      "answer": "Sieros dioksidas",
-      "category": "Chemija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Elementas, žymimas simboliu Pb",
       "answer": "Švinas",
       "category": "Chemija (sunku)",
@@ -9395,18 +9335,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Galaktika, kuriai priklauso Saulės sistema",
-      "answer": "Paukščių Takas",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Erdvės objektas, kurio trauka tokia stipri, kad iš jo neišsprūsta net šviesa",
-      "answer": "Juodoji skylė",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Astronautas, pirmasis žengęs Mėnulio paviršiumi",
       "answer": "Armstrongas",
       "category": "Astronomija (sunku)",
@@ -9461,12 +9389,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Dangaus kūnų sistema, kurios centre yra žvaigždė",
-      "answer": "Planetų sistema",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Nykštukinė planeta, iki 2006 m. laikyta devintąja Saulės sistemos planeta",
       "answer": "Plutonas",
       "category": "Astronomija (sunku)",
@@ -9485,12 +9407,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Žvaigždžių sankaupa, matoma naktį kaip šviesi juosta danguje",
-      "answer": "Paukščių Takas",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Vienetas, žymintis atstumą, kurį šviesa nueina per metus",
       "answer": "Šviesmetis",
       "category": "Astronomija (sunku)",
@@ -9499,12 +9415,6 @@
     {
       "clue": "Raudonoji planeta, į kurią siunčiami roveriai",
       "answer": "Marsas",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Reiškinys, kai žvaigždė baigia degalus ir suspaudžiama į labai tankų kūną",
-      "answer": "Neutroninė žvaigždė",
       "category": "Astronomija (sunku)",
       "difficulty": 3
     },
@@ -9683,12 +9593,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Olandų dailininkas, nupiešęs „Žvaigždėtą naktį“",
-      "answer": "Van Gogas",
-      "category": "Menas (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Italų menininkas, sukūręs skulptūrą „Dovydas“",
       "answer": "Mikelandželas",
       "category": "Menas (sunku)",
@@ -9703,12 +9607,6 @@
     {
       "clue": "Meno stilius, kilęs XX a. pradžioje, vaizduojantis realybę suskaidytomis formomis",
       "answer": "Kubizmas",
-      "category": "Menas (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Italų menininkas, nutapęs „Paskutinę vakarienę“",
-      "answer": "Da Vinčis",
       "category": "Menas (sunku)",
       "difficulty": 3
     },
@@ -9793,12 +9691,6 @@
     {
       "clue": "Meno muziejus Madride, kuriame saugomi Goya ir Velaskeso darbai",
       "answer": "Prado",
-      "category": "Menas (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Nyderlandų dailininkas, nupjovęs sau ausį",
-      "answer": "Van Gogas",
       "category": "Menas (sunku)",
       "difficulty": 3
     },
@@ -10115,12 +10007,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Tarptautinė organizacija, įkurta 1945 m. taikai palaikyti",
-      "answer": "Jungtinės Tautos",
-      "category": "Politika (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Britų ministrė pirmininkė, vadinama geležine ledi",
       "answer": "Tečer",
       "category": "Politika (sunku)",
@@ -10147,12 +10033,6 @@
     {
       "clue": "Valdymo forma, kai valdžią renka piliečiai per atstovus",
       "answer": "Demokratija",
-      "category": "Politika (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Sąjunga, kuriai priklauso dauguma Europos valstybių ekonominiu ir politiniu pagrindu",
-      "answer": "Europos Sąjunga",
       "category": "Politika (sunku)",
       "difficulty": 3
     },
@@ -10243,12 +10123,6 @@
     {
       "clue": "Anglų ekonomistas, pagrindęs valstybės įsikišimo į ekonomiką idėją",
       "answer": "Keinsas",
-      "category": "Ekonomika (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Institucija, valdanti šalies pinigų politiką ir emisiją",
-      "answer": "Centrinis bankas",
       "category": "Ekonomika (sunku)",
       "difficulty": 3
     },
@@ -10361,12 +10235,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Dirbtinio intelekto sritis, mokanti sistemas mokytis iš duomenų",
-      "answer": "Mašininis mokymasis",
-      "category": "Kompiuterija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Kompanijos „Apple“ įkūrėjas, pristatęs iPhone",
       "answer": "Džobsas",
       "category": "Kompiuterija (sunku)",
@@ -10445,12 +10313,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Reiškinys, kai kūnas plūduriuoja skystyje dėl iškeliamosios jėgos",
-      "answer": "Archimedo dėsnis",
-      "category": "Fizika (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Šveicarijoje veikiantis dalelių tyrimo centras, sutrumpintai vadinamas šiuo vardu",
       "answer": "CERNAS",
       "category": "Fizika (sunku)",
@@ -10501,12 +10363,6 @@
     {
       "clue": "Fizikos šaka, tirianti kūnų judėjimą neatsižvelgiant į jį sukėlusias jėgas",
       "answer": "Kinematika",
-      "category": "Fizika (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Reiškinys, kai judantis šaltinis keičia bangos suvokiamą dažnį",
-      "answer": "Doplerio efektas",
       "category": "Fizika (sunku)",
       "difficulty": 3
     },
@@ -10667,12 +10523,6 @@
       "difficulty": 3
     },
     {
-      "clue": "1989 m. žmonių grandinės, nusidriekusios per Vilnių, Rygą ir Taliną, pavadinimas",
-      "answer": "Baltijos kelias",
-      "category": "Lietuva (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Lietuvos rašytojas, laikomas tautinio atgimimo patriarchu",
       "answer": "Basanavičius",
       "category": "Lietuva (sunku)",
@@ -10703,12 +10553,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Futbolo turnyras, vykstantis kas ketverius metus tarp nacionalinių rinktinių",
-      "answer": "Pasaulio čempionatas",
-      "category": "Sportas (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Argentinietis futbolininkas, laimėjęs Pasaulio taurę 2022 m.",
       "answer": "Mesis",
       "category": "Sportas (sunku)",
@@ -10717,12 +10561,6 @@
     {
       "clue": "Krepšinio lyga, laikoma stipriausia pasaulyje, JAV",
       "answer": "NBA",
-      "category": "Sportas (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Dviračių lenktynės, vykstančios Prancūzijoje kasmet liepą",
-      "answer": "Tour de France",
       "category": "Sportas (sunku)",
       "difficulty": 3
     },
@@ -10745,12 +10583,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Žiemos sporto šaka, kurioje slystama nuo kalno ant vienos lentos",
-      "answer": "Snieglenčių sportas",
-      "category": "Sportas (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Teisės šaka, reguliuojanti santykius tarp valstybių",
       "answer": "Tarptautinė",
       "category": "Teisė (sunku)",
@@ -10765,12 +10597,6 @@
     {
       "clue": "Teismo sprendimas, kuriuo asmuo pripažįstamas nekaltu arba kaltu",
       "answer": "Nuosprendis",
-      "category": "Teisė (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Teisės principas, teigiantis, kad kaltė turi būti įrodyta",
-      "answer": "Nekaltumo prezumpcija",
       "category": "Teisė (sunku)",
       "difficulty": 3
     },
@@ -10801,12 +10627,6 @@
     {
       "clue": "Teisinis dokumentas, kuriuo asmuo paskiria turto paveldėtojus",
       "answer": "Testamentas",
-      "category": "Teisė (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Valdžių padalijimo teorija, skirianti įstatymų leidžiamąją, vykdomąją ir teismų valdžias",
-      "answer": "Trias politica",
       "category": "Teisė (sunku)",
       "difficulty": 3
     },
@@ -10931,24 +10751,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Belgų inžinierius, sukūręs pasaulinį žiniatinklį",
-      "answer": "Berners Li",
-      "category": "Technologijos (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Technologija, leidžianti mašinoms imituoti žmogaus intelektą",
-      "answer": "Dirbtinis intelektas",
-      "category": "Technologijos (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Duomenų saugojimo technologija, veikianti be centrinio serverio, grandimi sujungtais blokais",
-      "answer": "Blokų grandinė",
-      "category": "Technologijos (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Belaidžio ryšio technologija, naudojama trumpu atstumu tarp įrenginių",
       "answer": "Bluetooth",
       "category": "Technologijos (sunku)",
@@ -10957,12 +10759,6 @@
     {
       "clue": "Erdvėlaivių bendrovė, įkurta Elono Musko, kurianti daugkartinio naudojimo raketas",
       "answer": "SpaceX",
-      "category": "Technologijos (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Objektų gamybos sluoksnis po sluoksnio technologija pagal kompiuterinį modelį",
-      "answer": "Trimatis spausdinimas",
       "category": "Technologijos (sunku)",
       "difficulty": 3
     },
@@ -10979,12 +10775,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Įrenginys, verčiantis šviesos energiją elektros energija",
-      "answer": "Saulės elementas",
-      "category": "Technologijos (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Robotikos šaka, kurianti mašinas, atliekančias žmogui pavojingus darbus",
       "answer": "Robotika",
       "category": "Technologijos (sunku)",
@@ -10997,12 +10787,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Frankų karalius, karūnuotas imperatoriumi 800 m.",
-      "answer": "Karolis Didysis",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "1054 m. įvykis, po kurio krikščionybė skilo į katalikybę ir stačiatikybę",
       "answer": "Schizma",
       "category": "Istorija (sunku)",
@@ -11011,12 +10795,6 @@
     {
       "clue": "Osmanų imperijos sostinė, dabartinis Stambulas, iki 1453 m. vadinta šiuo vardu",
       "answer": "Konstantinopolis",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "XX a. pradžios karas, prasidėjęs po Sarajevo pasikėsinimo",
-      "answer": "Pirmasis pasaulinis",
       "category": "Istorija (sunku)",
       "difficulty": 3
     },
@@ -11045,18 +10823,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Prancūzų karalius, vadintas Saulės karaliumi",
-      "answer": "Liudvikas XIV",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "1683 m. mūšis prie Vienos, sustabdęs osmanų veržimąsi į Europą",
-      "answer": "Vienos mūšis",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Senovės Romos respublikos aukščiausia patariamoji institucija",
       "answer": "Senatas",
       "category": "Istorija (sunku)",
@@ -11065,12 +10831,6 @@
     {
       "clue": "Anglijos ir Škotijos karalius, suvienijęs abi karūnas 1603 m.",
       "answer": "Jokūbas",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "XVI a. Ispanijos ir Anglijos jūrų mūšyje sudaužyta didžioji laivyno armada",
-      "answer": "Nenugalimoji armada",
       "category": "Istorija (sunku)",
       "difficulty": 3
     },
@@ -11119,12 +10879,6 @@
     {
       "clue": "XIII a. Vokiečių ordino įkurta valstybė Baltijos pakrantėje",
       "answer": "Kryžiuočiai",
-      "category": "Istorija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "1991 m. subyrėjusi didžiausia pasaulio valstybė",
-      "answer": "Sovietų Sąjunga",
       "category": "Istorija (sunku)",
       "difficulty": 3
     },
@@ -11185,12 +10939,6 @@
     {
       "clue": "Kalnų grandinė, skirianti Ispaniją nuo Prancūzijos",
       "answer": "Pirėnai",
-      "category": "Geografija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Šalis, vadinama Baltuoju žemynu kaimyne, apsupta Antarktidos vandenyno",
-      "answer": "Naujoji Zelandija",
       "category": "Geografija (sunku)",
       "difficulty": 3
     },
@@ -11275,12 +11023,6 @@
     {
       "clue": "Mokslininkas, pirmasis panaudojęs mikroskopą bakterijoms stebėti",
       "answer": "Levenhukas",
-      "category": "Mokslas (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Fizikos dėsnis, aprašantis dujų slėgio, tūrio ir temperatūros ryšį",
-      "answer": "Idealiųjų dujų dėsnis",
       "category": "Mokslas (sunku)",
       "difficulty": 3
     },
@@ -11387,12 +11129,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Kaulų sistemos dalis, gaminanti kraujo ląsteles",
-      "answer": "Kaulų čiulpai",
-      "category": "Anatomija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Elementas, kurio simbolis O, sudarantis penktadalį atmosferos",
       "answer": "Deguonis",
       "category": "Chemija (sunku)",
@@ -11419,12 +11155,6 @@
     {
       "clue": "Angliavandenilių grupė, sudaranti naftą",
       "answer": "Alkanai",
-      "category": "Chemija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Skalė, kuria matuojamas tirpalo rūgštingumas",
-      "answer": "Ph skalė",
       "category": "Chemija (sunku)",
       "difficulty": 3
     },
@@ -11465,12 +11195,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Skaičius, žymintis natūralaus logaritmo pagrindą, apytiksliai 2,718",
-      "answer": "Oilerio skaičius",
-      "category": "Matematika (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Anglų matematikas, sukūręs tikimybių teorijos pagrindus kartu su Paskaliu",
       "answer": "Ferma",
       "category": "Matematika (sunku)",
@@ -11507,12 +11231,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Žvaigždynas, dar vadinamas Didžiaisiais grįžulo ratais",
-      "answer": "Didieji grįžulo ratai",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Planeta, apsupta metano dujų, matoma mėlynai žalia spalva",
       "answer": "Neptūnas",
       "category": "Astronomija (sunku)",
@@ -11531,20 +11249,8 @@
       "difficulty": 3
     },
     {
-      "clue": "Reiškinys, kai dvi žvaigždės sukasi viena aplink kitą",
-      "answer": "Dvinarė sistema",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Sovietų kosmonautas, pirmasis žmogus kosmose",
       "answer": "Gagarinas",
-      "category": "Astronomija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Mėnulio dalis, kurios niekada nematome nuo Žemės",
-      "answer": "Kita pusė",
       "category": "Astronomija (sunku)",
       "difficulty": 3
     },
@@ -12023,26 +11729,8 @@
       "difficulty": 3
     },
     {
-      "clue": "Ekonomikos terminas, žymintis prekių ir paslaugų kainų santykį per laiką",
-      "answer": "Kainų indeksas",
-      "category": "Ekonomika (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Rinkos struktūra, kai konkuruoja keli stambūs gamintojai",
       "answer": "Oligopolija",
-      "category": "Ekonomika (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Ekonomikos terminas, žymintis nedarbo ir infliacijos santykį",
-      "answer": "Filipso kreivė",
-      "category": "Ekonomika (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "1944 m. sistema, nustačiusi dolerio susiejimą su auksu",
-      "answer": "Bretono Vudso",
       "category": "Ekonomika (sunku)",
       "difficulty": 3
     },
@@ -12061,12 +11749,6 @@
     {
       "clue": "Ekonomikos terminas, žymintis valstybės išlaidų viršijimą virš pajamų",
       "answer": "Deficitas",
-      "category": "Ekonomika (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Tarptautinė organizacija, teikianti paskolas besivystančioms šalims",
-      "answer": "Pasaulio bankas",
       "category": "Ekonomika (sunku)",
       "difficulty": 3
     },
@@ -12119,18 +11801,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Programavimo kalba, sukurta specialiai duomenų analizei ir statistikai, pavadinta raide",
-      "answer": "R kalba",
-      "category": "Kompiuterija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Terminas, žymintis nulinės dienos saugumo spragą programinėje įrangoje",
-      "answer": "Nulinė diena",
-      "category": "Kompiuterija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "„Facebook“ įkūrėjas, pakeitęs kompanijos pavadinimą į Meta",
       "answer": "Cukerbergas",
       "category": "Kompiuterija (sunku)",
@@ -12139,12 +11809,6 @@
     {
       "clue": "Duomenų bazių užklausų kalba, sutrumpintai vadinama SQL",
       "answer": "SQL",
-      "category": "Kompiuterija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Kompiuterio dalis, laikinai saugojanti duomenis darbo metu",
-      "answer": "Operatyvioji atmintis",
       "category": "Kompiuterija (sunku)",
       "difficulty": 3
     },
@@ -12167,12 +11831,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Reiškinys, kai kūnas sugeria visą kritusią šviesą ir neatspindi jos",
-      "answer": "Absoliuti juoda kūnas",
-      "category": "Fizika (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Vienetas, kuriuo matuojama galia tarptautinėje sistemoje",
       "answer": "Vatas",
       "category": "Fizika (sunku)",
@@ -12185,12 +11843,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Reiškinys, kai objektas juda apskritimu pastoviu greičiu, veikiamas jėgos į centrą",
-      "answer": "Centripetinė jėga",
-      "category": "Fizika (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Prietaisas, matuojantis elektros įtampą",
       "answer": "Voltmetras",
       "category": "Fizika (sunku)",
@@ -12199,12 +11851,6 @@
     {
       "clue": "Fizikas, atradęs elektroną 1897 m.",
       "answer": "Tomsonas",
-      "category": "Fizika (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Bangos tipas, kurioje dalelės svyruoja statmenai sklidimo krypčiai",
-      "answer": "Skersinė banga",
       "category": "Fizika (sunku)",
       "difficulty": 3
     },
@@ -12353,12 +11999,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Teismo institucija, sprendžianti ginčus tarp valstybių Hagoje",
-      "answer": "Tarptautinis teismas",
-      "category": "Teisė (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Teisinė sąvoka, žyminti asmens teisę valdyti, naudoti ir disponuoti daiktu",
       "answer": "Nuosavybė",
       "category": "Teisė (sunku)",
@@ -12427,12 +12067,6 @@
     {
       "clue": "Senovės Romos apskrito plano šventykla su kupolu, skirta visiems dievams",
       "answer": "Panteonas",
-      "category": "Architektūra (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Vilniaus senamiesčio simbolis, aukščiausias bokštas ant kalvos",
-      "answer": "Gedimino pilies bokštas",
       "category": "Architektūra (sunku)",
       "difficulty": 3
     },
@@ -12557,12 +12191,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Egipto plokštė, padėjusi iššifruoti hieroglifus, rasta netoli Rozetos miesto",
-      "answer": "Rozetos akmuo",
-      "category": "Archeologija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Britanijos priešistorinis akmenų statinys lygumoje",
       "answer": "Stounhendžas",
       "category": "Archeologija (sunku)",
@@ -12589,12 +12217,6 @@
     {
       "clue": "Uoliena, susidariusi iš sustingusios magmos",
       "answer": "Bazaltas",
-      "category": "Geologija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Skalė, kuria matuojamas žemės drebėjimų stiprumas",
-      "answer": "Richterio skalė",
       "category": "Geologija (sunku)",
       "difficulty": 3
     },
@@ -12641,12 +12263,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Ginklas, naudojantis branduolinę reakciją didžiuliam sprogimui sukelti",
-      "answer": "Atominė bomba",
-      "category": "Karyba (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Karinė strategija, kai priešas apsupamas iš visų pusių",
       "answer": "Apsupimas",
       "category": "Karyba (sunku)",
@@ -12667,12 +12283,6 @@
     {
       "clue": "Verslo terminas, žymintis įmonės prekės ženklo vertę vartotojų akyse",
       "answer": "Reputacija",
-      "category": "Verslas (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Verslo modelis, kai produktas parduodamas tiesiogiai internetu be tarpininkų",
-      "answer": "Elektroninė prekyba",
       "category": "Verslas (sunku)",
       "difficulty": 3
     },
@@ -12749,12 +12359,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Klimato reiškinys, susijęs su Ramiojo vandenyno vandens temperatūros pokyčiais",
-      "answer": "El Ninjo",
-      "category": "Meteorologija (sunku)",
-      "difficulty": 3
-    },
-    {
       "clue": "Atmosferos sluoksnis, kuriame formuojasi orai",
       "answer": "Troposfera",
       "category": "Meteorologija (sunku)",
@@ -12781,12 +12385,6 @@
     {
       "clue": "Škotų mokslininkas, atradęs peniciliną atsitiktinai iš pelėsio",
       "answer": "Flemingas",
-      "category": "Farmacija (sunku)",
-      "difficulty": 3
-    },
-    {
-      "clue": "Vaisto tyrimo etapas, kai preparatas testuojamas su savanoriais žmonėmis",
-      "answer": "Klinikiniai tyrimai",
       "category": "Farmacija (sunku)",
       "difficulty": 3
     },
@@ -12849,24 +12447,6 @@
       "answer": "Reinas",
       "category": "Geografija",
       "difficulty": 2
-    },
-    {
-      "clue": "Dirbtinis vandens kelias tarp Viduržemio ir Raudonosios jūrų",
-      "answer": "Sueco kanalas",
-      "category": "Geografija",
-      "difficulty": 3
-    },
-    {
-      "clue": "Vandens telkinys su Venecijos įlanka, skiriantis Apeninus nuo Balkanų",
-      "answer": "Adrijos jūra",
-      "category": "Geografija",
-      "difficulty": 3
-    },
-    {
-      "clue": "Jūra be krantų Atlante",
-      "answer": "Sargaso jūra",
-      "category": "Geografija",
-      "difficulty": 3
     },
     {
       "clue": "Uola išraižytas miestas Jordanijoje",
@@ -13097,12 +12677,6 @@
       "difficulty": 1
     },
     {
-      "clue": "Tarkuotų bulvių kepsniai, valgomi su grietine",
-      "answer": "Bulviniai blynai",
-      "category": "Lietuva",
-      "difficulty": 1
-    },
-    {
       "clue": "Rūkyta lietuviška varškės ar sūrio rūšis",
       "answer": "Džiugas",
       "category": "Lietuva",
@@ -13123,12 +12697,6 @@
     {
       "clue": "1988 m. įkurtas Lietuvos persitvarkymo judėjimas",
       "answer": "Sąjūdis",
-      "category": "Lietuva",
-      "difficulty": 2
-    },
-    {
-      "clue": "Lietuvos aukščiausias pastatas Vilniuje",
-      "answer": "Televizijos bokštas",
       "category": "Lietuva",
       "difficulty": 2
     },
@@ -13169,12 +12737,6 @@
       "difficulty": 2
     },
     {
-      "clue": "Chartija, pasirašyta Anglijoje 1215 m.",
-      "answer": "Magna Carta",
-      "category": "Istorija",
-      "difficulty": 3
-    },
-    {
       "clue": "Makedonijos karalius, vadintas Didžiuoju",
       "answer": "Aleksandras",
       "category": "Istorija",
@@ -13211,28 +12773,10 @@
       "difficulty": 2
     },
     {
-      "clue": "Havajų uostas, užpultas 1941 metais",
-      "answer": "Perl Harboras",
-      "category": "Istorija",
-      "difficulty": 2
-    },
-    {
       "clue": "Spaudos mašiną išradęs vokietis",
       "answer": "Gutenbergas",
       "category": "Istorija",
       "difficulty": 2
-    },
-    {
-      "clue": "Prekybos trasa, jungusi Kiniją su Viduržemio jūra",
-      "answer": "Šilko kelias",
-      "category": "Istorija",
-      "difficulty": 2
-    },
-    {
-      "clue": "Radinys, padėjęs iššifruoti Egipto hieroglifus",
-      "answer": "Rozetės akmuo",
-      "category": "Istorija",
-      "difficulty": 3
     },
     {
       "clue": "Prancūzijos karalių rūmai prie Paryžiaus",
@@ -13243,18 +12787,6 @@
     {
       "clue": "Reformacijos pradininkas, prikalęs tezes Vitenberge",
       "answer": "Liuteris",
-      "category": "Istorija",
-      "difficulty": 2
-    },
-    {
-      "clue": "Kova tarp Šiaurės ir Pietų JAV valstijų 1861-1865 m.",
-      "answer": "Pilietinis karas",
-      "category": "Istorija",
-      "difficulty": 2
-    },
-    {
-      "clue": "Romos imperijos palikimas, kuriuo iki XVIII a. rašė Europos mokslininkai",
-      "answer": "Lotynų kalba",
       "category": "Istorija",
       "difficulty": 2
     },
@@ -13355,12 +12887,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Saldus tirštas skystis iš kanadiško medžio sulos",
-      "answer": "Klevų sirupas",
-      "category": "Maistas",
-      "difficulty": 2
-    },
-    {
       "clue": "Grūdas, salyklinamas alui",
       "answer": "Miežiai",
       "category": "Maistas",
@@ -13377,12 +12903,6 @@
       "answer": "Duona",
       "category": "Maistas",
       "difficulty": 1
-    },
-    {
-      "clue": "Riebalinis skystis, spaudžiamas iš Viduržemio jūros medžio vaisių",
-      "answer": "Alyvuogių aliejus",
-      "category": "Maistas",
-      "difficulty": 2
     },
     {
       "clue": "Prieskonis, malamas iš juodų grūdelių",
@@ -13411,12 +12931,6 @@
     {
       "clue": "Sriuba iš burokėlių, populiari Rytų Europoje",
       "answer": "Barščiai",
-      "category": "Maistas",
-      "difficulty": 1
-    },
-    {
-      "clue": "Kepinys su sodo vaisiais ir trupiniais",
-      "answer": "Obuolių pyragas",
       "category": "Maistas",
       "difficulty": 1
     },
@@ -13529,12 +13043,6 @@
       "difficulty": 1
     },
     {
-      "clue": "Ant sienos kabantis laiko matuoklis",
-      "answer": "Sieninis laikrodis",
-      "category": "Kasdienybė",
-      "difficulty": 2
-    },
-    {
       "clue": "Anglų kilmės žaidimas su vartais ir kėliniais",
       "answer": "Kriketas",
       "category": "Sportas",
@@ -13553,12 +13061,6 @@
       "difficulty": 1
     },
     {
-      "clue": "Komandinis žaidimas ant ledo su disku ir lazdomis",
-      "answer": "Ledo ritulys",
-      "category": "Sportas",
-      "difficulty": 1
-    },
-    {
       "clue": "Kovos sportas ringe su pirštinėmis",
       "answer": "Boksas",
       "category": "Sportas",
@@ -13571,12 +13073,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Lenktynės dviem ratais, garsios „Tour de France“",
-      "answer": "Dviračių sportas",
-      "category": "Sportas",
-      "difficulty": 1
-    },
-    {
       "clue": "Plaukimo stilius, pavadintas vabzdžio vardu",
       "answer": "Peteliškė",
       "category": "Sportas",
@@ -13587,12 +13083,6 @@
       "answer": "Triatlonas",
       "category": "Sportas",
       "difficulty": 2
-    },
-    {
-      "clue": "Varžybos, pažymėtos penkiais susikibusiais žiedais",
-      "answer": "Olimpinės žaidynės",
-      "category": "Sportas",
-      "difficulty": 1
     },
     {
       "clue": "Pasaulio futbolo valdymo organizacija",
@@ -13637,12 +13127,6 @@
       "difficulty": 1
     },
     {
-      "clue": "Bėgimo, šuolių ir metimų rungtys kartu",
-      "answer": "Lengvoji atletika",
-      "category": "Sportas",
-      "difficulty": 2
-    },
-    {
       "clue": "Komandinis sportas baseine su kamuoliu",
       "answer": "Vandensvydis",
       "category": "Sportas",
@@ -13659,12 +13143,6 @@
       "answer": "Bandymas",
       "category": "Sportas",
       "difficulty": 3
-    },
-    {
-      "clue": "Sportas, kai keliama štanga",
-      "answer": "Sunkioji atletika",
-      "category": "Sportas",
-      "difficulty": 2
     },
     {
       "clue": "Sportas, kai iriamasi valtimi su irklais",
@@ -13687,12 +13165,6 @@
     {
       "clue": "Bausmės smūgis futbole nuo vienuolikos metrų",
       "answer": "Baudinys",
-      "category": "Sportas",
-      "difficulty": 2
-    },
-    {
-      "clue": "Ženklas, rodomas futbolininkui šalinant iš aikštės",
-      "answer": "Raudona kortelė",
       "category": "Sportas",
       "difficulty": 2
     },
@@ -13871,36 +13343,6 @@
       "difficulty": 2
     },
     {
-      "clue": "Senovės Atėnų gyventojų šneka, kuria rašė Homeras",
-      "answer": "Graikų kalba",
-      "category": "Kalba",
-      "difficulty": 1
-    },
-    {
-      "clue": "Brazilijos valstybinė šneka, atkeliavusi iš Europos",
-      "answer": "Portugalų kalba",
-      "category": "Kalba",
-      "difficulty": 2
-    },
-    {
-      "clue": "Iškilių taškelių sistema akliesiems skaityti",
-      "answer": "Brailio raštas",
-      "category": "Kalba",
-      "difficulty": 2
-    },
-    {
-      "clue": "Taškų ir brūkšnių telegrafo kodas",
-      "answer": "Morzės abėcėlė",
-      "category": "Kalba",
-      "difficulty": 2
-    },
-    {
-      "clue": "Nosinė, varnelė ar brūkšnys virš raidės",
-      "answer": "Diakritinis ženklas",
-      "category": "Kalba",
-      "difficulty": 3
-    },
-    {
       "clue": "Žodis, sudarytas iš pirmųjų raidžių",
       "answer": "Akronimas",
       "category": "Kalba",
@@ -13919,22 +13361,10 @@
       "difficulty": 2
     },
     {
-      "clue": "Berlyno ir Vienos gyventojų gimtoji šneka",
-      "answer": "Vokiečių kalba",
-      "category": "Kalba",
-      "difficulty": 1
-    },
-    {
       "clue": "Kalbos dalis, žyminti veiksmo aplinkybę",
       "answer": "Prieveiksmis",
       "category": "Kalba",
       "difficulty": 2
-    },
-    {
-      "clue": "Lietuvių kalbos raidžių skaičius",
-      "answer": "Trisdešimt dvi",
-      "category": "Kalba",
-      "difficulty": 3
     },
     {
       "clue": "Bendrovė, sukūrusi „Windows“",
@@ -14009,18 +13439,6 @@
       "difficulty": 1
     },
     {
-      "clue": "Vaizduoklis, valdomas pirštu",
-      "answer": "Jutiklinis ekranas",
-      "category": "Technologijos",
-      "difficulty": 2
-    },
-    {
-      "clue": "Laiškų siuntimo tinkle sistema",
-      "answer": "Elektroninis paštas",
-      "category": "Technologijos",
-      "difficulty": 1
-    },
-    {
       "clue": "Programa svetainėms naršyti",
       "answer": "Naršyklė",
       "category": "Technologijos",
@@ -14033,22 +13451,10 @@
       "difficulty": 2
     },
     {
-      "clue": "Programa, susirašinėjanti su žmogumi",
-      "answer": "Pokalbių robotas",
-      "category": "Technologijos",
-      "difficulty": 2
-    },
-    {
       "clue": "Centrinis kompiuterio skaičiavimo mazgas",
       "answer": "Procesorius",
       "category": "Technologijos",
       "difficulty": 2
-    },
-    {
-      "clue": "Duomenų dublikatas, saugomas praradimo atveju",
-      "answer": "Atsarginė kopija",
-      "category": "Technologijos",
-      "difficulty": 1
     },
     {
       "clue": "Palydovinė navigacijos sistema automobilyje",
@@ -14063,26 +13469,8 @@
       "difficulty": 3
     },
     {
-      "clue": "Skaitmeninė vieta, iš kurios diegiamos telefono programos",
-      "answer": "Programėlių parduotuvė",
-      "category": "Technologijos",
-      "difficulty": 2
-    },
-    {
       "clue": "Akmuo, įskrendantis į atmosferą ir sudegantis",
       "answer": "Meteoras",
-      "category": "Astronomija",
-      "difficulty": 2
-    },
-    {
-      "clue": "Uolienų sritis tarp Marso ir Jupiterio",
-      "answer": "Asteroidų juosta",
-      "category": "Astronomija",
-      "difficulty": 3
-    },
-    {
-      "clue": "Dangaus kūnas virš šiaurės ašigalio, rodantis kryptį",
-      "answer": "Šiaurinė žvaigždė",
       "category": "Astronomija",
       "difficulty": 2
     },
@@ -14095,12 +13483,6 @@
     {
       "clue": "Mėnulio fazė, kai matomas visas skritulys",
       "answer": "Pilnatis",
-      "category": "Astronomija",
-      "difficulty": 1
-    },
-    {
-      "clue": "Reiškinys, kai Mėnulis uždengia dienos šviesulį",
-      "answer": "Saulės užtemimas",
       "category": "Astronomija",
       "difficulty": 1
     },
@@ -14145,18 +13527,6 @@
       "answer": "Fotosfera",
       "category": "Astronomija",
       "difficulty": 3
-    },
-    {
-      "clue": "Tamsi vėsesnė sritis mūsų žvaigždės paviršiuje",
-      "answer": "Saulės dėmė",
-      "category": "Astronomija",
-      "difficulty": 3
-    },
-    {
-      "clue": "Šviesų reiškinys poliariniame danguje",
-      "answer": "Šiaurės pašvaistė",
-      "category": "Astronomija",
-      "difficulty": 2
     },
     {
       "clue": "Sąnarys tarp šlaunies ir blauzdos",
@@ -14207,28 +13577,10 @@
       "difficulty": 1
     },
     {
-      "clue": "Takas, jungiantis akį su smegenimis",
-      "answer": "Regos nervas",
-      "category": "Anatomija",
-      "difficulty": 3
-    },
-    {
       "clue": "Šviesai jautri akies dalis",
       "answer": "Tinklainė",
       "category": "Anatomija",
       "difficulty": 3
-    },
-    {
-      "clue": "Organizmo gynyba nuo ligų sukėlėjų",
-      "answer": "Imuninė sistema",
-      "category": "Anatomija",
-      "difficulty": 2
-    },
-    {
-      "clue": "Britų grupė iš Liverpulio, sukūrusi „Yesterday“",
-      "answer": "The Beatles",
-      "category": "Muzika",
-      "difficulty": 1
     },
     {
       "clue": "Karaliumi vadintas roko atlikėjas Elvis ...",
@@ -14333,18 +13685,6 @@
       "difficulty": 2
     },
     {
-      "clue": "Sveikasis dydis, dalijamas tik iš savęs ir vieneto",
-      "answer": "Pirminis skaičius",
-      "category": "Matematika",
-      "difficulty": 2
-    },
-    {
-      "clue": "Sveikasis dydis, dalijamas iš dviejų be liekanos",
-      "answer": "Lyginis skaičius",
-      "category": "Matematika",
-      "difficulty": 1
-    },
-    {
       "clue": "Veiksmas, žymimas minuso ženklu",
       "answer": "Atimtis",
       "category": "Matematika",
@@ -14361,12 +13701,6 @@
       "answer": "Algebra",
       "category": "Matematika",
       "difficulty": 1
-    },
-    {
-      "clue": "Sveikasis dydis, mažesnis už nulį",
-      "answer": "Neigiamas skaičius",
-      "category": "Matematika",
-      "difficulty": 2
     },
     {
       "clue": "Trupmenos viršutinė dalis",
@@ -14387,32 +13721,8 @@
       "difficulty": 3
     },
     {
-      "clue": "Skaičių eilė, kurioje kiekvienas – dviejų ankstesnių suma",
-      "answer": "Fibonačio seka",
-      "category": "Matematika",
-      "difficulty": 3
-    },
-    {
-      "clue": "Mendelejevo sudaryta cheminių elementų sistema",
-      "answer": "Periodinė lentelė",
-      "category": "Chemija",
-      "difficulty": 1
-    },
-    {
-      "clue": "Dujos, sukeliančios šiltnamio efektą, CO2",
-      "answer": "Anglies dioksidas",
-      "category": "Chemija",
-      "difficulty": 2
-    },
-    {
       "clue": "Medžiaga, kurios pH mažesnis už 7",
       "answer": "Rūgštis",
-      "category": "Chemija",
-      "difficulty": 2
-    },
-    {
-      "clue": "Valgomosios druskos cheminis pavadinimas",
-      "answer": "Natrio chloridas",
       "category": "Chemija",
       "difficulty": 2
     },
@@ -14467,18 +13777,6 @@
     {
       "clue": "Nuo lūžusios rankos uždedamas kietas apvalkalas",
       "answer": "Gipsas",
-      "category": "Medicina",
-      "difficulty": 1
-    },
-    {
-      "clue": "Medžiaga, kurią organizmas gamina paveiktas saulės",
-      "answer": "Vitaminas D",
-      "category": "Medicina",
-      "difficulty": 2
-    },
-    {
-      "clue": "Medžiaga, kurios gausu citrinose ir erškėtuogėse",
-      "answer": "Vitaminas C",
       "category": "Medicina",
       "difficulty": 1
     },
@@ -14561,12 +13859,6 @@
       "difficulty": 1
     },
     {
-      "clue": "Guminė avalynė lietui",
-      "answer": "Guminiai batai",
-      "category": "Drabužiai",
-      "difficulty": 1
-    },
-    {
       "clue": "Drabužis, saugantis nuo lietaus",
       "answer": "Lietpaltis",
       "category": "Drabužiai",
@@ -14625,12 +13917,6 @@
       "answer": "Burokėlis",
       "category": "Vaisiai ir daržovės",
       "difficulty": 1
-    },
-    {
-      "clue": "Balta daržovė su žiedynais, verdama garuose",
-      "answer": "Žiedinis kopūstas",
-      "category": "Vaisiai ir daržovės",
-      "difficulty": 2
     },
     {
       "clue": "Žalias ankštinis augalas su apvaliais grūdeliais",
@@ -14747,22 +14033,10 @@
       "difficulty": 1
     },
     {
-      "clue": "Mažytė vertikaliai plaukianti žuvis su susukta uodega",
-      "answer": "Jūrų arkliukas",
-      "category": "Jūrų gyvūnai",
-      "difficulty": 2
-    },
-    {
       "clue": "Vandens transporto priemonė su burėmis",
       "answer": "Burlaivis",
       "category": "Transportas",
       "difficulty": 1
-    },
-    {
-      "clue": "Vandens transporto priemonė, plaukianti po vandeniu",
-      "answer": "Povandeninis laivas",
-      "category": "Transportas",
-      "difficulty": 2
     },
     {
       "clue": "Automobilis, vežiojantis keleivius už mokestį",
@@ -14795,12 +14069,6 @@
       "difficulty": 1
     },
     {
-      "clue": "Skraidyklė su dujų gaubtu ir krepšiu keleiviams",
-      "answer": "Oro balionas",
-      "category": "Transportas",
-      "difficulty": 2
-    },
-    {
       "clue": "Skandinavų karžygių pomirtinė salė",
       "answer": "Valhala",
       "category": "Mitologija",
@@ -14829,12 +14097,6 @@
       "answer": "Puškaitis",
       "category": "Mitologija",
       "difficulty": 3
-    },
-    {
-      "clue": "Slavų mitologijos ragana, gyvenanti trobelėje ant vištos kojos",
-      "answer": "Baba Jaga",
-      "category": "Mitologija",
-      "difficulty": 2
     },
     {
       "clue": "Būtybė, virstanti vilku per pilnatį",
@@ -14875,12 +14137,6 @@
     {
       "clue": "Anglų rašytojas, parašęs „Oliverį Tvistą“",
       "answer": "Dikensas",
-      "category": "Literatūra",
-      "difficulty": 2
-    },
-    {
-      "clue": "Prancūzų rašytojas, aprašęs kelionę aplink pasaulį per 80 dienų",
-      "answer": "Žiulis Vernas",
       "category": "Literatūra",
       "difficulty": 2
     },
@@ -14933,22 +14189,10 @@
       "difficulty": 1
     },
     {
-      "clue": "Juosta be įgarsinto dialogo, populiari XX a. pradžioje",
-      "answer": "Nebylusis filmas",
-      "category": "Kinas",
-      "difficulty": 2
-    },
-    {
       "clue": "Indijos kino pramonės pavadinimas",
       "answer": "Bolivudas",
       "category": "Kinas",
       "difficulty": 2
-    },
-    {
-      "clue": "Sagos apie šviesos kardus ir Džedajus pavadinimas",
-      "answer": "Žvaigždžių karai",
-      "category": "Kinas",
-      "difficulty": 1
     },
     {
       "clue": "Filmas, tęsiantis ankstesnio istoriją",
@@ -14961,30 +14205,6 @@
       "answer": "Kadras",
       "category": "Kinas",
       "difficulty": 2
-    },
-    {
-      "clue": "Juosta, kuriamas žiūrovui gąsdinti",
-      "answer": "Siaubo filmas",
-      "category": "Kinas",
-      "difficulty": 1
-    },
-    {
-      "clue": "Filmas apie ateitį ir technologijas",
-      "answer": "Mokslinė fantastika",
-      "category": "Kinas",
-      "difficulty": 2
-    },
-    {
-      "clue": "Filme skambanti muzika",
-      "answer": "Garso takelis",
-      "category": "Kinas",
-      "difficulty": 2
-    },
-    {
-      "clue": "Vieta, kurioje žiūrimi filmai dideliame ekrane",
-      "answer": "Kino teatras",
-      "category": "Kinas",
-      "difficulty": 1
     },
     {
       "clue": "Titrai, verčiantys užsienietišką kalbą",
@@ -15113,12 +14333,6 @@
       "difficulty": 2
     },
     {
-      "clue": "Malda, kurios pradžia „Tėve mūsų“",
-      "answer": "Tėve mūsų",
-      "category": "Religija",
-      "difficulty": 2
-    },
-    {
       "clue": "Dešimt Dievo įsakymų gavo šis pranašas ant Sinajaus",
       "answer": "Mozė",
       "category": "Religija",
@@ -15221,26 +14435,8 @@
       "difficulty": 2
     },
     {
-      "clue": "Sausio 1-osios šventė su fejerverkais",
-      "answer": "Naujieji metai",
-      "category": "Šventės",
-      "difficulty": 1
-    },
-    {
       "clue": "Vėlinės minimos šį mėnesį",
       "answer": "Lapkritis",
-      "category": "Šventės",
-      "difficulty": 2
-    },
-    {
-      "clue": "Santuokos metinės, švenčiamos po 25 metų",
-      "answer": "Sidabrinės vestuvės",
-      "category": "Šventės",
-      "difficulty": 3
-    },
-    {
-      "clue": "Rugsėjo 1-oji mokykloje",
-      "answer": "Mokslo metų pradžia",
       "category": "Šventės",
       "difficulty": 2
     },
@@ -17525,18 +16721,6 @@
       "difficulty": 3
     },
     {
-      "clue": "Kovo pradžioje Vilniuje vykstanti amatų šventė",
-      "answer": "Kaziuko mugė",
-      "category": "Lietuva",
-      "difficulty": 2
-    },
-    {
-      "clue": "Sąjungininkų išsilaipinimas Normandijoje 1944 m. birželį",
-      "answer": "Diena D",
-      "category": "Istorija",
-      "difficulty": 3
-    },
-    {
       "clue": "Teniso terminas, kai geimo rezultatas 40:40",
       "answer": "Deusas",
       "category": "Sportas",
@@ -17571,12 +16755,6 @@
       "answer": "Laipsnis",
       "category": "Matematika",
       "difficulty": 1
-    },
-    {
-      "clue": "Veiksmas, atvirkštinis kėlimui kvadratu",
-      "answer": "Kvadratinė šaknis",
-      "category": "Matematika",
-      "difficulty": 2
     },
     {
       "clue": "Graikų mitų pabaisa gyvatėmis vietoj plaukų",

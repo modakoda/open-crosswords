@@ -77,7 +77,7 @@ or run `npm run seed` to load the bundled English starter set
 (`npm run seed -- data/seed-lt.json`), covering easy through moderately
 obscure clues (difficulty 1-3). The generate form's **hard** level draws only
 difficulty 4-5, which that set does not reach, so load
-`npm run seed -- data/seed-lt-hard.json` as well (302 entries across 28
+`npm run seed -- data/seed-lt-hard.json` as well (296 entries across 28
 specialist topics) if you want hard Lithuanian puzzles. Both files are
 independent - the hard set repeats no answer from the starter set, so seeding
 both never puts the same word in a grid twice. For a much larger English pool (~1.1M entries

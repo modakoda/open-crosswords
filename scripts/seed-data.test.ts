@@ -102,7 +102,7 @@ describe("data/seed-lt-medium.json", () => {
 
   it("is a Lithuanian file the seed script accepts", () => {
     expect(language).toEqual({ code: "lt", name: "Lietuvių" });
-    expect(rows.length).toBe(1000);
+    expect(rows.length).toBe(960);
   });
 
   it("holds only difficulties the medium level draws from", () => {
