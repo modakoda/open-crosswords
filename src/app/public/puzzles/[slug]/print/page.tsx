@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { getPuzzleBySlug } from "@/lib/puzzles";
 import { PrintView } from "./PrintView";
-import { getMessages, resolveLocale } from "@/lib/i18n";
+import { getMessages } from "@/lib/i18n";
+import { getRequestLocale } from "@/lib/i18n/request";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,7 +16,7 @@ export default async function PrintPage({
   const puzzle = await getPuzzleBySlug(slug);
   if (!puzzle) notFound();
 
-  const messages = getMessages(resolveLocale(puzzle.languageCode));
+  const messages = getMessages(await getRequestLocale());
 
   return <PrintView puzzle={puzzle} messages={messages} />;
 }

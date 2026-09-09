@@ -19,9 +19,10 @@ app, easy to self-host.
   the library with the admin UI, CSV/JSON import, or optional AI drafting; an
   English starter set is bundled to import if you want a running start. The
   visitor-facing UI itself (generate, solve, print) is translated into English
-  and Lithuanian (`src/lib/i18n/`), matching the puzzle's language; site-wide
-  chrome defaults to the visitor's browser language and can be switched from
-  the header (persisted in a cookie).
+  and Lithuanian (`src/lib/i18n/`). It defaults to the visitor's browser
+  language and can be switched from the header (persisted in a cookie), which
+  applies on every page including a puzzle's — the clues stay in whatever
+  language the puzzle was built in.
 
 ## Try it out (Docker, no build)
 

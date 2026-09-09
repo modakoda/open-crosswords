@@ -116,15 +116,19 @@ or solve them online via a shareable link. Open source, single Next.js app.
   check as a pure function, which is how it is tested.
 - **UI translation** in `src/lib/i18n/`: static `en`/`lt` dictionaries
   (`getMessages`), keyed to the app chrome, not the (separately language-scoped)
-  clue/answer library. Site-wide chrome (`layout.tsx`, the public pages, the
-  client sign-up/login/dashboard pages) resolves its locale via
+  clue/answer library. Every page's chrome resolves its locale via
   `getRequestLocale` (server-only): the visitor's explicit choice from the
   `locale` cookie if set (`LanguageSwitcher` in the header, persisted by the
   `setLocale` server action in `src/lib/i18n/actions.ts`, which validates the
   value against `locales` before writing), otherwise the highest-`q` supported
-  language in their browser's `Accept-Language` header; the generate form
-  matches whichever content language is selected; the solve/print pages match
-  the puzzle's own `languageCode` (`resolveLocale`). Admin UI is not
+  language in their browser's `Accept-Language` header. That includes the
+  solve and print pages, which once read the puzzle's own `languageCode`
+  instead — the header's switcher then named one language while the page
+  rendered another, and picking the language already displayed did nothing.
+  Interface language belongs to the visitor; a puzzle's language stays a
+  property of its clues (still shown beside the title). The generate form is
+  the one exception: its chrome matches whichever content language is
+  selected, so it is next if this mismatch resurfaces. Admin UI is not
   translated. Add a language by adding its code to `locales` and a dictionary
   satisfying `typeof en`.
 - **Auth** is better-auth (`src/lib/auth.ts`, catch-all route

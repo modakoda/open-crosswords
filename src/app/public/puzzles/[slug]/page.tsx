@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { getPuzzleBySlug } from "@/lib/puzzles";
 import { SolveView } from "@/components/SolveView";
 import { Badge } from "@/components/ui/badge";
-import { getMessages, resolveLocale } from "@/lib/i18n";
+import { getMessages } from "@/lib/i18n";
 import { getRequestLocale } from "@/lib/i18n/request";
 
 export const runtime = "nodejs";
@@ -32,7 +32,7 @@ export default async function PuzzlePage({
   const puzzle = await getPuzzleBySlug(slug);
   if (!puzzle) notFound();
 
-  const messages = getMessages(resolveLocale(puzzle.languageCode));
+  const messages = getMessages(await getRequestLocale());
 
   return (
     <div className="space-y-5">

@@ -96,3 +96,62 @@ describe("data/seed-lt-hard.json", () => {
     }
   });
 });
+
+describe("data/seed-lt-medium.json", () => {
+  const { language, rows } = load("seed-lt-medium.json");
+
+  it("is a Lithuanian file the seed script accepts", () => {
+    expect(language).toEqual({ code: "lt", name: "Lietuvių" });
+    expect(rows.length).toBe(1000);
+  });
+
+  it("holds only difficulties the medium level draws from", () => {
+    const { min, max } = difficultyRange("medium");
+    for (const r of rows) {
+      expect(r.difficulty).toBeGreaterThanOrEqual(min);
+      expect(r.difficulty).toBeLessThanOrEqual(max);
+    }
+  });
+
+  it("normalizes every answer to a placeable Lithuanian word", () => {
+    for (const r of rows) {
+      const n = normalizeAnswer(r.answer, "lt");
+      expect(isPlaceableAnswer(n), `${r.answer} -> ${n}`).toBe(true);
+      // `selectCandidates` drops anything under three letters by default.
+      expect(n.length, r.answer).toBeGreaterThanOrEqual(3);
+    }
+  });
+
+  it("repeats no answer, in itself or against the other bundled sets", () => {
+    const taken = new Set(
+      [...load("seed-lt.json").rows, ...load("seed-lt-hard.json").rows].map((r) =>
+        normalizeAnswer(r.answer, "lt"),
+      ),
+    );
+    const seen = new Set<string>();
+    for (const r of rows) {
+      const n = normalizeAnswer(r.answer, "lt");
+      expect(seen.has(n), `duplicate in file: ${r.answer}`).toBe(false);
+      expect(taken.has(n), `already bundled: ${r.answer}`).toBe(false);
+      seen.add(n);
+    }
+  });
+
+  it("fills a full A4 grid on its own at the medium difficulty", () => {
+    const candidates = toCandidates(rows);
+    const { min, max } = difficultyRange("medium");
+    const { maxSize, targetWords } = paperToGrid("a4", "portrait");
+
+    for (const seed of ["one", "two", "three", "four", "five"]) {
+      const pool = selectCandidates(candidates, {
+        seed,
+        targetWords,
+        minDifficulty: min,
+        maxDifficulty: max,
+        maxLength: maxSize,
+      });
+      const crossword = generateCrossword(pool, { seed, maxSize, targetWords });
+      expect(crossword.placements.length, `seed ${seed}`).toBe(targetWords);
+    }
+  });
+});
