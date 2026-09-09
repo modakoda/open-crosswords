@@ -881,7 +881,7 @@
       "difficulty": 1
     },
     {
-      "clue": "Vokietijos miestą iki 1989 m. skyrusi siena",
+      "clue": "Vokietijos miestas, kurį Šaltojo karo metais dalijo garsi siena",
       "answer": "Berlynas",
       "category": "Istorija",
       "difficulty": 2
@@ -7163,8 +7163,8 @@
       "difficulty": 3
     },
     {
-      "clue": "1991 m. sausio įvykiai prie Vilniaus televizijos bokšto",
-      "answer": "Sausio13oji",
+      "clue": "1991 m. data, kai beginkliai žmonės apgynė Vilniaus televizijos bokštą",
+      "answer": "Sausio tryliktoji",
       "category": "Istorija (sunku)",
       "difficulty": 3
     },
@@ -9191,8 +9191,8 @@
       "difficulty": 3
     },
     {
-      "clue": "Anglies izotopas, naudojamas senų radinių datavimui",
-      "answer": "Anglis-14",
+      "clue": "Radioaktyvus anglies izotopas, naudojamas archeologiniam datavimui",
+      "answer": "Radiokarbonas",
       "category": "Chemija (sunku)",
       "difficulty": 3
     },
@@ -10643,8 +10643,8 @@
       "difficulty": 3
     },
     {
-      "clue": "1991 m. sausio įvykiai prie televizijos bokšto Vilniuje",
-      "answer": "Sausio 13-oji",
+      "clue": "Pasienio postas, kuriame 1991 m. sovietų OMON nužudė Lietuvos pareigūnus",
+      "answer": "Medininkai",
       "category": "Lietuva (sunku)",
       "difficulty": 3
     },
@@ -10961,8 +10961,8 @@
       "difficulty": 3
     },
     {
-      "clue": "Technologija, leidžianti spausdinti trimačius objektus sluoksniais",
-      "answer": "3D spausdinimas",
+      "clue": "Objektų gamybos sluoksnis po sluoksnio technologija pagal kompiuterinį modelį",
+      "answer": "Trimatis spausdinimas",
       "category": "Technologijos (sunku)",
       "difficulty": 3
     },
@@ -12857,7 +12857,7 @@
       "difficulty": 3
     },
     {
-      "clue": "Jūra tarp Italijos ir Balkanų",
+      "clue": "Vandens telkinys su Venecijos įlanka, skiriantis Apeninus nuo Balkanų",
       "answer": "Adrijos jūra",
       "category": "Geografija",
       "difficulty": 3
@@ -14825,8 +14825,8 @@
       "difficulty": 2
     },
     {
-      "clue": "Lietuvių mitologijos miško ir medžioklės dievas",
-      "answer": "Medeina",
+      "clue": "Baltų šventųjų giraičių dievas, gyvenantis po šeivamedžiu",
+      "answer": "Puškaitis",
       "category": "Mitologija",
       "difficulty": 3
     },
