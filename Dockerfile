@@ -12,6 +12,7 @@
 
 FROM node:22-alpine AS base
 WORKDIR /app
+RUN npm install -g npm@latest
 
 FROM base AS deps
 COPY package.json package-lock.json ./
