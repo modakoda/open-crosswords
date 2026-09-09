@@ -5,6 +5,8 @@ import {
 } from "@/lib/auth-throttle";
 import { clientIp } from "@/lib/client-ip";
 import { env } from "@/lib/env/server";
+import { isUserBlocked } from "@/lib/user-block";
+import { revokeUserSessions } from "@/lib/user-sessions";
 import {
   isKnownDevice,
   withKnownDevice,
@@ -47,13 +49,26 @@ function isSignedIn(returned: unknown): boolean {
 }
 
 /**
+ * The id of the account a completed sign-in belongs to, or null. Read off the
+ * endpoint's own return value, so it is the account the password actually
+ * matched — never anything taken from the request body.
+ */
+function signedInUserId(returned: unknown): string | null {
+  if (!isSignedIn(returned)) return null;
+  const { user } = returned as { user?: { id?: unknown } };
+  return typeof user?.id === "string" ? user.id : null;
+}
+
+/**
  * Per-account backoff on top of the address-keyed rate limit configured in
- * ./auth.ts (see ./auth-throttle.ts for the counters themselves). The before
- * hook counts the attempt and refuses it when locked; the after hook releases
- * the caller's counter once a sign-in actually completes, remembers the
- * browser, and forgets it again on the way out. Counting up front is what makes
- * the check and the increment one step: judging here and counting afterwards
- * would let a parallel burst all pass the same stale check.
+ * ./auth.ts (see ./auth-throttle.ts for the counters themselves), plus the
+ * sign-in half of administrative blocking (see ./user-block.ts). The before
+ * hook counts the attempt and refuses it when locked; the after hook refuses a
+ * blocked account, then releases the caller's counter once a sign-in actually
+ * completes, remembers the browser, and forgets it again on the way out.
+ * Counting up front is what makes the check and the increment one step: judging
+ * here and counting afterwards would let a parallel burst all pass the same
+ * stale check.
  */
 export const signInThrottleHooks = {
     before: createAuthMiddleware(async (ctx) => {
@@ -98,6 +113,26 @@ export const signInThrottleHooks = {
         return;
       }
       if (ctx.path !== SIGN_IN_PATH || !isSignedIn(ctx.context.returned)) return;
+
+      // A blocked account is refused *after* its password checked out, never
+      // before: deciding earlier would answer "does this address exist" to
+      // anyone who asked. Whoever gets here already holds the password, so the
+      // specific reason tells them nothing they didn't know.
+      //
+      // The session better-auth just minted is dropped rather than left to the
+      // auth guard, which refuses it on every request anyway — belt and braces,
+      // because whether a thrown after-hook still emits its Set-Cookie is
+      // better-auth's business, and a cookie pointing at no row is inert
+      // regardless of how that goes.
+      const blockedId = signedInUserId(ctx.context.returned);
+      if (blockedId && (await isUserBlocked(blockedId))) {
+        await revokeUserSessions(blockedId);
+        throw new APIError("FORBIDDEN", {
+          code: "ACCOUNT_BLOCKED",
+          message: "This account has been blocked. Contact an administrator.",
+        });
+      }
+
       const email = attemptedEmail(ctx.body);
       if (!email) return;
       try {

@@ -68,4 +68,68 @@ test.describe("admin users view", () => {
       page.getByRole("menuitem", { name: "Delete account" }),
     ).not.toHaveAttribute("aria-disabled", "true");
   });
+
+  test("shows a status for every account", async ({ page }) => {
+    await expect(
+      rowFor(page, E2E_CLIENT_EMAIL).getByText("Active", { exact: true }),
+    ).toBeVisible();
+  });
+
+  test("offers no block against an admin account", async ({ page }) => {
+    await rowFor(page, E2E_ADMIN_EMAIL)
+      .getByRole("button", { name: "Row actions" })
+      .click();
+    await expect(
+      page.getByRole("menuitem", { name: "Block account…" }),
+    ).toHaveAttribute("aria-disabled", "true");
+  });
+
+  /**
+   * The lock is the automatic sign-in backoff, not a block — nobody has one
+   * running here, so the action must be unavailable rather than a no-op an
+   * admin can click and get nothing from.
+   */
+  test("offers no lock release for an account that is not locked out", async ({
+    page,
+  }) => {
+    await rowFor(page, E2E_CLIENT_EMAIL)
+      .getByRole("button", { name: "Row actions" })
+      .click();
+    await expect(
+      page.getByRole("menuitem", { name: "Clear sign-in lock" }),
+    ).toHaveAttribute("aria-disabled", "true");
+  });
+
+  test("filters to blocked accounts, of which the seed has none", async ({ page }) => {
+    await expect(rowFor(page, E2E_CLIENT_EMAIL)).toBeVisible();
+    await page.getByLabel("Filter by status").click();
+    await page.getByRole("option", { name: "Blocked", exact: true }).click();
+
+    await expect(page.getByText("No users yet.")).toBeVisible();
+  });
+
+  /**
+   * The dialog is where the duration and reason are chosen, so it has to open
+   * and it has to be abandonable — dismissing it must leave the account alone.
+   * The block itself is covered against a real database in
+   * `src/lib/orpc/routers/admin-users.test.ts`; applying one here would leave
+   * an account every later spec signs in as blocked.
+   */
+  test("opens the block dialog and applies nothing when dismissed", async ({
+    page,
+  }) => {
+    await rowFor(page, E2E_CLIENT2_EMAIL)
+      .getByRole("button", { name: "Row actions" })
+      .click();
+    await page.getByRole("menuitem", { name: "Block account…" }).click();
+
+    await expect(page.getByRole("dialog")).toContainText(E2E_CLIENT2_EMAIL);
+    await expect(page.getByLabel("Duration")).toBeVisible();
+    await expect(page.getByLabel("Reason (optional)")).toBeVisible();
+
+    await page.getByRole("button", { name: "Cancel" }).click();
+    await expect(
+      rowFor(page, E2E_CLIENT2_EMAIL).getByText("Active", { exact: true }),
+    ).toBeVisible();
+  });
 });

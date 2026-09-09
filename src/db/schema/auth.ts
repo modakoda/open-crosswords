@@ -19,6 +19,22 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
+  /**
+   * Administrative block. Set only from the admin user screen (see
+   * src/lib/user-block.ts); better-auth never writes these. `blockedUntil`
+   * null means indefinite, so "is this account blocked right now" is
+   * `blocked && (blockedUntil is null or blockedUntil > now)` and is computed
+   * in exactly one place — the flag is deliberately not cleared when a
+   * timed block lapses, so the reason and dates stay readable afterwards.
+   *
+   * Timestamps are `timestamp without time zone` holding UTC, like every other
+   * column here; compare them against `now() at time zone 'utc'`, never a bare
+   * `now()`, which would be off by the server's configured offset.
+   */
+  blocked: boolean("blocked").notNull().default(false),
+  blockedReason: text("blocked_reason"),
+  blockedAt: timestamp("blocked_at"),
+  blockedUntil: timestamp("blocked_until"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

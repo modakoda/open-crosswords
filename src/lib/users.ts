@@ -1,7 +1,12 @@
-import { and, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { and, desc, eq, ilike, not, or, sql } from "drizzle-orm";
 import { db } from "@/db";
+import { NOW_UTC } from "@/db/now";
 import { puzzles, session, solveStates, user } from "@/db/schema";
 import { isAdminEmail } from "@/lib/auth-guard";
+import { BLOCK_ACTIVE_SQL, isBlocked } from "@/lib/user-block";
+import { accountLocks } from "@/lib/sign-in-lock";
+
+export { revokeUserSessions } from "@/lib/user-sessions";
 import type { z } from "zod";
 import type { listUsersQuerySchema } from "@/lib/validation/schemas";
 
@@ -14,17 +19,6 @@ type ListQuery = z.infer<typeof listUsersQuerySchema>;
  * columns disagree. Spelling out the table is what keeps the correlation real.
  */
 const OUTER_USER_ID = sql`${user}.${sql.identifier("id")}`;
-
-/**
- * "Now", as the naive UTC wall-clock these tables are written in.
- *
- * `session.expires_at` is `timestamp without time zone` holding UTC, so a bare
- * `now()` (a `timestamptz`) is coerced using the *server's* TimeZone and
- * mis-classifies every session by that offset on any deployment not set to
- * UTC. Binding a JS `Date` instead is worse: it reaches the driver untyped and
- * Postgres refuses the comparison outright. Converting in SQL avoids both.
- */
-const NOW_UTC = sql`(now() at time zone 'utc')`;
 
 /** One row of the admin user listing. Never carries anything from `account`. */
 export interface AdminUserRow {
@@ -47,6 +41,24 @@ export interface AdminUserRow {
    * until it is removed — which is why it must stay deletable.
    */
   holdsAdminAddress: boolean;
+  /**
+   * Blocked right now — the flag *and* an expiry that hasn't passed. A block
+   * that has lapsed reports false here while `blockedUntil` still says when it
+   * ended, so the screen can show the history without implying it is in force.
+   */
+  blocked: boolean;
+  blockedReason: string | null;
+  blockedAt: string | null;
+  /** ISO expiry, or null for an indefinite block. */
+  blockedUntil: string | null;
+  /**
+   * Seconds of account-wide sign-in lock still to run (see
+   * src/lib/sign-in-lock.ts), or 0. This is the automatic backoff, not a
+   * block: nobody decided it, it decays on its own, and it is the one an
+   * outsider can trigger against someone else's address — which is why an
+   * admin can see it and release it.
+   */
+  signInLockSeconds: number;
   puzzleCount: number;
   solveCount: number;
   /** Unexpired sessions, i.e. devices that can act as this user right now. */
@@ -64,6 +76,7 @@ export interface AdminUserRow {
  */
 export async function listUsers(
   q: ListQuery,
+  now: Date = new Date(),
 ): Promise<{ rows: AdminUserRow[]; total: number }> {
   const filters = [];
   if (q.q) {
@@ -72,6 +85,9 @@ export async function listUsers(
     filters.push(or(ilike(user.email, term), ilike(user.name, term))!);
   }
   if (q.verified !== undefined) filters.push(eq(user.emailVerified, q.verified));
+  if (q.blocked !== undefined) {
+    filters.push(q.blocked ? BLOCK_ACTIVE_SQL : not(BLOCK_ACTIVE_SQL));
+  }
   const where = filters.length ? and(...filters) : undefined;
 
   const [rows, [{ count }]] = await Promise.all([
@@ -81,6 +97,10 @@ export async function listUsers(
         name: user.name,
         email: user.email,
         emailVerified: user.emailVerified,
+        blocked: user.blocked,
+        blockedReason: user.blockedReason,
+        blockedAt: user.blockedAt,
+        blockedUntil: user.blockedUntil,
         puzzleCount: sql<number>`(select count(*) from ${puzzles} where ${puzzles.userId} = ${OUTER_USER_ID})::int`,
         solveCount: sql<number>`(select count(*) from ${solveStates} where ${solveStates.userId} = ${OUTER_USER_ID})::int`,
         activeSessions: sql<number>`(select count(*) from ${session} where ${session.userId} = ${OUTER_USER_ID} and ${session.expiresAt} > ${NOW_UTC})::int`,
@@ -94,6 +114,11 @@ export async function listUsers(
     db.select({ count: sql<number>`count(*)::int` }).from(user).where(where),
   ]);
 
+  // One extra query for the whole page rather than one per row; the counters
+  // live in their own table and are keyed by a digest of the address, so they
+  // cannot be joined to `user` in the statement above.
+  const locks = await accountLocks(rows.map((r) => r.email), now);
+
   return {
     rows: rows.map((r) => {
       const allowListed = isAdminEmail(r.email);
@@ -101,6 +126,10 @@ export async function listUsers(
         ...r,
         isAdmin: allowListed && r.emailVerified,
         holdsAdminAddress: allowListed && !r.emailVerified,
+        blocked: isBlocked(r, now),
+        blockedAt: r.blockedAt?.toISOString() ?? null,
+        blockedUntil: r.blockedUntil?.toISOString() ?? null,
+        signInLockSeconds: locks.get(r.email) ?? 0,
         createdAt: r.createdAt.toISOString(),
       };
     }),
@@ -120,6 +149,8 @@ export async function findUser(id: string) {
       email: user.email,
       name: user.name,
       emailVerified: user.emailVerified,
+      blocked: user.blocked,
+      blockedUntil: user.blockedUntil,
     })
     .from(user)
     .where(eq(user.id, id))
@@ -142,15 +173,3 @@ export async function deleteUser(id: string) {
   return row ?? null;
 }
 
-/**
- * Drop every session row for an account, signing it out everywhere. Expired
- * rows are deleted too — they are dead weight, and counting only live ones
- * would report a number the admin can't reconcile with the listing.
- */
-export async function revokeUserSessions(id: string) {
-  const rows = await db
-    .delete(session)
-    .where(eq(session.userId, id))
-    .returning({ id: session.id });
-  return rows.length;
-}

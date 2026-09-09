@@ -82,7 +82,9 @@ e2e/                      Playwright specs + seed.ts (fixed e2e-*@example.com ac
 data/seed-en.json         starter English question set
 data/seed-en-large.json.gz  large English set generated from WordNet (~1.1M entries,
                           gzipped; `npm run seed` gunzips `.gz` paths transparently)
-data/seed-lt.json         starter Lithuanian question set (easy through hard)
+data/seed-lt.json         starter Lithuanian question set (difficulty 1-3)
+data/seed-lt-hard.json    Lithuanian difficulty 4-5 set feeding the "hard"
+                          generate level (no answer overlaps seed-lt.json)
 drizzle/                  committed migration SQL
 ```
 

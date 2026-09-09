@@ -29,6 +29,13 @@
       "when": 1788650592593,
       "tag": "0003_cute_blindfold",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1788904922918,
+      "tag": "0004_same_magma",
+      "breakpoints": true
     }
   ]
 }

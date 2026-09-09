@@ -14,7 +14,7 @@ vi.mock("next/headers", () => ({
 }));
 
 const { db } = await import("@/db");
-const { rateLimit, signInAttempt } = await import("@/db/schema");
+const { rateLimit, session, signInAttempt, user } = await import("@/db/schema");
 const { auth } = await import("./auth");
 const { attemptKey, consumeSignInAttempt, PER_ACCOUNT, PER_CLIENT } = await import(
   "./auth-throttle"
@@ -87,6 +87,7 @@ async function signUp(): Promise<Response> {
 beforeEach(async () => {
   await db.execute(sql`truncate table ${signInAttempt}`);
   await db.execute(sql`truncate table ${rateLimit}`);
+  await db.update(user).set({ blocked: false, blockedUntil: null });
 });
 
 // Each request runs a real password hash, so a loaded machine can take much
@@ -202,5 +203,47 @@ describe("rate limit storage", { timeout: TIMEOUT }, () => {
     const rows = await db.select().from(rateLimit);
     expect(rows.length).toBeGreaterThan(0);
     expect(rows[0]?.key).toContain("/sign-in/email");
+  });
+});
+
+describe("blocked accounts", { timeout: TIMEOUT }, () => {
+  /**
+   * The refusal lands *after* the password checked out, never before. Deciding
+   * earlier would answer "does this address exist" to anyone who asked;
+   * whoever gets this far already holds the password.
+   */
+  it("refuses a blocked account and leaves it no session", async () => {
+    await signUp();
+    await db.update(user).set({ blocked: true }).where(eq(user.email, EMAIL));
+
+    const res = await signIn(PASSWORD);
+    expect(res.status).toBe(403);
+    expect(await db.select().from(session)).toHaveLength(0);
+  });
+
+  it("still refuses a wrong password with the ordinary 401", async () => {
+    await signUp();
+    await db.update(user).set({ blocked: true }).where(eq(user.email, EMAIL));
+
+    expect((await signIn("wrong-password-here")).status).toBe(401);
+  });
+
+  it("lets the account back in once the block is lifted", async () => {
+    await signUp();
+    await db.update(user).set({ blocked: true }).where(eq(user.email, EMAIL));
+    expect((await signIn(PASSWORD)).status).toBe(403);
+
+    await db.update(user).set({ blocked: false }).where(eq(user.email, EMAIL));
+    expect((await signIn(PASSWORD)).status).toBe(200);
+  });
+
+  it("lets a lapsed timed block through without an admin lifting it", async () => {
+    await signUp();
+    await db
+      .update(user)
+      .set({ blocked: true, blockedUntil: new Date(Date.now() - 60_000) })
+      .where(eq(user.email, EMAIL));
+
+    expect((await signIn(PASSWORD)).status).toBe(200);
   });
 });

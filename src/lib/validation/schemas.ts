@@ -93,8 +93,28 @@ export const listUsersQuerySchema = z.object({
   q: z.string().trim().max(120).optional(),
   /** Undefined lists every account; true/false narrows to one side. */
   verified: z.boolean().optional(),
+  /**
+   * Blocked *right now*, i.e. the flag with an expiry that hasn't passed —
+   * an account whose timed block has lapsed reads as not blocked here.
+   */
+  blocked: z.boolean().optional(),
   limit: z.coerce.number().int().min(1).max(200).default(50),
   offset: z.coerce.number().int().min(0).default(0),
+});
+
+/**
+ * Blocking an account. The reason is an operator's note shown only on the
+ * admin screen, so it is bounded but otherwise free text; `days` absent means
+ * an indefinite block, and the ceiling exists so a mistyped number can't put
+ * an expiry so far out that it is indistinguishable from indefinite while
+ * still reading as temporary.
+ */
+export const MAX_BLOCK_DAYS = 365;
+
+export const blockUserSchema = z.object({
+  id: z.string().trim().min(1).max(255),
+  reason: z.string().trim().max(500).optional(),
+  days: z.coerce.number().int().min(1).max(MAX_BLOCK_DAYS).optional(),
 });
 
 /**

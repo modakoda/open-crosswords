@@ -68,6 +68,9 @@ export const ADMIN_PROCEDURES: { path: string; input: unknown }[] = [
   // schema accepts and no row has.
   { path: "admin/users/delete", input: { id: "no-such-user" } },
   { path: "admin/users/revokeSessions", input: { id: "no-such-user" } },
+  { path: "admin/users/block", input: { id: "no-such-user", days: 1 } },
+  { path: "admin/users/unblock", input: { id: "no-such-user" } },
+  { path: "admin/users/clearSignInLock", input: { id: "no-such-user" } },
 ];
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));

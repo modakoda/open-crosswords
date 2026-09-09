@@ -25,6 +25,13 @@ const VERIFIED_FILTERS: Record<string, boolean | undefined> = {
   unverified: false,
 };
 
+/** Blocked *right now* — a lapsed timed block counts as not blocked. */
+const BLOCKED_FILTERS: Record<string, boolean | undefined> = {
+  [ALL]: undefined,
+  blocked: true,
+  active: false,
+};
+
 /**
  * The account listing. Every registered user, not just the ones who own
  * puzzles — a client account is created by public sign-up and may never have
@@ -36,6 +43,7 @@ export function UserManager() {
   const [total, setTotal] = useState(0);
   const [q, setQ] = useState("");
   const [verified, setVerified] = useState<string>(ALL);
+  const [blocked, setBlocked] = useState<string>(ALL);
   const [msg, setMsg] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [page, setPage] = useState(0);
@@ -46,6 +54,7 @@ export function UserManager() {
       .list({
         q: q || undefined,
         verified: VERIFIED_FILTERS[verified],
+        blocked: BLOCKED_FILTERS[blocked],
         limit: pageSize,
         offset: page * pageSize,
       })
@@ -58,7 +67,7 @@ export function UserManager() {
         if (page > last) setPage(last);
       })
       .catch(() => setMsg("Failed to load users"));
-  }, [q, verified, page, pageSize]);
+  }, [q, verified, blocked, page, pageSize]);
 
   useEffect(load, [load]);
 
@@ -91,6 +100,22 @@ export function UserManager() {
             <SelectItem value={ALL}>All accounts</SelectItem>
             <SelectItem value="verified">Verified email</SelectItem>
             <SelectItem value="unverified">Unverified email</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={blocked}
+          onValueChange={(v) => {
+            setBlocked(v);
+            setPage(0);
+          }}
+        >
+          <SelectTrigger className="w-40" aria-label="Filter by status">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value={ALL}>Any status</SelectItem>
+            <SelectItem value="blocked">Blocked</SelectItem>
+            <SelectItem value="active">Not blocked</SelectItem>
           </SelectContent>
         </Select>
       </div>

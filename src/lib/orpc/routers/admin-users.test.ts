@@ -21,8 +21,10 @@ vi.mock("@/lib/auth-guard", async () => {
 });
 
 const { db } = await import("@/db");
-const { languages, puzzles, session, solveStates, user } = await import("@/db/schema");
+const { languages, puzzles, session, signInAttempt, solveStates, user } =
+  await import("@/db/schema");
 const { adminUsersRouter } = await import("./admin-users");
+const { attemptKey, PER_ACCOUNT } = await import("@/lib/auth-throttle");
 
 const ctx = () => ({ context: { headers: new Headers() } });
 
@@ -36,6 +38,8 @@ async function seedUser(
     name: string;
     emailVerified: boolean;
     createdAt: Date;
+    blocked: boolean;
+    blockedUntil: Date | null;
   }> = {},
 ) {
   await db.insert(user).values({
@@ -43,9 +47,20 @@ async function seedUser(
     name: over.name ?? `User ${id}`,
     email: over.email ?? `${id}@example.com`,
     emailVerified: over.emailVerified ?? true,
+    blocked: over.blocked ?? false,
+    blockedUntil: over.blockedUntil ?? null,
     ...(over.createdAt ? { createdAt: over.createdAt } : {}),
   });
   return id;
+}
+
+/** A run of failed attempts against the account-wide counter for `email`. */
+async function seedAccountLock(email: string, failedCount: number, at = new Date()) {
+  await db.insert(signInAttempt).values({
+    identifier: attemptKey("account", email),
+    failedCount,
+    lastFailedAt: at,
+  });
 }
 
 async function seedSession(id: string, userId: string, expiresAt: Date) {
@@ -82,7 +97,7 @@ const hour = (n: number) => new Date(Date.now() + n * 3600_000);
 beforeEach(async () => {
   adminState.allow = true;
   await db.execute(
-    sql`truncate ${puzzles}, ${solveStates}, ${session}, ${languages}, ${user} restart identity cascade`,
+    sql`truncate ${puzzles}, ${solveStates}, ${session}, ${signInAttempt}, ${languages}, ${user} restart identity cascade`,
   );
   await db.insert(languages).values([{ code: "en", name: "English" }]);
 });
@@ -120,6 +135,10 @@ describe("admin.users.list", () => {
     const [row] = (await call(adminUsersRouter.list, {}, ctx())).rows;
     expect(Object.keys(row).sort()).toEqual([
       "activeSessions",
+      "blocked",
+      "blockedAt",
+      "blockedReason",
+      "blockedUntil",
       "createdAt",
       "email",
       "emailVerified",
@@ -128,6 +147,7 @@ describe("admin.users.list", () => {
       "isAdmin",
       "name",
       "puzzleCount",
+      "signInLockSeconds",
       "solveCount",
     ]);
   });
@@ -288,5 +308,246 @@ describe("admin.users.revokeSessions", () => {
     ).rejects.toThrow(/your own account/);
 
     expect(await db.select().from(session)).toHaveLength(2);
+  });
+});
+
+describe("admin.users.block", () => {
+  it("refuses a caller who is not an admin", async () => {
+    adminState.allow = false;
+    await expect(
+      call(adminUsersRouter.block, { id: "whoever" }, ctx()),
+    ).rejects.toThrow(ORPCError);
+  });
+
+  it("blocks indefinitely and ends every session", async () => {
+    await seedUser("spammer");
+    await seedSession("s1", "spammer", hour(1));
+    await seedSession("s2", "spammer", hour(5));
+
+    const res = await call(
+      adminUsersRouter.block,
+      { id: "spammer", reason: "Spam" },
+      ctx(),
+    );
+    expect(res).toMatchObject({ blockedUntil: null, revokedSessions: 2 });
+
+    const [row] = await db.select().from(user);
+    expect(row.blocked).toBe(true);
+    expect(row.blockedReason).toBe("Spam");
+    expect(row.blockedUntil).toBeNull();
+    expect(row.blockedAt).not.toBeNull();
+    expect(await db.select().from(session)).toHaveLength(0);
+  });
+
+  it("turns a duration in days into an absolute expiry", async () => {
+    await seedUser("temp");
+    const before = Date.now();
+
+    const res = await call(adminUsersRouter.block, { id: "temp", days: 7 }, ctx());
+
+    const until = new Date(res.blockedUntil!).getTime();
+    expect(until).toBeGreaterThanOrEqual(before + 7 * 86_400_000);
+    expect(until).toBeLessThan(Date.now() + 7 * 86_400_000 + 5_000);
+  });
+
+  it("rejects a duration outside the allowed range", async () => {
+    await seedUser("temp");
+    await expect(
+      call(adminUsersRouter.block, { id: "temp", days: 4000 }, ctx()),
+    ).rejects.toThrow();
+    await expect(
+      call(adminUsersRouter.block, { id: "temp", days: 0 }, ctx()),
+    ).rejects.toThrow();
+    expect((await db.select().from(user))[0].blocked).toBe(false);
+  });
+
+  /**
+   * Blocking an administrator would be a way to strip an administrator's
+   * access from a screen that must never be able to — the same reason deletion
+   * and session revocation refuse it.
+   */
+  it("refuses to block an admin, or the calling admin's own account", async () => {
+    await seedUser("other-admin", { email: ADMIN_EMAIL });
+    await seedUser("admin-self", { email: "someone-else@example.com" });
+
+    await expect(
+      call(adminUsersRouter.block, { id: "other-admin" }, ctx()),
+    ).rejects.toThrow(/out-of-band/);
+    await expect(
+      call(adminUsersRouter.block, { id: "admin-self" }, ctx()),
+    ).rejects.toThrow(/your own account/);
+
+    for (const row of await db.select().from(user)) expect(row.blocked).toBe(false);
+  });
+
+  it("404s on an unknown id", async () => {
+    await expect(
+      call(adminUsersRouter.block, { id: "ghost" }, ctx()),
+    ).rejects.toThrow(/not found/i);
+  });
+});
+
+describe("admin.users.unblock", () => {
+  it("refuses a caller who is not an admin", async () => {
+    adminState.allow = false;
+    await expect(
+      call(adminUsersRouter.unblock, { id: "whoever" }, ctx()),
+    ).rejects.toThrow(ORPCError);
+  });
+
+  /**
+   * The guard that shields admin rows exists to stop this screen *removing* an
+   * administrator's access. Applying it here would do the opposite: an admin
+   * row that is somehow blocked has no other way back, because `adminProcedure`
+   * refuses a blocked session and `create-admin` leaves an existing verified
+   * account alone. So the restorative actions deliberately have no such guard.
+   */
+  it("lifts a block on an admin account, and on the caller's own", async () => {
+    await seedUser("other-admin", { email: ADMIN_EMAIL, blocked: true });
+    await seedUser("admin-self", { email: "someone-else@example.com", blocked: true });
+
+    await expect(
+      call(adminUsersRouter.unblock, { id: "other-admin" }, ctx()),
+    ).resolves.toMatchObject({ email: ADMIN_EMAIL });
+    await expect(
+      call(adminUsersRouter.unblock, { id: "admin-self" }, ctx()),
+    ).resolves.toMatchObject({ email: "someone-else@example.com" });
+
+    for (const row of await db.select().from(user)) expect(row.blocked).toBe(false);
+  });
+
+  it("404s on an unknown id", async () => {
+    await expect(
+      call(adminUsersRouter.unblock, { id: "ghost" }, ctx()),
+    ).rejects.toThrow(/not found/i);
+  });
+
+  it("lifts the block and clears what described it", async () => {
+    await seedUser("banned", { blocked: true, blockedUntil: hour(24) });
+
+    await call(adminUsersRouter.unblock, { id: "banned" }, ctx());
+
+    const [row] = await db.select().from(user);
+    expect(row).toMatchObject({
+      blocked: false,
+      blockedReason: null,
+      blockedAt: null,
+      blockedUntil: null,
+    });
+  });
+});
+
+describe("admin.users.list — blocked state", () => {
+  it("reports an indefinite block as blocked", async () => {
+    await seedUser("banned", { blocked: true });
+    const [row] = (await call(adminUsersRouter.list, {}, ctx())).rows;
+    expect(row.blocked).toBe(true);
+    expect(row.blockedUntil).toBeNull();
+  });
+
+  /**
+   * A timed block ends on its own — nothing writes the flag back, so the
+   * listing must derive "blocked right now" from the expiry, exactly as the
+   * auth guard does. If these two ever disagree, an account refused at sign-in
+   * would show as active.
+   */
+  it("reports a lapsed timed block as not blocked, keeping its expiry", async () => {
+    await seedUser("served", { blocked: true, blockedUntil: hour(-1) });
+    const [row] = (await call(adminUsersRouter.list, {}, ctx())).rows;
+    expect(row.blocked).toBe(false);
+    expect(row.blockedUntil).not.toBeNull();
+  });
+
+  it("filters on the blocked state, not on the stored flag", async () => {
+    await seedUser("live-block", { blocked: true });
+    await seedUser("lapsed", { blocked: true, blockedUntil: hour(-1) });
+    await seedUser("plain");
+
+    const blocked = await call(adminUsersRouter.list, { blocked: true }, ctx());
+    expect(blocked.rows.map((r) => r.id)).toEqual(["live-block"]);
+
+    const free = await call(adminUsersRouter.list, { blocked: false }, ctx());
+    expect(free.rows.map((r) => r.id).sort()).toEqual(["lapsed", "plain"]);
+  });
+
+  it("reports the account-wide sign-in lock in seconds", async () => {
+    await seedUser("locked", { email: "locked@example.com" });
+    await seedUser("free", { email: "free@example.com" });
+    // One attempt past the free allowance earns the base backoff.
+    await seedAccountLock("locked@example.com", PER_ACCOUNT.free + 1);
+
+    const rows = (await call(adminUsersRouter.list, {}, ctx())).rows;
+    const by = (id: string) => rows.find((r) => r.id === id)!;
+    expect(by("locked").signInLockSeconds).toBeGreaterThan(0);
+    expect(by("free").signInLockSeconds).toBe(0);
+  });
+});
+
+describe("admin.users.clearSignInLock", () => {
+  it("refuses a caller who is not an admin", async () => {
+    adminState.allow = false;
+    await expect(
+      call(adminUsersRouter.clearSignInLock, { id: "whoever" }, ctx()),
+    ).rejects.toThrow(ORPCError);
+  });
+
+  it("drops the account-wide counter and says whether there was one", async () => {
+    await seedUser("locked", { email: "locked@example.com" });
+    await seedAccountLock("locked@example.com", PER_ACCOUNT.free + 1);
+
+    await expect(
+      call(adminUsersRouter.clearSignInLock, { id: "locked" }, ctx()),
+    ).resolves.toMatchObject({ cleared: true });
+    expect(await db.select().from(signInAttempt)).toHaveLength(0);
+
+    await expect(
+      call(adminUsersRouter.clearSignInLock, { id: "locked" }, ctx()),
+    ).resolves.toMatchObject({ cleared: false });
+  });
+
+  /**
+   * The per-address counter is what actually bounds password guessing, and it
+   * is keyed by a digest of an address this app never stores — so nothing
+   * reachable from the admin screen can find or clear one.
+   */
+  it("leaves the per-address counter alone", async () => {
+    await seedUser("locked", { email: "locked@example.com" });
+    await db.insert(signInAttempt).values({
+      identifier: attemptKey("client:203.0.113.9", "locked@example.com"),
+      failedCount: 9,
+      lastFailedAt: new Date(),
+    });
+
+    await call(adminUsersRouter.clearSignInLock, { id: "locked" }, ctx());
+
+    expect(await db.select().from(signInAttempt)).toHaveLength(1);
+  });
+
+  /**
+   * The account-wide counter is a lever an outsider can run up against any
+   * address they merely know, so withholding the release from admin accounts
+   * would leave the accounts most worth attacking as the only ones with no
+   * remedy. Releasing it hands back nothing but that counter.
+   */
+  it("releases the lock on an admin account, and on the caller's own", async () => {
+    await seedUser("other-admin", { email: ADMIN_EMAIL });
+    await seedUser("admin-self", { email: "someone-else@example.com" });
+    await seedAccountLock(ADMIN_EMAIL, PER_ACCOUNT.free + 1);
+    await seedAccountLock("someone-else@example.com", PER_ACCOUNT.free + 1);
+
+    await expect(
+      call(adminUsersRouter.clearSignInLock, { id: "other-admin" }, ctx()),
+    ).resolves.toMatchObject({ cleared: true });
+    await expect(
+      call(adminUsersRouter.clearSignInLock, { id: "admin-self" }, ctx()),
+    ).resolves.toMatchObject({ cleared: true });
+
+    expect(await db.select().from(signInAttempt)).toHaveLength(0);
+  });
+
+  it("404s on an unknown id", async () => {
+    await expect(
+      call(adminUsersRouter.clearSignInLock, { id: "ghost" }, ctx()),
+    ).rejects.toThrow(/not found/i);
   });
 });

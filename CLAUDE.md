@@ -83,6 +83,15 @@ or solve them online via a shareable link. Open source, single Next.js app.
   revocation — deleting an account cascades its sessions, credentials and
   solve progress, but `puzzles.userId` is `on delete set null`, so the puzzles
   it generated survive as anonymous ones and no shared link breaks),
+  `user-block.ts` (administrative blocking — the `user.blocked` flag with an
+  optional `blockedUntil`, where "blocked right now" is always *derived* from
+  the pair, by `isBlocked` and its SQL twin `BLOCK_ACTIVE_SQL`, so a timed
+  block ends without anything having to run on a schedule),
+  `user-sessions.ts` (session revocation on its own, so the sign-in hook can
+  reach it without closing an import cycle back through the auth guard),
+  `sign-in-lock.ts` (the admin's read and release of the *account-wide* half of
+  the sign-in backoff — the per-address half is keyed by a digest of an address
+  the app never stores and is unreachable by construction),
   `ai/draft.ts` (optional LLM drafting), `solve-state.ts`
   (per-user solve progress, read/write always scoped to the caller's own id),
   `print-layout.ts` (paper geometry: it sizes each print sheet's cells, clue
@@ -137,7 +146,11 @@ or solve them online via a shareable link. Open source, single Next.js app.
   the attempt and refuses it when locked, the after hook releases the caller's
   counter on a verified successful sign-in and issues the signed known-device
   cookie (`src/lib/known-device.ts`) that exempts that browser from the
-  account-wide lock.
+  account-wide lock. The same after hook refuses a **blocked** account with a
+  403, deliberately *after* the password has verified — deciding earlier would
+  answer "does this address exist" to anyone who asked — and drops the session
+  better-auth just minted, since a thrown after-hook still emits its
+  `Set-Cookie` and a cookie pointing at no row is inert.
 - **Authorization model**: two independent identities layered on one
   better-auth session — "admin" (a signed-in user whose verified email is in
   `ADMIN_EMAILS`, checked by `getAdmin`/`requireAdmin` in
@@ -150,17 +163,36 @@ or solve them online via a shareable link. Open source, single Next.js app.
   (every `admin.*` oRPC procedure is admin-gated, including `admin.puzzles.*`
   — the only listing that spans every client's puzzles and surfaces their
   owner's email, so it must never be reached from anywhere else — and
-  `admin.users.*`, which lists every registered account and can delete one or
-  revoke its sessions). Neither of those two destructive actions may target an
-  administrator: `targetOf` in `routers/admin-users.ts` refuses the calling
-  admin's own row and any row that is allow-listed **and** verified — the same
-  pair `getAdmin` demands, deliberately not membership alone, because
+  `admin.users.*`, which lists every registered account and can delete one,
+  revoke its sessions, block or unblock it, or release its account-wide sign-in
+  lock). The three actions that *take* access away — delete, revokeSessions,
+  block — may never target an administrator: `destructiveTarget` in
+  `routers/admin-users.ts` refuses the calling admin's own row and any row that
+  is allow-listed **and** verified — the same pair `getAdmin` demands,
+  deliberately not membership alone, because
   `create-admin` verifies in the same run and refuses an address an unverified
   account already holds, so an allow-listed-but-unverified row is a public
   sign-up squatting that address and must stay removable or the address can
-  never be provisioned. Nothing on that screen can grant or revoke admin-ness,
-  and `emailVerified` is deliberately not editable there: verifying an
-  allow-listed address would be a privilege-escalation lever.
+  never be provisioned. The two *restorative* actions — unblock and
+  clearSignInLock — go through `restorativeTarget` instead, which applies
+  neither refusal: those refusals exist to stop this screen removing an
+  administrator, and applying them to actions that only ever give access back
+  would instead make an administrator's lockout unrecoverable from inside the
+  app (an address can be blocked before it is allow-listed, `create-admin`
+  leaves an existing verified account alone, and the account-wide sign-in lock
+  is a lever any outsider can run up against an address they merely know).
+  Nothing on that screen can grant or revoke admin-ness, and `emailVerified` is
+  deliberately not editable there: verifying an allow-listed address would be a
+  privilege-escalation lever — which is also why there is no editable role:
+  blocking is the only per-account state the screen writes.
+  A **blocked** account keeps existing, keeps its puzzles and keeps its address
+  taken, but authorizes nothing: `blockUser` sets the flag and deletes every
+  session in one transaction, `getAdmin`/`getCurrentUser` re-read the block from
+  the database on every request so a session already in flight goes inert, and
+  the sign-in hook refuses a fresh one. better-auth's own `/api/auth/*`
+  endpoints do *not* consult the block — safe only while no route can mint a
+  session for a blocked account, so enabling `session.cookieCache` or a
+  social/password-reset flow means revisiting it.
   Generated puzzles are **public** and addressed by an unguessable
   word-and-number slug (e.g.
   `amber-quiet-otter-canyon-48392174`), and optionally owned by
@@ -215,7 +247,10 @@ external input, or the AI/import paths must meet these before it's done:
   Next renders and can skip the layout entirely. Per-user-owned rows (`puzzles.userId`,
   `solve_states`) must always be scoped to the id from `context.user`
   (set by `userProcedure` from the verified session) — never from a
-  client-supplied id (missing scoping / IDOR is a blocking defect).
+  client-supplied id (missing scoping / IDOR is a blocking defect). Account
+  blocking stays one-directional in both senses: an action that removes access
+  may never target an administrator, and an action that restores it may never
+  be withheld from one.
 - **Input validation**: validate every external input (procedure inputs,
   form fields, env vars, CSV/JSON import text, AI output) with Zod via
   `.input()` on the procedure (oRPC rejects on failure automatically), and

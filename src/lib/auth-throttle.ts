@@ -99,8 +99,12 @@ interface Counter {
   policy: Policy;
 }
 
-/** Seconds still to wait given a counter's state before this attempt. */
-function remainingLock(
+/**
+ * Seconds still to wait given a counter's state before this attempt. Exported
+ * so the admin user screen can *report* an account-wide lock (see
+ * ./sign-in-lock.ts) using this curve rather than a second copy of it.
+ */
+export function remainingLock(
   row: { failedCount: number; lastFailedAt: Date },
   policy: Policy,
   now: Date,
