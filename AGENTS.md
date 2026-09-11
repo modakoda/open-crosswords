@@ -85,6 +85,8 @@ data/seed-en-large.json.gz  large English set generated from WordNet (~1.1M entr
 data/seed-lt.json         starter Lithuanian question set (difficulty 1-3)
 data/seed-lt-hard.json    Lithuanian difficulty 4-5 set feeding the "hard"
                           generate level (no answer overlaps seed-lt.json)
+data/seed-lt-medium.json  Lithuanian difficulty 2-4 set (1000 entries) feeding the
+                          "medium" level (no answer overlaps the other two)
 drizzle/                  committed migration SQL
 ```
 

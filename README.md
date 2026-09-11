@@ -80,7 +80,10 @@ difficulty 4-5, which that set does not reach, so load
 `npm run seed -- data/seed-lt-hard.json` as well (296 entries across 28
 specialist topics) if you want hard Lithuanian puzzles. Both files are
 independent - the hard set repeats no answer from the starter set, so seeding
-both never puts the same word in a grid twice. For a much larger English pool (~1.1M entries
+both never puts the same word in a grid twice. A third Lithuanian file,
+`npm run seed -- data/seed-lt-medium.json`, adds 1000 difficulty 2-4 entries
+across 33 topics for the **medium** level, and likewise repeats no answer from
+either of the other two. For a much larger English pool (~1.1M entries
 programmatically generated from WordNet — definitions plus
 synonym/hypernym/hyponym/meronym/antonym relations; quality is more variable
 than the hand-curated starter set, especially in obscure/taxonomic corners),
